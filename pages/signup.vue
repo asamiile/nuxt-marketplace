@@ -49,14 +49,6 @@ async function signUp() {
     if (error) throw error
     if (!data.user) throw new Error('User data is null after sign up.')
 
-    // Create a profile record for the new user.
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: data.user.id,
-       })
-    if (profileError) throw profileError
-
     successMsg.value = 'Please check your email to confirm your account.'
     setTimeout(() => {
       router.push('/login')
