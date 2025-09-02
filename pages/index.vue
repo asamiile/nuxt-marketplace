@@ -1,29 +1,48 @@
 <template>
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold">サイトへようこそ</h1>
-    <div v-if="user">
-      <p class="mt-4">{{ user.email }} でログイン中です</p>
-      <button @click="signOut" class="mt-4 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
-        ログアウト
-      </button>
+    <h1 class="text-3xl font-bold mb-8">商品一覧</h1>
+
+    <div v-if="pending">
+      <p>読み込み中...</p>
+    </div>
+    <div v-else-if="error">
+      <p>エラーが発生しました: {{ error.message }}</p>
+    </div>
+    <div v-else-if="products && products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <ProductCard v-for="product in products" :key="product.id" :product="product" />
     </div>
     <div v-else>
-      <p class="mt-4">ログインしていません。</p>
+      <p>商品はまだありません。</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const user = useCurrentUser()
-const supabase = useSupabaseClient()
-const router = useRouter()
+import type { Product } from '~/types/product'
 
-async function signOut() {
-  const { error } = await supabase.auth.signOut()
+const supabase = useSupabaseClient()
+
+const { data: products, pending, error } = await useAsyncData<Product[]>('products', async () => {
+  const { data, error } = await supabase
+    .from('products')
+    .select(`
+      id,
+      name,
+      price,
+      image_url,
+      profiles (
+        username
+      )
+    `)
+    .order('created_at', { ascending: false })
+
   if (error) {
-    console.error(error)
-  } else {
-    router.push('/login')
+    console.error('Error fetching products:', error)
+    throw error
   }
-}
+
+  // The data from Supabase needs to be cast to the Product type.
+  // The select query is structured to match the Product type.
+  return data as Product[]
+})
 </script>
