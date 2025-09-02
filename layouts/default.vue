@@ -13,11 +13,16 @@
               <NuxtLink to="/sell" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 hover:bg-gray-50">
                 出品する
               </NuxtLink>
-              <div>
-                <!-- Profile menu placeholder -->
-                <button class="flex items-center p-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <div class="relative">
+                <button @click="isMenuOpen = !isMenuOpen" class="flex items-center p-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   <span class="inline-block w-8 h-8 bg-gray-400 rounded-full"></span>
                 </button>
+                <div v-if="isMenuOpen" @click.away="isMenuOpen = false" class="absolute right-0 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-10">
+                  <NuxtLink to="/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ダッシュボード</NuxtLink>
+                  <button @click="signOut" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    ログアウト
+                  </button>
+                </div>
               </div>
             </template>
             <template v-else>
@@ -50,4 +55,17 @@
 
 <script setup lang="ts">
 const user = useCurrentUser()
+const supabase = useSupabaseClient()
+const router = useRouter()
+const isMenuOpen = ref(false)
+
+async function signOut() {
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error(error)
+  } else {
+    isMenuOpen.value = false
+    router.push('/login')
+  }
+}
 </script>
