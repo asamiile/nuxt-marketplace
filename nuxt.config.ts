@@ -14,7 +14,11 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      exclude: ['/signup'], // Pages that don't require authentication
+      exclude: [
+        '/', // Allow access to the homepage
+        '/login',
+        '/signup',
+      ], // Pages that don't require authentication
     }
   },
 
