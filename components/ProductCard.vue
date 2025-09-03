@@ -1,14 +1,14 @@
 <template>
-  <div class="border-border border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
+  <UiCard class="overflow-hidden hover:shadow-xl transition-shadow duration-300">
     <NuxtLink :to="`/product/${product.id}`">
       <img :src="product.image_url" alt="Product image" class="w-full h-48 object-cover">
-      <div class="p-4">
-        <h3 class="font-bold text-lg truncate text-card-foreground">{{ product.name }}</h3>
-        <p class="text-card-foreground/80 text-sm">{{ product.profiles?.username || 'Unknown Creator' }}</p>
-        <p class="font-semibold mt-2 text-card-foreground">{{ formatPrice(product.price) }}</p>
-      </div>
+      <UiCardContent class="p-4">
+        <UiCardTitle class="text-lg truncate">{{ product.name }}</UiCardTitle>
+        <p class="text-sm text-muted-foreground">{{ product.profiles?.username || 'Unknown Creator' }}</p>
+        <p class="font-semibold mt-2">{{ formatPrice(product.price) }}</p>
+      </UiCardContent>
     </NuxtLink>
-  </div>
+  </UiCard>
 </template>
 
 <script setup lang="ts">
@@ -20,7 +20,8 @@ interface ProductCardProps {
 
 defineProps<ProductCardProps>()
 
-const formatPrice = (price: number) => {
+const formatPrice = (price: number | null) => {
+  if (price === null) return ''
   return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
 }
 </script>
