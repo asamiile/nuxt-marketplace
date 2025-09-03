@@ -8,19 +8,14 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n'
   ],
   i18n: {
+    strategy: 'prefix_except_default',
     locales: [
-      {
-        code: 'ja',
-        file: 'ja.json'
-      },
-      {
-        code: 'en',
-        file: 'en.json'
-      }
+      { code: 'ja', iso: 'ja-JP', name: '日本語' },
+      { code: 'en', iso: 'en-US', name: 'English' },      
     ],
     lazy: true,
-    langDir: 'locales',
-    defaultLocale: 'ja'
+    defaultLocale: 'ja',
+    vueI18n: './i18n.config.ts',
   },
   supabase: {
     url: process.env.SUPABASE_URL,
