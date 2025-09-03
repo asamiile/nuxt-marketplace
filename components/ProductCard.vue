@@ -4,7 +4,10 @@
       <img :src="product.image_url" alt="Product image" class="w-full h-48 object-cover">
       <UiCardContent class="p-4">
         <UiCardTitle class="text-lg truncate">{{ product.name }}</UiCardTitle>
-        <p class="text-sm text-muted-foreground">{{ product.profiles?.username || 'Unknown Creator' }}</p>
+        <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" @click.stop class="text-sm text-muted-foreground hover:text-primary transition-colors">
+          {{ product.profiles.username }}
+        </NuxtLink>
+        <p v-else class="text-sm text-muted-foreground">Unknown Creator</p>
         <p class="font-semibold mt-2">{{ formatPrice(product.price) }}</p>
       </UiCardContent>
     </NuxtLink>

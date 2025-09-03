@@ -17,7 +17,11 @@
       <div>
         <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-foreground">{{ product.name }}</h1>
         <p class="text-lg text-foreground mb-4">
-          作成者: <span class="font-semibold">{{ product.profiles?.username || 'N/A' }}</span>
+          作成者:
+          <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" class="font-semibold hover:text-primary transition-colors">
+            {{ product.profiles.username }}
+          </NuxtLink>
+          <span v-else class="font-semibold">N/A</span>
         </p>
         <p class="text-3xl font-bold text-foreground mb-6">{{ formatPrice(product.price) }}</p>
         <p class="text-foreground mb-8 whitespace-pre-wrap">{{ product.description }}</p>

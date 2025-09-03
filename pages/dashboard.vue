@@ -7,6 +7,47 @@
       </NuxtLink>
     </div>
 
+    <!-- Profile Settings Form -->
+    <div class="mb-12">
+      <h2 class="text-xl font-semibold mb-4 text-foreground">プロフィール設定</h2>
+      <div v-if="profileLoading" class="text-center py-12 bg-secondary rounded-lg">
+        <p>プロフィールを読み込み中...</p>
+      </div>
+      <form v-else @submit.prevent="updateProfile" class="space-y-6 bg-secondary p-6 rounded-lg">
+        <div>
+          <Label for="username">ユーザー名</Label>
+          <Input id="username" v-model="profile.username" type="text" class="mt-1" />
+        </div>
+        <div>
+          <Label for="avatar_url">アバターURL</Label>
+          <Input id="avatar_url" v-model="profile.avatar_url" type="text" class="mt-1" placeholder="https://..."/>
+          <p class="text-sm text-muted-foreground mt-1">画像URLを入力してください。</p>
+        </div>
+        <div>
+          <Label for="bio">自己紹介</Label>
+          <Textarea id="bio" v-model="profile.bio" class="mt-1" placeholder="こんにちは！..." />
+        </div>
+        <div>
+          <Label for="website_url">ウェブサイトURL</Label>
+          <Input id="website_url" v-model="profile.website_url" type="url" class="mt-1" placeholder="https://..."/>
+        </div>
+        <div>
+          <Label for="x_url">X (Twitter) URL</Label>
+          <Input id="x_url" v-model="profile.x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
+        </div>
+        <div>
+          <Label for="youtube_url">YouTube URL</Label>
+          <Input id="youtube_url" v-model="profile.youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
+        </div>
+        <div>
+          <Button type="submit" :disabled="saving">
+            {{ saving ? '保存中...' : 'プロフィールを更新' }}
+          </Button>
+        </div>
+      </form>
+    </div>
+
+
     <div v-if="pending">
       <p>読み込み中...</p>
     </div>
@@ -32,6 +73,11 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
 import { buttonVariants } from '~/components/ui/buttonVariants'
+import { Input } from '~/components/ui/Input'
+import { Label } from '~/components/ui/Label'
+import { Textarea } from '~/components/ui/Textarea'
+import { Button } from '~/components/ui/Button'
+
 
 definePageMeta({
   middleware: 'auth'
@@ -40,6 +86,79 @@ definePageMeta({
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 
+// --- Profile State & Logic ---
+const profile = ref({
+  username: '',
+  avatar_url: '',
+  bio: '',
+  website_url: '',
+  x_url: '',
+  youtube_url: ''
+})
+const profileLoading = ref(true)
+const saving = ref(false)
+
+// Fetch profile data
+useAsyncData('profile-data', async () => {
+  if (!user.value) return
+
+  profileLoading.value = true
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('username, avatar_url, bio, website_url, x_url, youtube_url')
+      .eq('id', user.value.id)
+      .single()
+
+    if (error) throw error
+    if (data) {
+      profile.value = {
+        username: data.username || '',
+        avatar_url: data.avatar_url || '',
+        bio: data.bio || '',
+        website_url: data.website_url || '',
+        x_url: data.x_url || '',
+        youtube_url: data.youtube_url || ''
+      }
+    }
+  } catch (e: any) {
+    console.error('Error fetching profile data:', e.message)
+  } finally {
+    profileLoading.value = false
+  }
+}, {
+  watch: [user]
+})
+
+// Update profile function
+async function updateProfile() {
+  if (!user.value) return
+
+  saving.value = true
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        username: profile.value.username,
+        avatar_url: profile.value.avatar_url,
+        bio: profile.value.bio,
+        website_url: profile.value.website_url,
+        x_url: profile.value.x_url,
+        youtube_url: profile.value.youtube_url,
+      })
+      .eq('id', user.value.id)
+
+    if (error) throw error
+    alert('プロフィールを更新しました！')
+  } catch (error: any) {
+    alert('エラー: ' + error.message)
+  } finally {
+    saving.value = false
+  }
+}
+
+
+// --- Products Fetching Logic (existing) ---
 const { data: products, pending, error } = await useAsyncData<Product[]>(
   `user-products-${user.value?.id}`,
   async () => {
@@ -67,7 +186,7 @@ const { data: products, pending, error } = await useAsyncData<Product[]>(
     return data as Product[]
   },
   {
-    watch: [user] // Re-fetch if the user changes
+    watch: [user]
   }
 )
 </script>
