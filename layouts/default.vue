@@ -18,7 +18,7 @@
                   <span class="inline-block w-8 h-8 bg-gray-400 dark:bg-gray-600 rounded-full"></span>
                 </button>
                 <div v-if="isMenuOpen" class="absolute right-0 w-48 mt-2 origin-top-right bg-card rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-10">
-                  <NuxtLink to="/dashboard" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">ダッシュボード</NuxtLink>
+                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">ダッシュボード</NuxtLink>
                   <button @click="signOut" class="w-full text-left block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
                     ログアウト
                   </button>
