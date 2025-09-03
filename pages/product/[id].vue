@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="container">
     <div v-if="pending">
       <p>商品を読み込んでいます...</p>
     </div>
     <div v-else-if="error || !product" class="text-center">
       <h1 class="text-2xl font-bold">商品が見つかりません</h1>
       <p class="mt-4">お探しの商品は存在しないか、移動された可能性があります。</p>
-      <NuxtLink to="/" class="mt-6 inline-block px-6 py-3 text-white rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600">
+      <NuxtLink to="/" :class="buttonVariants({ class: 'mt-6' })">
         ホームに戻る
       </NuxtLink>
     </div>
@@ -22,9 +22,9 @@
         <p class="text-3xl font-bold text-foreground mb-6">{{ formatPrice(product.price) }}</p>
         <p class="text-foreground mb-8 whitespace-pre-wrap">{{ product.description }}</p>
         <div class="flex items-center gap-4">
-          <button class="flex-grow px-8 py-4 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+          <UiButton class="flex-grow" size="lg">
             購入する
-          </button>
+          </UiButton>
           <button
             @click="toggleFavorite"
             class="p-4 rounded-md bg-card border border-border hover:bg-muted"
@@ -42,6 +42,7 @@
 import { ref, onMounted } from 'vue'
 import type { Product } from '~/types/product'
 import { useFavorites } from '~/composables/useFavorites'
+import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const route = useRoute()
 const supabase = useSupabaseClient()
@@ -64,8 +65,6 @@ const { data: product, pending, error } = await useAsyncData<Product | null>(`pr
     .single()
 
   if (error) {
-    // This will not throw an error if the item is not found, Supabase returns null.
-    // It will only throw for actual database errors.
     console.error(`Error fetching product ${id}:`, error)
     throw error
   }
@@ -73,7 +72,6 @@ const { data: product, pending, error } = await useAsyncData<Product | null>(`pr
   return data
 })
 
-// If the product is not found after fetching, show a 404 error page.
 if (!pending.value && !product.value) {
   throw createError({ statusCode: 404, statusMessage: 'Product Not Found', fatal: true })
 }
@@ -83,7 +81,6 @@ const formatPrice = (price: number | null) => {
   return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
 }
 
-// Set page metadata
 useHead({
   title: product.value?.name || '商品詳細',
   meta: [
