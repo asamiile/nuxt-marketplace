@@ -1,36 +1,39 @@
 <template>
-  <div>
-    <h1 class="text-3xl font-bold mb-8 text-foreground">商品を出品する</h1>
-    <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-md">
-      <div class="space-y-6">
-        <div>
-          <label for="name" class="block text-sm font-medium text-foreground">商品名</label>
-          <input v-model="name" type="text" id="name" required class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground">
-        </div>
-        <div>
-          <label for="description" class="block text-sm font-medium text-foreground">説明</label>
-          <textarea v-model="description" id="description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground"></textarea>
-        </div>
-        <div>
-          <label for="price" class="block text-sm font-medium text-foreground">価格 (円)</label>
-          <input v-model.number="price" type="number" id="price" required min="0" class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground">
-        </div>
-        <div>
-          <label for="image" class="block text-sm font-medium text-foreground">サムネイル画像</label>
-          <input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-950 file:text-pink-600 dark:file:text-pink-300 hover:file:bg-pink-100 dark:hover:file:bg-pink-900">
-        </div>
-        <div>
-          <label for="file" class="block text-sm font-medium text-foreground">デジタルアセット (zip, etc.)</label>
-          <input @change="handleFileUpload" type="file" id="file" required class="mt-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-950 file:text-pink-600 dark:file:text-pink-300 hover:file:bg-pink-100 dark:hover:file:bg-pink-900">
-        </div>
-      </div>
-      <div class="mt-8">
-        <button type="submit" class="w-full px-6 py-3 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50" :disabled="isSubmitting">
-          {{ isSubmitting ? 'アップロード中...' : '出品する' }}
-        </button>
-      </div>
-      <p v-if="errorMessage" class="mt-4 text-sm text-red-600">{{ errorMessage }}</p>
-    </form>
+  <div class="container mx-auto max-w-3xl py-12">
+    <UiCard>
+      <UiCardHeader>
+        <UiCardTitle>商品を販売</UiCardTitle>
+        <UiCardDescription>以下のフォームに必要事項を入力して、新しい商品を販売してください。</UiCardDescription>
+      </UiCardHeader>
+      <UiCardContent>
+        <form @submit.prevent="handleSubmit" class="space-y-6">
+          <div class="grid gap-2">
+            <UiLabel for="name">商品名</UiLabel>
+            <UiInput v-model="name" id="name" required placeholder="例: すごいデジタルアセット" />
+          </div>
+          <div class="grid gap-2">
+            <UiLabel for="description">説明</UiLabel>
+            <UiTextarea v-model="description" id="description" required placeholder="商品の特徴を詳しく説明してください。" />
+          </div>
+          <div class="grid gap-2">
+            <UiLabel for="price">価格（円）</UiLabel>
+            <UiInput v-model.number="price" type="number" id="price" required min="0" placeholder="例: 1000" />
+          </div>
+          <div class="grid gap-2">
+            <UiLabel for="image">サムネイル画像</UiLabel>
+            <UiInput @change="handleImageUpload" type="file" id="image" required accept="image/*" />
+          </div>
+          <div class="grid gap-2">
+            <UiLabel for="file">デジタルアセット</UiLabel>
+            <UiInput @change="handleFileUpload" type="file" id="file" required />
+          </div>
+          <UiButton type="submit" class="w-full" :disabled="isSubmitting">
+            {{ isSubmitting ? 'アップロード中...' : '出品する' }}
+          </UiButton>
+          <p v-if="errorMessage" class="text-sm font-medium text-destructive">{{ errorMessage }}</p>
+        </form>
+      </UiCardContent>
+    </UiCard>
   </div>
 </template>
 

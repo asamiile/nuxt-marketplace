@@ -22,7 +22,6 @@
         <p class="text-foreground">お気に入りに登録した商品はまだありません。</p>
       </div>
     </div>
-
     <div class="border-t border-border pt-8">
       <h2 class="text-2xl font-semibold mb-4 text-foreground">あなたの出品商品</h2>
       <div v-if="pending">
