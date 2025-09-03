@@ -1,31 +1,31 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8">商品を出品する</h1>
-    <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+  <div>
+    <h1 class="text-3xl font-bold mb-8 text-foreground">商品を出品する</h1>
+    <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-md">
       <div class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">商品名</label>
-          <input v-model="name" type="text" id="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+          <label for="name" class="block text-sm font-medium text-foreground">商品名</label>
+          <input v-model="name" type="text" id="name" required class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground">
         </div>
         <div>
-          <label for="description" class="block text-sm font-medium text-gray-700">説明</label>
-          <textarea v-model="description" id="description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+          <label for="description" class="block text-sm font-medium text-foreground">説明</label>
+          <textarea v-model="description" id="description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground"></textarea>
         </div>
         <div>
-          <label for="price" class="block text-sm font-medium text-gray-700">価格 (円)</label>
-          <input v-model.number="price" type="number" id="price" required min="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+          <label for="price" class="block text-sm font-medium text-foreground">価格 (円)</label>
+          <input v-model.number="price" type="number" id="price" required min="0" class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground">
         </div>
         <div>
-          <label for="image" class="block text-sm font-medium text-gray-700">サムネイル画像</label>
-          <input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+          <label for="image" class="block text-sm font-medium text-foreground">サムネイル画像</label>
+          <input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-950 file:text-pink-600 dark:file:text-pink-300 hover:file:bg-pink-100 dark:hover:file:bg-pink-900">
         </div>
         <div>
-          <label for="file" class="block text-sm font-medium text-gray-700">デジタルアセット (zip, etc.)</label>
-          <input @change="handleFileUpload" type="file" id="file" required class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+          <label for="file" class="block text-sm font-medium text-foreground">デジタルアセット (zip, etc.)</label>
+          <input @change="handleFileUpload" type="file" id="file" required class="mt-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-950 file:text-pink-600 dark:file:text-pink-300 hover:file:bg-pink-100 dark:hover:file:bg-pink-900">
         </div>
       </div>
       <div class="mt-8">
-        <button type="submit" class="w-full px-6 py-3 text-lg font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" :disabled="isSubmitting">
+        <button type="submit" class="w-full px-6 py-3 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50" :disabled="isSubmitting">
           {{ isSubmitting ? 'アップロード中...' : '出品する' }}
         </button>
       </div>
