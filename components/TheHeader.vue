@@ -15,11 +15,9 @@
         </div>
         <nav class="flex items-center">
           <template v-if="user">
-            <Button as-child variant="ghost" class="mr-2">
-              <NuxtLink to="/sell">
-                出品する
-              </NuxtLink>
-            </Button>
+            <NuxtLink to="/sell" :class="buttonVariants({ variant: 'ghost', class: 'mr-2' })">
+              出品する
+            </NuxtLink>
             <div ref="dropdownRef" class="relative">
               <Button @click="isMenuOpen = !isMenuOpen" variant="ghost" class="relative h-8 w-8 rounded-full">
                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
@@ -44,16 +42,12 @@
             </div>
           </template>
           <template v-else>
-            <Button as-child variant="ghost" class="mr-2">
-              <NuxtLink to="/login">
-                ログイン
-              </NuxtLink>
-            </Button>
-            <Button as-child>
-              <NuxtLink to="/signup">
-                新規登録
-              </NuxtLink>
-            </Button>
+            <NuxtLink to="/login" :class="buttonVariants({ variant: 'ghost', class: 'mr-2' })">
+              ログイン
+            </NuxtLink>
+            <NuxtLink to="/signup" :class="buttonVariants({ variant: 'default' })">
+              新規登録
+            </NuxtLink>
           </template>
         </nav>
       </div>
@@ -63,6 +57,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const user = useCurrentUser()
 const supabase = useSupabaseClient()
