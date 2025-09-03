@@ -21,20 +21,35 @@
         </p>
         <p class="text-3xl font-bold text-foreground mb-6">{{ formatPrice(product.price) }}</p>
         <p class="text-foreground mb-8 whitespace-pre-wrap">{{ product.description }}</p>
-        <button class="w-full px-8 py-4 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-          購入する
-        </button>
+        <div class="flex items-center gap-4">
+          <button class="flex-grow px-8 py-4 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+            購入する
+          </button>
+          <button
+            @click="toggleFavorite"
+            class="p-4 rounded-md bg-card border border-border hover:bg-muted"
+            aria-label="Toggle Favorite"
+          >
+            <span :class="{'text-red-500': isFavoritedState, 'text-gray-400': !isFavoritedState}" class="text-2xl">❤️</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import type { Product } from '~/types/product'
+import { useFavorites } from '~/composables/useFavorites'
 
 const route = useRoute()
 const supabase = useSupabaseClient()
+const user = useCurrentUser()
 const id = route.params.id
+
+const { isFavorited, addFavorite, removeFavorite } = useFavorites()
+const isFavoritedState = ref(false)
 
 const { data: product, pending, error } = await useAsyncData<Product | null>(`product-${id}`, async () => {
   const { data, error } = await supabase
@@ -75,4 +90,25 @@ useHead({
     { name: 'description', content: product.value?.description || '商品の詳細ページです。' }
   ]
 })
+
+onMounted(async () => {
+  if (user.value && product.value) {
+    isFavoritedState.value = await isFavorited(product.value.id)
+  }
+})
+
+const toggleFavorite = async () => {
+  if (!user.value) {
+    alert('Please log in to favorite items.')
+    return
+  }
+  if (!product.value) return
+
+  isFavoritedState.value = !isFavoritedState.value
+  if (isFavoritedState.value) {
+    await addFavorite(product.value.id)
+  } else {
+    await removeFavorite(product.value.id)
+  }
+}
 </script>
