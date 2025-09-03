@@ -20,6 +20,14 @@
             <UiInput v-model.number="price" type="number" id="price" required min="0" placeholder="例: 1000" />
           </div>
           <div class="grid gap-2">
+            <UiLabel for="license_type">ライセンスの種類</UiLabel>
+            <UiInput v-model="license_type" id="license_type" placeholder="例: Standard License" />
+          </div>
+          <div class="grid gap-2">
+            <UiLabel for="terms_of_use">利用規約</UiLabel>
+            <UiTextarea v-model="terms_of_use" id="terms_of_use" placeholder="商品の利用に関する規約や制限事項を記入してください。" />
+          </div>
+          <div class="grid gap-2">
             <UiLabel for="image">サムネイル画像</UiLabel>
             <UiInput @change="handleImageUpload" type="file" id="image" required accept="image/*" />
           </div>
@@ -45,6 +53,8 @@ definePageMeta({
 const name = ref('')
 const description = ref('')
 const price = ref<number | null>(null)
+const license_type = ref('')
+const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
@@ -104,7 +114,9 @@ const handleSubmit = async () => {
       price: price.value,
       image_url: imageUrlData.publicUrl,
       file_url: assetUrlData.publicUrl,
-      creator_id: user.value.id
+      creator_id: user.value.id,
+      license_type: license_type.value,
+      terms_of_use: terms_of_use.value
     })
 
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
