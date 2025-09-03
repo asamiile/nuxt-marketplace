@@ -1,18 +1,18 @@
 <template>
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8">商品一覧</h1>
+    <h1 class="text-3xl font-bold mb-8">{{ $t('indexPage.title') }}</h1>
 
     <div v-if="pending">
-      <p>読み込み中...</p>
+      <p>{{ $t('indexPage.loading') }}</p>
     </div>
     <div v-else-if="error">
-      <p>エラーが発生しました: {{ error.message }}</p>
+      <p>{{ $t('indexPage.error') }} {{ error.message }}</p>
     </div>
     <div v-else-if="products && products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <ProductCard v-for="product in products" :key="product.id" :product="product" />
     </div>
     <div v-else>
-      <p>商品はまだありません。</p>
+      <p>{{ $t('indexPage.noProducts') }}</p>
     </div>
   </div>
 </template>
