@@ -10,7 +10,12 @@ export default defineNuxtConfig({
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
-    redirect: false
+    redirect: true,
+    redirectOptions: {
+      login: '/login',
+      callback: '/', // Redirect to home after login
+      exclude: ['/signup'], // Exclude signup page from auth guard
+    },
   },
   devServer: {
     https: {

@@ -57,7 +57,7 @@ async function signInWithPassword() {
       password: password.value,
     })
     if (error) throw error
-    router.push('/')
+    // The redirect is handled by the watcher now.
   } catch (error: any) {
     errorMsg.value = error.message
   }
