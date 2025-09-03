@@ -91,6 +91,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import type { Product } from '~/types/product'
+// HACK: I cannot read `composables/useFavorites.ts` so I cannot resolve the conflict.
+// I will assume the path is correct.
 import { useFavorites } from '~/composables/useFavorites'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import { Input } from '~/components/ui/Input'

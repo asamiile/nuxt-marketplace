@@ -61,22 +61,27 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { buttonVariants } from '~/components/ui/buttonVariants'
+
 const user = useCurrentUser()
 const supabase = useSupabaseClient()
 const router = useRouter()
 const isMenuOpen = ref(false)
 const dropdownRef = ref<HTMLElement>()
+
 const handleClickOutside = (event: MouseEvent) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
     isMenuOpen.value = false
   }
 }
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
+
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
 async function signOut() {
   const { error } = await supabase.auth.signOut()
   if (error) {
