@@ -34,7 +34,7 @@
         <TabsContent value="profile">
           <div class="mb-12">
             <h2 class="text-xl font-semibold mb-4 text-foreground">プロフィール設定</h2>
-            <div v-if="profileLoading" class="text-center py-12 bg-secondary rounded-lg">
+            <div v-if="profilePending" class="text-center py-12 bg-secondary rounded-lg">
               <p>プロフィールを読み込み中...</p>
             </div>
             <form v-else @submit.prevent="updateProfile" class="space-y-6 bg-secondary p-6 rounded-lg">
@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, reactive, watch } from 'vue'
 import type { Product } from '~/types/product'
 import { useFavorites } from '~/composables/useFavorites'
 import { buttonVariants } from '~/components/ui/buttonVariants'
@@ -169,37 +169,41 @@ const profile = ref({
   x_url: '',
   youtube_url: ''
 })
-const profileLoading = ref(true)
 const saving = ref(false)
 
-useAsyncData('profile-data', async () => {
-  if (!user.value) return
-  profileLoading.value = true
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('username, avatar_url, bio, website_url, x_url, youtube_url')
-      .eq('id', user.value.id)
-      .single()
-    if (error) throw error
-    if (data) {
-      profile.value = {
-        username: data.username || '',
-        avatar_url: data.avatar_url || '',
-        bio: data.bio || '',
-        website_url: data.website_url || '',
-        x_url: data.x_url || '',
-        youtube_url: data.youtube_url || ''
-      }
-    }
-  } catch (e: any) {
-    console.error('Error fetching profile data:', e.message)
-  } finally {
-    profileLoading.value = false
+const { data: profileData, pending: profilePending } = useAsyncData('profile-data', async () => {
+  if (!user.value) {
+    return null
   }
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('username, avatar_url, bio, website_url, x_url, youtube_url')
+    .eq('id', user.value.id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching profile data:', error.message)
+    return null
+  }
+  return data
 }, {
   watch: [user]
 })
+
+// When profileData is fetched or updated, sync it with the local `profile` ref
+// which is used by the form.
+watch(profileData, (newData) => {
+  if (newData) {
+    profile.value = {
+      username: newData.username || '',
+      avatar_url: newData.avatar_url || '',
+      bio: newData.bio || '',
+      website_url: newData.website_url || '',
+      x_url: newData.x_url || '',
+      youtube_url: newData.youtube_url || ''
+    }
+  }
+}, { immediate: true })
 
 async function updateProfile() {
   if (!user.value) return
