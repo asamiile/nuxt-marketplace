@@ -47,6 +47,7 @@
         <div class="flex justify-center space-x-6">
           <NuxtLink to="/terms" class="text-sm text-gray-500 hover:text-gray-900">利用規約</NuxtLink>
           <NuxtLink to="/privacy" class="text-sm text-gray-500 hover:text-gray-900">プライバシーポリシー</NuxtLink>
+          <NuxtLink to="/contact" class="text-sm text-gray-500 hover:text-gray-900">お問い合わせ</NuxtLink>
         </div>
       </div>
     </footer>

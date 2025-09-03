@@ -25,7 +25,3 @@ logs
 
 # Supabase
 supabase/.temp/
-
-# Local SSL
-server.key
-server.crt
