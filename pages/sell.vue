@@ -1,39 +1,39 @@
 <template>
   <div class="container mx-auto max-w-3xl py-12">
-    <Card>
-      <CardHeader>
-        <CardTitle>商品を販売</CardTitle>
-        <CardDescription>以下のフォームに必要事項を入力して、新しい商品を販売してください。</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <UiCard>
+      <UiCardHeader>
+        <UiCardTitle>商品を販売</UiCardTitle>
+        <UiCardDescription>以下のフォームに必要事項を入力して、新しい商品を販売してください。</UiCardDescription>
+      </UiCardHeader>
+      <UiCardContent>
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <div class="grid gap-2">
-            <Label for="name">商品名</Label>
-            <Input v-model="name" id="name" required placeholder="例: すごいデジタルアセット" />
+            <UiLabel for="name">商品名</UiLabel>
+            <UiInput v-model="name" id="name" required placeholder="例: すごいデジタルアセット" />
           </div>
           <div class="grid gap-2">
-            <Label for="description">説明</Label>
-            <Textarea v-model="description" id="description" required placeholder="商品の特徴を詳しく説明してください。" />
+            <UiLabel for="description">説明</UiLabel>
+            <UiTextarea v-model="description" id="description" required placeholder="商品の特徴を詳しく説明してください。" />
           </div>
           <div class="grid gap-2">
-            <Label for="price">価格（円）</Label>
-            <Input v-model.number="price" type="number" id="price" required min="0" placeholder="例: 1000" />
+            <UiLabel for="price">価格（円）</UiLabel>
+            <UiInput v-model.number="price" type="number" id="price" required min="0" placeholder="例: 1000" />
           </div>
           <div class="grid gap-2">
-            <Label for="image">サムネイル画像</Label>
-            <Input @change="handleImageUpload" type="file" id="image" required accept="image/*" />
+            <UiLabel for="image">サムネイル画像</UiLabel>
+            <UiInput @change="handleImageUpload" type="file" id="image" required accept="image/*" />
           </div>
           <div class="grid gap-2">
-            <Label for="file">デジタルアセット</Label>
-            <Input @change="handleFileUpload" type="file" id="file" required />
+            <UiLabel for="file">デジタルアセット</UiLabel>
+            <UiInput @change="handleFileUpload" type="file" id="file" required />
           </div>
-          <Button type="submit" class="w-full" :disabled="isSubmitting">
+          <UiButton type="submit" class="w-full" :disabled="isSubmitting">
             {{ isSubmitting ? 'アップロード中...' : '出品する' }}
-          </Button>
+          </UiButton>
           <p v-if="errorMessage" class="text-sm font-medium text-destructive">{{ errorMessage }}</p>
         </form>
-      </CardContent>
-    </Card>
+      </UiCardContent>
+    </UiCard>
   </div>
 </template>
 

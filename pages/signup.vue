@@ -1,40 +1,40 @@
 <template>
   <div class="flex items-center justify-center min-h-full py-12">
-    <Card class="w-full max-w-md">
-      <CardHeader>
-        <CardTitle class="text-2xl font-bold text-center">
+    <UiCard class="w-full max-w-md">
+      <UiCardHeader>
+        <UiCardTitle class="text-2xl font-bold text-center">
           アカウントを作成
-        </CardTitle>
-        <CardDescription class="text-center">
+        </UiCardTitle>
+        <UiCardDescription class="text-center">
           新しいアカウントを作成します
-        </CardDescription>
-      </CardHeader>
-      <CardContent class="space-y-4">
+        </UiCardDescription>
+      </UiCardHeader>
+      <UiCardContent class="space-y-4">
         <form class="space-y-4" @submit.prevent="signUp">
           <div class="space-y-2">
             <label for="email-address">メールアドレス</label>
-            <Input id="email-address" v-model="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" />
+            <UiInput id="email-address" v-model="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" />
           </div>
           <div class="space-y-2">
             <label for="password">パスワード</label>
-            <Input id="password" v-model="password" name="password" type="password" autocomplete="new-password" required placeholder="••••••••" />
+            <UiInput id="password" v-model="password" name="password" type="password" autocomplete="new-password" required placeholder="••••••••" />
           </div>
-          <Button type="submit" class="w-full">
+          <UiButton type="submit" class="w-full">
             アカウントを作成
-          </Button>
+          </UiButton>
         </form>
         <div v-if="errorMsg" class="text-sm font-medium text-destructive">{{ errorMsg }}</div>
         <div v-if="successMsg" class="text-sm font-medium text-green-600">{{ successMsg }}</div>
-      </CardContent>
-      <CardFooter class="flex justify-center">
+      </UiCardContent>
+      <UiCardFooter class="flex justify-center">
         <p class="text-sm text-muted-foreground">
           すでにアカウントをお持ちですか？
           <NuxtLink to="/login" class="font-semibold text-primary hover:underline">
             ログイン
           </NuxtLink>
         </p>
-      </CardFooter>
-    </Card>
+      </UiCardFooter>
+    </UiCard>
   </div>
 </template>
 
