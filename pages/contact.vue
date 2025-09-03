@@ -10,7 +10,7 @@
         <div v-if="successMsg" class="p-4 text-green-700 bg-green-100 border-l-4 border-green-500">
           <p>{{ successMsg }}</p>
         </div>
-         <div v-if="errorMsg" class="p-4 text-red-700 bg-red-100 border-l-4 border-red-500">
+        <div v-if="errorMsg" class="p-4 text-red-700 bg-red-100 border-l-4 border-red-500">
           <p>{{ errorMsg }}</p>
         </div>
 
@@ -65,8 +65,9 @@ async function handleSubmit() {
   successMsg.value = null
 
   try {
+    // supabase.functions.invokeの第二引数の 'body' は、オブジェクトを直接渡すのが推奨されています。
     const { error } = await supabase.functions.invoke('contact', {
-      body: JSON.stringify(form.value),
+      body: form.value,
     })
 
     if (error) {
