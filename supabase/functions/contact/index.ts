@@ -1,27 +1,28 @@
+// supabase/functions/contact/index.ts
+
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { Resend } from 'https://esm.sh/resend@2.0.0'
 
-// CORSヘッダーを設定
+// 定数としてCORSヘッダーを定義（コードの重複を避けるため）
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 serve(async (req) => {
-  // CORS preflightリクエストへの対応
+  // ★★★ CORSプリフライトリクエストへの対応を追加 ★★★
+  // リクエストのメソッドがOPTIONSの場合は、CORSヘッダーを含んだ200 OKレスポンスをすぐに返す
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // ResendのAPIキーを環境変数から取得
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
     const { name, email: replyTo, subject, message } = await req.json()
 
-    // メールを送信
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev', // テスト用の送信元アドレス
-      to: 'あなたのメールアドレス@example.com', // ★★★ あなたがResendに登録したメールアドレスに書き換えてください ★★★
+      from: 'onboarding@resend.dev',
+      to: 'あなたがResendに登録したメールアドレス@example.com', // ★忘れずにご自身のメールアドレスに書き換えてください
       subject: `【お問い合わせ】${subject}`,
       html: `
         <p>お問い合わせがありました。</p>
@@ -40,12 +41,12 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, // 成功時もCORSヘッダーを含める
       status: 200,
     })
   } catch (err) {
     return new Response(String(err?.message ?? err), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, // エラー時もCORSヘッダーを含める
       status: 500,
     })
   }
