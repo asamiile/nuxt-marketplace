@@ -22,7 +22,7 @@ serve(async (req) => {
 
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'あなたがResendに登録したメールアドレス@example.com', // ★忘れずにご自身のメールアドレスに書き換えてください
+      to: Deno.env.get('CONTACT_FORM_EMAIL_TO'),
       subject: `【お問い合わせ】${subject}`,
       html: `
         <p>お問い合わせがありました。</p>
