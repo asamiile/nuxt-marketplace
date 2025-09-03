@@ -66,12 +66,12 @@ export const useFavorites = () => {
     try {
       const { data, error } = await supabase
         .from('favorites')
-        .select('product:products(*)') // Fetch related product data
+        .select('product:products(*, profiles(username))') // Fetch related product data and creator profile
         .eq('user_id', user.value.id)
 
       if (error) throw error
 
-      // The result is an array of objects like { product: Product }, so we map it
+      // The result is an array of objects like { product: ProductWithProfile }, so we map it
       favorites.value = data?.map(fav => fav.product).filter(p => p !== null) as Product[]
 
     } catch (error) {
