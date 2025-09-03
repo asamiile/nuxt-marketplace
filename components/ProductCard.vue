@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 import type { Product } from '~/types/product'
-import { useFavorites } from '~/composables/useFavorites'
 
 interface ProductCardProps {
   product: Product;
@@ -31,44 +30,7 @@ interface ProductCardProps {
 
 const props = defineProps<ProductCardProps>()
 
-const { isFavorited, addFavorite, removeFavorite } = useFavorites()
-const user = useCurrentUser()
-
-const { data: isFavoritedState } = await useAsyncData(
-  `product-favorite-${props.product.id}`,
-  () => {
-    if (!user.value) {
-      return false
-    }
-    return isFavorited(props.product.id)
-  },
-  {
-    watch: [user],
-    default: () => false,
-  }
-)
-
-const toggleFavorite = async () => {
-  if (!user.value) {
-    alert('Please log in to favorite items.')
-    return
-  }
-  if (isFavoritedState.value === null) return
-
-  const newState = !isFavoritedState.value
-  isFavoritedState.value = newState
-
-  try {
-    if (newState) {
-      await addFavorite(props.product.id)
-    } else {
-      await removeFavorite(props.product.id)
-    }
-  } catch (e) {
-    // revert on error
-    isFavoritedState.value = !newState
-  }
-}
+const { isFavoritedState, toggleFavorite } = useProductFavorite(props.product.id)
 
 const formatPrice = (price: number | null) => {
   if (price === null) return ''

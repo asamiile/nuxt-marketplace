@@ -44,15 +44,11 @@
 
 <script setup lang="ts">
 import type { Product } from '~/types/product'
-import { useFavorites } from '~/composables/useFavorites'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const route = useRoute()
 const supabase = useSupabaseClient()
-const user = useCurrentUser()
 const id = route.params.id
-
-const { isFavorited, addFavorite, removeFavorite } = useFavorites()
 
 const { data: product, pending, error } = await useAsyncData<Product | null>(`product-${id}`, async () => {
   const { data, error } = await supabase
@@ -74,24 +70,13 @@ const { data: product, pending, error } = await useAsyncData<Product | null>(`pr
   return data
 })
 
-// Fetch favorite status using useAsyncData
-const { data: isFavoritedState } = await useAsyncData(
-  `product-favorite-${id}`,
-  async () => {
-    if (!user.value || !product.value) {
-      return false
-    }
-    return await isFavorited(product.value.id)
-  },
-  {
-    watch: [user, product],
-    default: () => false,
-  }
-)
-
 if (!pending.value && !product.value) {
   throw createError({ statusCode: 404, statusMessage: 'Product Not Found', fatal: true })
 }
+
+// Use the new composable
+// We pass a getter function so the composable can react to changes in product.value
+const { isFavoritedState, toggleFavorite } = useProductFavorite(() => product.value?.id)
 
 const formatPrice = (price: number | null) => {
   if (price === null) return ''
@@ -104,26 +89,4 @@ useHead({
     { name: 'description', content: product.value?.description || '商品の詳細ページです。' }
   ]
 })
-
-const toggleFavorite = async () => {
-  if (!user.value) {
-    alert('Please log in to favorite items.')
-    return
-  }
-  if (!product.value || isFavoritedState.value === null) return
-
-  const newState = !isFavoritedState.value
-  isFavoritedState.value = newState
-
-  try {
-    if (newState) {
-      await addFavorite(product.value.id)
-    } else {
-      await removeFavorite(product.value.id)
-    }
-  } catch (e) {
-    // revert on error
-    isFavoritedState.value = !newState
-  }
-}
 </script>
