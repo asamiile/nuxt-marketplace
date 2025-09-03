@@ -1,8 +1,8 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div>
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold">マイダッシュボード</h1>
-      <NuxtLink to="/sell" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+      <h1 class="text-3xl font-bold text-foreground">マイダッシュボード</h1>
+      <NuxtLink to="/sell" class="px-4 py-2 text-sm font-medium text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500">
         新しい商品を出品する
       </NuxtLink>
     </div>
@@ -14,15 +14,15 @@
       <p>エラーが発生しました: {{ error.message }}</p>
     </div>
     <div v-else-if="products && products.length > 0">
-      <h2 class="text-xl font-semibold mb-4">あなたの出品商品</h2>
+      <h2 class="text-xl font-semibold mb-4 text-foreground">あなたの出品商品</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <ProductCard v-for="product in products" :key="product.id" :product="product" />
       </div>
     </div>
-    <div v-else class="text-center py-12 bg-gray-50 rounded-lg">
-      <h2 class="text-xl font-semibold">商品はまだありません。</h2>
-      <p class="mt-2 text-gray-600">最初の商品を出品して、販売を始めましょう！</p>
-      <NuxtLink to="/sell" class="mt-6 inline-block px-6 py-3 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+    <div v-else class="text-center py-12 bg-secondary rounded-lg">
+      <h2 class="text-xl font-semibold text-foreground">商品はまだありません。</h2>
+      <p class="mt-2 text-foreground">最初の商品を出品して、販売を始めましょう！</p>
+      <NuxtLink to="/sell" class="mt-6 inline-block px-6 py-3 text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500">
         出品ページへ
       </NuxtLink>
     </div>
