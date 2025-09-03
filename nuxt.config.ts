@@ -12,10 +12,4 @@ export default defineNuxtConfig({
     key: process.env.SUPABASE_KEY,
     redirect: false
   },
-  devServer: {
-    https: {
-      key: './server.key',
-      cert: './server.crt'
-    }
-  },  
 })
