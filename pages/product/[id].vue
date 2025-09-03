@@ -29,15 +29,13 @@
           <UiButton class="flex-grow" size="lg">
             購入する
           </UiButton>
-          <ClientOnly>
-            <button
-              @click="toggleFavorite"
-              class="p-4 rounded-md bg-card border border-border hover:bg-muted"
-              aria-label="Toggle Favorite"
-            >
-              <span :class="{'text-red-500': isFavoritedState, 'text-gray-400': !isFavoritedState}" class="text-2xl">❤️</span>
-            </button>
-          </ClientOnly>
+          <button
+            @click="toggleFavorite"
+            class="p-4 rounded-md bg-card border border-border hover:bg-muted"
+            aria-label="Toggle Favorite"
+          >
+            <span :class="{'text-red-500': isFavoritedState, 'text-gray-400': !isFavoritedState}" class="text-2xl">❤️</span>
+          </button>
         </div>
       </div>
     </div>
@@ -45,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import type { Product } from '~/types/product'
 import { useFavorites } from '~/composables/useFavorites'
 import { buttonVariants } from '~/components/ui/buttonVariants'
@@ -56,7 +53,6 @@ const user = useCurrentUser()
 const id = route.params.id
 
 const { isFavorited, addFavorite, removeFavorite } = useFavorites()
-const isFavoritedState = ref(false)
 
 const { data: product, pending, error } = await useAsyncData<Product | null>(`product-${id}`, async () => {
   const { data, error } = await supabase
@@ -78,6 +74,21 @@ const { data: product, pending, error } = await useAsyncData<Product | null>(`pr
   return data
 })
 
+// Fetch favorite status using useAsyncData
+const { data: isFavoritedState } = await useAsyncData(
+  `product-favorite-${id}`,
+  async () => {
+    if (!user.value || !product.value) {
+      return false
+    }
+    return await isFavorited(product.value.id)
+  },
+  {
+    watch: [user, product],
+    default: () => false,
+  }
+)
+
 if (!pending.value && !product.value) {
   throw createError({ statusCode: 404, statusMessage: 'Product Not Found', fatal: true })
 }
@@ -94,24 +105,25 @@ useHead({
   ]
 })
 
-onMounted(async () => {
-  if (user.value && product.value) {
-    isFavoritedState.value = await isFavorited(product.value.id)
-  }
-})
-
 const toggleFavorite = async () => {
   if (!user.value) {
     alert('Please log in to favorite items.')
     return
   }
-  if (!product.value) return
+  if (!product.value || isFavoritedState.value === null) return
 
-  isFavoritedState.value = !isFavoritedState.value
-  if (isFavoritedState.value) {
-    await addFavorite(product.value.id)
-  } else {
-    await removeFavorite(product.value.id)
+  const newState = !isFavoritedState.value
+  isFavoritedState.value = newState
+
+  try {
+    if (newState) {
+      await addFavorite(product.value.id)
+    } else {
+      await removeFavorite(product.value.id)
+    }
+  } catch (e) {
+    // revert on error
+    isFavoritedState.value = !newState
   }
 }
 </script>

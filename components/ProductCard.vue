@@ -11,20 +11,17 @@
         <p class="font-semibold mt-2">{{ formatPrice(product.price) }}</p>
       </UiCardContent>
     </NuxtLink>
-    <ClientOnly>
-      <button
-        @click.prevent="toggleFavorite"
-        class="absolute top-2 right-2 p-1 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition-colors z-10"
-        aria-label="Toggle Favorite"
-      >
-        <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>
-      </button>
-    </ClientOnly>
+    <button
+      @click.prevent="toggleFavorite"
+      class="absolute top-2 right-2 p-1 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition-colors z-10"
+      aria-label="Toggle Favorite"
+    >
+      <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>
+    </button>
   </UiCard>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import type { Product } from '~/types/product'
 import { useFavorites } from '~/composables/useFavorites'
 
@@ -35,27 +32,41 @@ interface ProductCardProps {
 const props = defineProps<ProductCardProps>()
 
 const { isFavorited, addFavorite, removeFavorite } = useFavorites()
-const isFavoritedState = ref(false)
-const user = useCurrentUser();
+const user = useCurrentUser()
 
-onMounted(async () => {
-  if (user.value) {
-    isFavoritedState.value = await isFavorited(props.product.id)
+const { data: isFavoritedState } = await useAsyncData(
+  `product-favorite-${props.product.id}`,
+  () => {
+    if (!user.value) {
+      return false
+    }
+    return isFavorited(props.product.id)
+  },
+  {
+    watch: [user],
+    default: () => false,
   }
-})
+)
 
 const toggleFavorite = async () => {
   if (!user.value) {
-    // Or redirect to login, show a message, etc.
     alert('Please log in to favorite items.')
     return
   }
+  if (isFavoritedState.value === null) return
 
-  isFavoritedState.value = !isFavoritedState.value
-  if (isFavoritedState.value) {
-    await addFavorite(props.product.id)
-  } else {
-    await removeFavorite(props.product.id)
+  const newState = !isFavoritedState.value
+  isFavoritedState.value = newState
+
+  try {
+    if (newState) {
+      await addFavorite(props.product.id)
+    } else {
+      await removeFavorite(props.product.id)
+    }
+  } catch (e) {
+    // revert on error
+    isFavoritedState.value = !newState
   }
 }
 
