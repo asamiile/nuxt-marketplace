@@ -39,10 +39,6 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '~/components/ui/Button'
-import { Input } from '~/components/ui/Input'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/Card'
-
 const supabase = useSupabaseClient()
 const router = useRouter()
 

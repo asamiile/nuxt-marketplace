@@ -38,12 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@/components/ui/Button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Input } from '@/components/ui/Input'
-import { Label } from '@/components/ui/Label'
-import { Textarea } from '@/components/ui/Textarea'
-
 definePageMeta({
   middleware: 'auth'
 })

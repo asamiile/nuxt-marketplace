@@ -63,7 +63,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Button } from '~/components/ui/Button'
 
 const user = useCurrentUser()
 const supabase = useSupabaseClient()
