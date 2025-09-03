@@ -33,12 +33,6 @@
                 {{ $t('header.signup') }}
               </NuxtLink>
             </template>
-            <div class="ml-4">
-              <select v-model="locale" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 focus:outline-none">
-                <option value="ja">日本語</option>
-                <option value="en">English</option>
-              </select>
-            </div>
           </div>
         </div>
       </nav>
@@ -60,15 +54,10 @@
 </template>
 
 <script setup lang="ts">
-const { locale, locales } = useI18n()
 const user = useCurrentUser()
 const supabase = useSupabaseClient()
 const router = useRouter()
 const isMenuOpen = ref(false)
-
-const availableLocales = computed(() => {
-  return locales.value.filter(i => i.code !== locale.value)
-})
 
 async function signOut() {
   const { error } = await supabase.auth.signOut()
