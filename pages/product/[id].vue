@@ -15,12 +15,12 @@
         <img :src="product.image_url" :alt="product.name" class="w-full rounded-lg shadow-lg">
       </div>
       <div>
-        <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-primary">{{ product.name }}</h1>
-        <p class="text-lg text-primary mb-4">
+        <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-foreground">{{ product.name }}</h1>
+        <p class="text-lg text-foreground mb-4">
           作成者: <span class="font-semibold">{{ product.profiles?.username || 'N/A' }}</span>
         </p>
-        <p class="text-3xl font-bold text-primary mb-6">{{ formatPrice(product.price) }}</p>
-        <p class="text-primary mb-8 whitespace-pre-wrap">{{ product.description }}</p>
+        <p class="text-3xl font-bold text-foreground mb-6">{{ formatPrice(product.price) }}</p>
+        <p class="text-foreground mb-8 whitespace-pre-wrap">{{ product.description }}</p>
         <button class="w-full px-8 py-4 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
           購入する
         </button>
