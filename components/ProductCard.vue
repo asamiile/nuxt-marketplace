@@ -11,13 +11,15 @@
         <p class="font-semibold mt-2">{{ formatPrice(product.price) }}</p>
       </UiCardContent>
     </NuxtLink>
-    <button
-      @click.prevent="toggleFavorite"
-      class="absolute top-2 right-2 p-1 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition-colors z-10"
-      aria-label="Toggle Favorite"
-    >
-      <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>
-    </button>
+    <ClientOnly>
+      <button
+        @click.prevent="toggleFavorite"
+        class="absolute top-2 right-2 p-1 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition-colors z-10"
+        aria-label="Toggle Favorite"
+      >
+        <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>
+      </button>
+    </ClientOnly>
   </UiCard>
 </template>
 

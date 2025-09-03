@@ -29,13 +29,15 @@
           <UiButton class="flex-grow" size="lg">
             購入する
           </UiButton>
-          <button
-            @click="toggleFavorite"
-            class="p-4 rounded-md bg-card border border-border hover:bg-muted"
-            aria-label="Toggle Favorite"
-          >
-            <span :class="{'text-red-500': isFavoritedState, 'text-gray-400': !isFavoritedState}" class="text-2xl">❤️</span>
-          </button>
+          <ClientOnly>
+            <button
+              @click="toggleFavorite"
+              class="p-4 rounded-md bg-card border border-border hover:bg-muted"
+              aria-label="Toggle Favorite"
+            >
+              <span :class="{'text-red-500': isFavoritedState, 'text-gray-400': !isFavoritedState}" class="text-2xl">❤️</span>
+            </button>
+          </ClientOnly>
         </div>
       </div>
     </div>
