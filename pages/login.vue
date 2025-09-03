@@ -1,52 +1,44 @@
 <template>
-  <div class="flex items-center justify-center min-h-full py-12">
-    <UiCard class="w-full max-w-md">
-      <UiCardHeader>
-        <UiCardTitle class="text-2xl font-bold text-center">
-          ログイン
-        </UiCardTitle>
-        <UiCardDescription class="text-center">
-          メールアドレスとパスワードを入力してください
-        </UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent class="space-y-4">
-        <form class="space-y-4" @submit.prevent="signInWithPassword">
-          <div class="space-y-2">
-            <label for="email-address">メールアドレス</label>
-            <UiInput id="email-address" v-model="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" />
+  <div class="flex items-center justify-center min-h-full px-4 py-12 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
+      <div>
+        <h2 class="mt-6 text-3xl font-extrabold text-center text-foreground">
+          アカウントにサインイン
+        </h2>
+      </div>
+      <form class="mt-8 space-y-6" @submit.prevent="signInWithPassword">
+        <div class="space-y-2 rounded-md shadow-sm">
+          <div>
+            <label for="email-address" class="sr-only">メールアドレス</label>
+            <input id="email-address" v-model="email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-2 bg-background text-foreground placeholder-gray-500 border border-border rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm" placeholder="メールアドレス">
           </div>
-          <div class="space-y-2">
-            <label for="password">パスワード</label>
-            <UiInput id="password" v-model="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••" />
-          </div>
-          <UiButton type="submit" class="w-full">
-            ログイン
-          </UiButton>
-        </form>
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t" />
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-card text-muted-foreground">
-              または
-            </span>
+          <div>
+            <label for="password" class="sr-only">パスワード</label>
+            <input id="password" v-model="password" name="password" type="password" autocomplete="current-password" required class="relative block w-full px-3 py-2 bg-background text-foreground placeholder-gray-500 border border-border rounded-none appearance-none rounded-b-md focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm" placeholder="パスワード">
           </div>
         </div>
-        <UiButton variant="outline" class="w-full" @click="signInWithGoogle">
-          Googleでログイン
-        </UiButton>
-        <div v-if="errorMsg" class="text-sm font-medium text-destructive">{{ errorMsg }}</div>
-      </UiCardContent>
-      <UiCardFooter class="flex justify-center">
-        <p class="text-sm text-muted-foreground">
-          アカウントをお持ちでないですか？
-          <NuxtLink to="/signup" class="font-semibold text-primary hover:underline">
-            新規登録
-          </NuxtLink>
-        </p>
-      </UiCardFooter>
-    </UiCard>
+
+        <div>
+          <button type="submit" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+            サインイン
+          </button>
+        </div>
+      </form>
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-border"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-background text-foreground">または以下で続ける</span>
+        </div>
+      </div>
+      <div>
+        <button @click="signInWithGoogle" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-pink-500 bg-white border border-pink-500 rounded-md shadow-sm hover:bg-pink-50 dark:bg-transparent dark:text-pink-400 dark:border-pink-400 dark:hover:bg-pink-950/50">
+          Googleでサインイン
+        </button>
+      </div>
+       <div v-if="errorMsg" class="text-red-500">{{ errorMsg }}</div>
+    </div>
   </div>
 </template>
 
