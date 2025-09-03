@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="container">
     <div v-if="pending">
       <p>商品を読み込んでいます...</p>
     </div>
     <div v-else-if="error || !product" class="text-center">
       <h1 class="text-2xl font-bold">商品が見つかりません</h1>
       <p class="mt-4">お探しの商品は存在しないか、移動された可能性があります。</p>
-      <NuxtLink to="/" class="mt-6 inline-block px-6 py-3 text-white rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600">
+      <NuxtLink to="/" :class="buttonVariants({ class: 'mt-6' })">
         ホームに戻る
       </NuxtLink>
     </div>
@@ -21,9 +21,9 @@
         </p>
         <p class="text-3xl font-bold text-foreground mb-6">{{ formatPrice(product.price) }}</p>
         <p class="text-foreground mb-8 whitespace-pre-wrap">{{ product.description }}</p>
-        <button class="w-full px-8 py-4 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+        <UiButton class="w-full" size="lg">
           購入する
-        </button>
+        </UiButton>
       </div>
     </div>
   </div>
@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import type { Product } from '~/types/product'
+import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const route = useRoute()
 const supabase = useSupabaseClient()

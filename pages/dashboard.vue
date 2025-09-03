@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="container py-8">
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-foreground">マイダッシュボード</h1>
-      <NuxtLink to="/sell" class="px-4 py-2 text-sm font-medium text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500">
+      <NuxtLink to="/sell" :class="buttonVariants()">
         新しい商品を出品する
       </NuxtLink>
     </div>
@@ -22,7 +22,7 @@
     <div v-else class="text-center py-12 bg-secondary rounded-lg">
       <h2 class="text-xl font-semibold text-foreground">商品はまだありません。</h2>
       <p class="mt-2 text-foreground">最初の商品を出品して、販売を始めましょう！</p>
-      <NuxtLink to="/sell" class="mt-6 inline-block px-6 py-3 text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500">
+      <NuxtLink to="/sell" :class="buttonVariants({ class: 'mt-6' })">
         出品ページへ
       </NuxtLink>
     </div>
@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import type { Product } from '~/types/product'
+import { buttonVariants } from '~/components/ui/buttonVariants'
 
 definePageMeta({
   middleware: 'auth'

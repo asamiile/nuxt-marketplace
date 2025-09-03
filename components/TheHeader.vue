@@ -19,22 +19,25 @@
               出品する
             </NuxtLink>
             <div ref="dropdownRef" class="relative">
-            <UiButton @click="isMenuOpen = !isMenuOpen" variant="ghost" class="relative h-8 w-8 rounded-full">
+              <UiButton @click="isMenuOpen = !isMenuOpen" variant="ghost" class="relative h-8 w-8 rounded-full">
                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
                   <span class="flex h-full w-full items-center justify-center rounded-full bg-muted">
                     {{ user.email?.charAt(0).toUpperCase() }}
                   </span>
                 </span>
-            </UiButton>
-              <div v-if="isMenuOpen" class="absolute right-0 w-56 mt-2 origin-top-right bg-popover text-popover-foreground rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div class="py-1">
+              </UiButton>
+              <div v-if="isMenuOpen" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                <div class="px-1 py-1">
                   <div class="px-4 py-2">
-                    <p class="text-sm">Signed in as</p>
-                    <p class="text-sm font-medium truncate">{{ user.email }}</p>
+                    <p class="text-sm font-medium text-foreground truncate">
+                      {{ user.email }}
+                    </p>
                   </div>
-                  <div class="border-t border-border"></div>
-                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm hover:bg-accent">ダッシュボード</NuxtLink>
-                  <button @click="signOut" class="w-full text-left block px-4 py-2 text-sm hover:bg-accent">
+                  <div class="my-1 h-px bg-border" />
+                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                    ダッシュボード
+                  </NuxtLink>
+                  <button @click="signOut" class="w-full text-left block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
                     ログアウト
                   </button>
                 </div>
@@ -42,10 +45,10 @@
             </div>
           </template>
           <template v-else>
-            <NuxtLink to="/login" :class="buttonVariants({ variant: 'ghost', class: 'mr-2' })">
+            <NuxtLink to="/login" :class="buttonVariants({ variant: 'ghost' })">
               ログイン
             </NuxtLink>
-            <NuxtLink to="/signup" :class="buttonVariants({ variant: 'default' })">
+            <NuxtLink to="/signup" :class="buttonVariants({ variant: 'default', class: 'ml-2' })">
               新規登録
             </NuxtLink>
           </template>
