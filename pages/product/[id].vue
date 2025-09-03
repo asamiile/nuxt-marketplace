@@ -1,12 +1,12 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div>
     <div v-if="pending">
       <p>商品を読み込んでいます...</p>
     </div>
-    <div v-else-if="error || !product">
+    <div v-else-if="error || !product" class="text-center">
       <h1 class="text-2xl font-bold">商品が見つかりません</h1>
       <p class="mt-4">お探しの商品は存在しないか、移動された可能性があります。</p>
-      <NuxtLink to="/" class="mt-6 inline-block px-6 py-3 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+      <NuxtLink to="/" class="mt-6 inline-block px-6 py-3 text-white rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600">
         ホームに戻る
       </NuxtLink>
     </div>
@@ -15,13 +15,13 @@
         <img :src="product.image_url" :alt="product.name" class="w-full rounded-lg shadow-lg">
       </div>
       <div>
-        <h1 class="text-3xl lg:text-4xl font-bold mb-2">{{ product.name }}</h1>
-        <p class="text-lg text-gray-600 mb-4">
+        <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-primary">{{ product.name }}</h1>
+        <p class="text-lg text-primary mb-4">
           作成者: <span class="font-semibold">{{ product.profiles?.username || 'N/A' }}</span>
         </p>
-        <p class="text-3xl font-bold text-gray-900 mb-6">{{ formatPrice(product.price) }}</p>
-        <p class="text-gray-700 mb-8 whitespace-pre-wrap">{{ product.description }}</p>
-        <button class="w-full px-8 py-4 text-lg font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <p class="text-3xl font-bold text-primary mb-6">{{ formatPrice(product.price) }}</p>
+        <p class="text-primary mb-8 whitespace-pre-wrap">{{ product.description }}</p>
+        <button class="w-full px-8 py-4 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
           購入する
         </button>
       </div>
