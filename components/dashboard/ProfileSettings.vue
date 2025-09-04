@@ -2,7 +2,7 @@
   <div class="mb-12">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-semibold text-foreground">プロフィール設定</h2>
-      <NuxtLink :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
+      <NuxtLink v-if="username" :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
         プロフィールを見る
       </NuxtLink>
     </div>
