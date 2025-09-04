@@ -1,6 +1,6 @@
 <template>
   <div class="mb-12">
-    <h2 class="text-xl font-semibold mb-4 text-foreground">プロフィール設定</h2>
+    <h2 class="text-2xl font-semibold mb-4 text-foreground">プロフィール設定</h2>
     <div v-if="profilePending" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
