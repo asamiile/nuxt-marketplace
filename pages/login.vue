@@ -19,7 +19,7 @@
         </div>
 
         <div>
-          <button type="submit" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+          <button type="submit" :class="buttonVariants({ variant: 'gradient-blue' })" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium rounded-md">
             サインイン
           </button>
         </div>
@@ -43,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+import { buttonVariants } from '~/components/ui/buttonVariants'
+
 const supabase = useSupabaseClient()
 const router = useRouter()
 
