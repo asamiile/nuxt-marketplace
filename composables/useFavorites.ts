@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import type { Product } from '~/types/product'
 
 export const useFavorites = () => {
@@ -8,6 +8,9 @@ export const useFavorites = () => {
   const favorites = ref<any[]>([])
   const loading = ref(false)
   const error = ref<Error | null>(null)
+  const itemsPerPage = 8
+  const currentPage = ref(1)
+  const totalPages = ref(1)
 
   // Check if a specific product is favorited
   const isFavorited = async (productId: number) => {
@@ -40,6 +43,9 @@ export const useFavorites = () => {
 
     if (error) {
       console.error('Error adding to favorites:', error)
+    } else {
+        // Refresh the current page of favorites after adding a new one
+        fetchFavoriteProducts()
     }
   }
 
@@ -55,6 +61,9 @@ export const useFavorites = () => {
 
     if (error) {
       console.error('Error removing from favorites:', error)
+    } else {
+        // Refresh the current page of favorites after removing one
+        fetchFavoriteProducts()
     }
   }
 
@@ -65,10 +74,26 @@ export const useFavorites = () => {
     loading.value = true
     error.value = null
     try {
+      // First, get the total count of favorites
+      const { count, error: countError } = await supabase
+        .from('favorites')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.value.id)
+
+      if (countError) throw countError
+
+      totalPages.value = count ? Math.ceil(count / itemsPerPage) : 1
+
+      // Then, fetch the products for the current page
+      const from = (currentPage.value - 1) * itemsPerPage
+      const to = from + itemsPerPage - 1
+
       const { data, error: dbError } = await supabase
         .from('favorites')
         .select('product:products(*, profiles(username))') // Fetch related product data and creator profile
         .eq('user_id', user.value.id)
+        .order('created_at', { ascending: false })
+        .range(from, to)
 
       if (dbError) throw dbError
 
@@ -89,6 +114,8 @@ export const useFavorites = () => {
     favorites,
     loading,
     error,
+    currentPage,
+    totalPages,
     isFavorited,
     addFavorite,
     removeFavorite,
