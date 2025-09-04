@@ -37,7 +37,7 @@
     <div>
       <h2 class="text-2xl font-semibold mb-6 text-foreground">{{ data.profile.username }}さんの商品</h2>
       <div v-if="data.products && data.products.length > 0">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
           <ProductCard v-for="product in data.products" :key="product.id" :product="product" />
         </div>
         <div class="mt-8">

@@ -9,7 +9,7 @@
       <p>エラーが発生しました: {{ error.message }}</p>
     </div>
     <div v-else-if="data && data.products && data.products.length > 0">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <ProductCard v-for="product in data.products" :key="product.id" :product="product" />
       </div>
       <div class="mt-8">
