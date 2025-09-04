@@ -51,6 +51,9 @@
                   <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
                     クリエイターページ
                   </NuxtLink>
+                  <NuxtLink to="/listings" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                    あなたの出品商品
+                  </NuxtLink>
                   <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
                     お気に入り商品
                   </NuxtLink>

@@ -1,11 +1,5 @@
 <template>
   <div>
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-semibold text-foreground">あなたの出品商品</h2>
-      <NuxtLink to="/sell" :class="buttonVariants()">
-        新しい商品を出品する
-      </NuxtLink>
-    </div>
     <div v-if="pending">
       <p>読み込み中...</p>
     </div>
