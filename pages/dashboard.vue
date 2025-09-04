@@ -37,7 +37,7 @@
             <div v-if="profilePending" class="text-center py-12 bg-secondary rounded-lg">
               <p>プロフィールを読み込み中...</p>
             </div>
-            <form v-else @submit.prevent="updateProfile" class="space-y-6 bg-secondary p-6 rounded-lg">
+            <form v-else-if="profile" @submit.prevent="updateProfile" class="space-y-6 bg-secondary p-6 rounded-lg">
               <div>
                 <Label for="username">ユーザー名</Label>
                 <Input id="username" v-model="profile.username" type="text" class="mt-1" />
@@ -69,6 +69,9 @@
                 </Button>
               </div>
             </form>
+            <div v-else class="text-center py-12 bg-secondary rounded-lg">
+              <p>プロフィールの読み込みに失敗しました。</p>
+            </div>
           </div>
         </TabsContent>
 
@@ -161,17 +164,9 @@ function showAlert(title: string, message: string, type: 'success' | 'error' = '
 }
 
 // --- Profile State & Logic ---
-const profile = ref({
-  username: '',
-  avatar_url: '',
-  bio: '',
-  website_url: '',
-  x_url: '',
-  youtube_url: ''
-})
 const saving = ref(false)
 
-const { data: profileData, pending: profilePending } = useAsyncData('profile-data', async () => {
+const { data: profile, pending: profilePending, refresh: refreshProfile } = useAsyncData('profile-data', async () => {
   if (!user.value) {
     return null
   }
@@ -190,23 +185,8 @@ const { data: profileData, pending: profilePending } = useAsyncData('profile-dat
   watch: [user]
 })
 
-// When profileData is fetched or updated, sync it with the local `profile` ref
-// which is used by the form.
-watch(profileData, (newData) => {
-  if (newData) {
-    profile.value = {
-      username: newData.username || '',
-      avatar_url: newData.avatar_url || '',
-      bio: newData.bio || '',
-      website_url: newData.website_url || '',
-      x_url: newData.x_url || '',
-      youtube_url: newData.youtube_url || ''
-    }
-  }
-}, { immediate: true })
-
 async function updateProfile() {
-  if (!user.value) return
+  if (!user.value || !profile.value) return
   saving.value = true
   try {
     const { error } = await supabase
@@ -222,6 +202,7 @@ async function updateProfile() {
       .eq('id', user.value.id)
     if (error) throw error
     showAlert('成功', 'プロフィールを更新しました！')
+    await refreshProfile() // Re-fetch data after successful update
   } catch (error: any) {
     showAlert('エラー', (error as Error).message, 'error')
   } finally {
