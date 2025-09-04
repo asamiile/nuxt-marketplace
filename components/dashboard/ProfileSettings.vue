@@ -4,7 +4,7 @@
     <div v-if="profilePending" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
-    <form v-else-if="profile" @submit.prevent="updateProfile" class="space-y-6 bg-secondary p-6 rounded-lg">
+    <form v-else-if="profile" @submit.prevent="updateProfile" class="space-y-6 bg-card p-8 rounded-lg shadow-md">
       <div>
         <Label for="username">ユーザー名</Label>
         <Input id="username" v-model="profile.username" type="text" class="mt-1" />
@@ -30,8 +30,8 @@
         <Label for="youtube_url">YouTube URL</Label>
         <Input id="youtube_url" v-model="profile.youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
       </div>
-      <div>
-        <Button type="submit" :disabled="saving">
+      <div class="pt-2">
+        <Button type="submit" :disabled="saving" class="w-full">
           {{ saving ? '保存中...' : 'プロフィールを更新' }}
         </Button>
       </div>
