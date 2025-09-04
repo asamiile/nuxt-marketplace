@@ -18,18 +18,26 @@
             <NuxtLink to="/sell" :class="buttonVariants({ variant: 'ghost', class: 'mr-2' })">
               出品する
             </NuxtLink>
-            <div v-if="profile" ref="dropdownRef" class="relative">
+            <div ref="dropdownRef" class="relative">
               <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-2 border-background">
-                <template v-if="profile.avatar_url">
-                  <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover border-2 border-background">
+                <template v-if="profile">
+                  <template v-if="profile.avatar_url">
+                    <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover">
+                  </template>
+                  <template v-else>
+                    <span class="text-lg font-semibold">
+                      {{ profile.username?.charAt(0).toUpperCase() }}
+                    </span>
+                  </template>
                 </template>
                 <template v-else>
+                  <!-- Fallback while profile is loading -->
                   <span class="text-lg font-semibold">
-                    {{ profile.username?.charAt(0).toUpperCase() }}
+                    {{ user.email?.charAt(0).toUpperCase() }}
                   </span>
                 </template>
               </button>
-              <div v-if="isMenuOpen" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+              <div v-if="isMenuOpen && profile" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                 <div class="px-1 py-1">
                   <div class="px-4 py-2">
                     <p class="text-sm font-medium text-foreground">
