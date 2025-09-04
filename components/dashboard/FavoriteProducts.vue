@@ -16,14 +16,22 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useFavorites } from '~/composables/useFavorites'
 import ProductCard from '~/components/ProductCard.vue'
 
+const { showAlert } = useAlert()
+
 // Fetch favorite products
-const { favorites: favoriteProducts, loading: favoritesLoading, fetchFavoriteProducts } = useFavorites()
+const { favorites: favoriteProducts, loading: favoritesLoading, error, fetchFavoriteProducts } = useFavorites()
 
 onMounted(() => {
   fetchFavoriteProducts()
+})
+
+watch(error, (newError) => {
+  if (newError) {
+    showAlert('エラー', `お気に入り商品の読み込みに失敗しました: ${newError.message}`, 'error')
+  }
 })
 </script>

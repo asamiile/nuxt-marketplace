@@ -1,14 +1,5 @@
 <template>
-  <div class="container py-8 relative">
-    <!-- Global Alert -->
-    <div v-if="alert.show" class="fixed top-20 right-1/2 translate-x-1/2 z-50 w-full max-w-sm">
-      <Alert
-        :title="alert.title"
-        :description="alert.message"
-        :class="alert.type === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700'"
-      />
-    </div>
-
+  <div class="container py-8">
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-foreground">マイダッシュボード</h1>
     </div>
@@ -47,13 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
 import TabsContent from '~/components/ui/tabs/TabsContent.vue'
-import Alert from '~/components/ui/Alert.vue'
 import ProfileSettings from '~/components/dashboard/ProfileSettings.vue'
 import FavoriteProducts from '~/components/dashboard/FavoriteProducts.vue'
 import UserListings from '~/components/dashboard/UserListings.vue'
@@ -66,23 +55,7 @@ const supabase = useSupabaseClient()
 const user = useCurrentUser()
 
 // --- Alert State & Logic ---
-const alert = reactive({
-  show: false,
-  title: '',
-  message: '',
-  type: 'success' as 'success' | 'error',
-})
-
-function showAlert(title: string, message: string, type: 'success' | 'error' = 'success', duration = 5000) {
-  alert.title = title
-  alert.message = message
-  alert.type = type
-  alert.show = true
-
-  setTimeout(() => {
-    alert.show = false
-  }, duration)
-}
+const { alert, showAlert } = useAlert()
 
 function handleShowAlert(alertData: { title: string, message: string, type: 'success' | 'error' }) {
   showAlert(alertData.title, alertData.message, alertData.type)

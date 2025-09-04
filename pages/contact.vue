@@ -1,19 +1,12 @@
 <template>
-  <div class="flex items-center justify-center min-h-full px-4 py-12 sm:px-6 lg:px-8">
-    <div class="w-full max-w-lg space-y-8">
+  <div class="container py-8">
+    <div class="w-full max-w-lg mx-auto space-y-8">
       <div>
         <h2 class="mt-6 text-3xl font-extrabold text-center text-gray-900">
           お問い合わせ
         </h2>
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <div v-if="successMsg" class="p-4 text-green-700 bg-green-100 border-l-4 border-green-500">
-          <p>{{ successMsg }}</p>
-        </div>
-        <div v-if="errorMsg" class="p-4 text-red-700 bg-red-100 border-l-4 border-red-500">
-          <p>{{ errorMsg }}</p>
-        </div>
-
         <div class="space-y-4 rounded-md shadow-sm">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700">お名前</label>
@@ -48,6 +41,8 @@
 import { ref } from 'vue'
 
 const supabase = useSupabaseClient()
+const { alert, showAlert } = useAlert()
+
 const form = ref({
   name: '',
   email: '',
@@ -56,16 +51,10 @@ const form = ref({
 })
 
 const loading = ref(false)
-const errorMsg = ref<string | null>(null)
-const successMsg = ref<string | null>(null)
 
 async function handleSubmit() {
   loading.value = true
-  errorMsg.value = null
-  successMsg.value = null
-
   try {
-    // supabase.functions.invokeの第二引数の 'body' は、オブジェクトを直接渡すのが推奨されています。
     const { error } = await supabase.functions.invoke('contact', {
       body: form.value,
     })
@@ -74,7 +63,7 @@ async function handleSubmit() {
       throw new Error(error.message)
     }
 
-    successMsg.value = 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。'
+    showAlert('成功', 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。')
     // フォームをリセット
     form.value = {
       name: '',
@@ -83,7 +72,7 @@ async function handleSubmit() {
       message: '',
     }
   } catch (err: any) {
-    errorMsg.value = `エラーが発生しました: ${err.message}`
+    showAlert('エラー', `エラーが発生しました: ${err.message}`, 'error')
   } finally {
     loading.value = false
   }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container py-8">
     <h1 class="text-3xl font-bold mb-8 text-foreground">商品を出品する</h1>
     <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-md">
       <div class="space-y-6">
@@ -29,7 +29,6 @@
           {{ isSubmitting ? 'アップロード中...' : '出品する' }}
         </button>
       </div>
-      <p v-if="errorMessage" class="mt-4 text-sm text-red-600">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
@@ -45,7 +44,6 @@ const price = ref<number | null>(null)
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
-const errorMessage = ref('')
 
 const handleImageUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -64,15 +62,15 @@ const handleFileUpload = (event: Event) => {
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const router = useRouter()
+const { alert, showAlert } = useAlert()
 
 const handleSubmit = async () => {
   if (!name.value || !description.value || price.value === null || !imageFile.value || !assetFile.value || !user.value) {
-    errorMessage.value = 'すべてのフィールドを入力してください。'
+    showAlert('入力エラー', 'すべてのフィールドを入力してください。', 'error')
     return
   }
 
   isSubmitting.value = true
-  errorMessage.value = ''
 
   try {
     // 1. Upload files to Supabase Storage
@@ -95,23 +93,23 @@ const handleSubmit = async () => {
     }
 
     // 3. Insert product record into the database
-    const { error: dbError } = await supabase.from('products').insert({
+    const { data, error: dbError } = await supabase.from('products').insert({
       name: name.value,
       description: description.value,
       price: price.value,
       image_url: imageUrlData.publicUrl,
       file_url: assetUrlData.publicUrl,
       creator_id: user.value.id
-    })
+    }).select().single()
 
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
 
     // 4. Handle success
-    alert('商品が正常にアップロードされました！')
-    router.push('/dashboard')
+    showAlert('成功', '商品が正常にアップロードされました！')
+    router.push(`/product/${data.id}`)
 
   } catch (error: any) {
-    errorMessage.value = error.message || '予期せぬエラーが発生しました。'
+    showAlert('エラー', error.message || '予期せぬエラーが発生しました。', 'error')
   } finally {
     isSubmitting.value = false
   }

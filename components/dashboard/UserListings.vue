@@ -9,9 +9,6 @@
     <div v-if="pending">
       <p>読み込み中...</p>
     </div>
-    <div v-else-if="error">
-      <p>エラーが発生しました: {{ error.message }}</p>
-    </div>
     <div v-else-if="products && products.length > 0">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ProductCard v-for="product in products" :key="product.id" :product="product" />
@@ -28,10 +25,12 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue'
 import type { Product } from '~/types/product'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import ProductCard from '~/components/ProductCard.vue'
 
+const { showAlert } = useAlert()
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 
@@ -63,4 +62,10 @@ const { data: products, pending, error } = await useAsyncData<Product[]>(
     watch: [user]
   }
 )
+
+watch(error, (newError) => {
+  if (newError) {
+    showAlert('エラー', `出品商品の読み込みに失敗しました: ${newError.message}`, 'error')
+  }
+})
 </script>
