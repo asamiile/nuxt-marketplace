@@ -1,51 +1,59 @@
 <template>
-  <div class="container mx-auto max-w-3xl py-12">
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle>商品を販売</UiCardTitle>
-        <UiCardDescription>以下のフォームに必要事項を入力して、新しい商品を販売してください。</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent>
-        <form @submit.prevent="handleSubmit" class="space-y-6">
-          <div class="grid gap-2">
-            <UiLabel for="name">商品名</UiLabel>
-            <UiInput v-model="name" id="name" required placeholder="例: すごいデジタルアセット" />
-          </div>
-          <div class="grid gap-2">
-            <UiLabel for="description">説明</UiLabel>
-            <UiTextarea v-model="description" id="description" required placeholder="商品の特徴を詳しく説明してください。" />
-          </div>
-          <div class="grid gap-2">
-            <UiLabel for="price">価格（円）</UiLabel>
-            <UiInput v-model.number="price" type="number" id="price" required min="0" placeholder="例: 1000" />
-          </div>
-          <div class="grid gap-2">
-            <UiLabel for="license_type">ライセンスの種類</UiLabel>
-            <UiInput v-model="license_type" id="license_type" placeholder="例: Standard License" />
-          </div>
-          <div class="grid gap-2">
-            <UiLabel for="terms_of_use">利用規約</UiLabel>
-            <UiTextarea v-model="terms_of_use" id="terms_of_use" placeholder="商品の利用に関する規約や制限事項を記入してください。" />
-          </div>
-          <div class="grid gap-2">
-            <UiLabel for="image">サムネイル画像</UiLabel>
-            <UiInput @change="handleImageUpload" type="file" id="image" required accept="image/*" />
-          </div>
-          <div class="grid gap-2">
-            <UiLabel for="file">デジタルアセット</UiLabel>
-            <UiInput @change="handleFileUpload" type="file" id="file" required />
-          </div>
-          <UiButton type="submit" class="w-full" :disabled="isSubmitting">
-            {{ isSubmitting ? 'アップロード中...' : '出品する' }}
-          </UiButton>
-          <p v-if="errorMessage" class="text-sm font-medium text-destructive">{{ errorMessage }}</p>
-        </form>
-      </UiCardContent>
-    </UiCard>
+  <div class="container py-8">
+    <div class="max-w-2xl mx-auto">
+      <UiCard>
+        <UiCardHeader>
+          <UiCardTitle>商品を出品する</UiCardTitle>
+          <UiCardDescription>以下のフォームに必要事項を入力して、新しい商品を販売してください。</UiCardDescription>
+        </UiCardHeader>
+        <UiCardContent>
+          <form @submit.prevent="handleSubmit" class="space-y-6">
+            <div>
+              <Label for="name">商品名</Label>
+              <Input v-model="name" type="text" id="name" required class="mt-1" />
+            </div>
+            <div>
+              <Label for="description">説明</Label>
+              <Textarea v-model="description" id="description" :rows="4" required class="mt-1" />
+            </div>
+            <div>
+              <Label for="price">価格 (円)</Label>
+              <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
+            </div>
+            <div>
+              <Label for="license_type">ライセンスの種類</Label>
+              <Input v-model="license_type" id="license_type" class="mt-1" placeholder="例: スタンダードライセンス" />
+            </div>
+            <div>
+              <Label for="terms_of_use">利用規約</Label>
+              <Textarea v-model="terms_of_use" id="terms_of_use" :rows="3" class="mt-1" placeholder="商用利用可、改変可など" />
+            </div>
+            <div>
+              <Label for="image">サムネイル画像</Label>
+              <Input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+            </div>
+            <div>
+              <Label for="file">デジタルアセット (zip, etc.)</Label>
+              <Input @change="handleFileUpload" type="file" id="file" required class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+            </div>
+            <div class="pt-2">
+              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting">
+                {{ isSubmitting ? 'アップロード中...' : '出品する' }}
+              </Button>
+            </div>
+          </form>
+        </UiCardContent>
+      </UiCard>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import Input from '~/components/ui/Input.vue'
+import Label from '~/components/ui/Label.vue'
+import Textarea from '~/components/ui/Textarea.vue'
+import Button from '~/components/ui/Button.vue'
+
 definePageMeta({
   middleware: 'auth'
 })
@@ -58,7 +66,6 @@ const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
-const errorMessage = ref('')
 
 const handleImageUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -77,15 +84,15 @@ const handleFileUpload = (event: Event) => {
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const router = useRouter()
+const { showAlert } = useAlert()
 
 const handleSubmit = async () => {
   if (!name.value || !description.value || price.value === null || !imageFile.value || !assetFile.value || !user.value) {
-    errorMessage.value = 'すべてのフィールドを入力してください。'
+    showAlert('入力エラー', 'すべてのフィールドを入力してください。', 'error')
     return
   }
 
   isSubmitting.value = true
-  errorMessage.value = ''
 
   try {
     // 1. Upload files to Supabase Storage
@@ -108,7 +115,7 @@ const handleSubmit = async () => {
     }
 
     // 3. Insert product record into the database
-    const { error: dbError } = await supabase.from('products').insert({
+    const { data, error: dbError } = await supabase.from('products').insert({
       name: name.value,
       description: description.value,
       price: price.value,
@@ -117,16 +124,16 @@ const handleSubmit = async () => {
       creator_id: user.value.id,
       license_type: license_type.value,
       terms_of_use: terms_of_use.value
-    })
+    }).select().single()
 
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
 
     // 4. Handle success
-    alert('商品が正常にアップロードされました！')
-    router.push('/dashboard')
+    showAlert('成功', '商品が正常にアップロードされました！')
+    router.push(`/product/${data.id}`)
 
   } catch (error: any) {
-    errorMessage.value = error.message || '予期せぬエラーが発生しました。'
+    showAlert('エラー', error.message || '予期せぬエラーが発生しました。', 'error')
   } finally {
     isSubmitting.value = false
   }

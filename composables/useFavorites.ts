@@ -7,6 +7,7 @@ export const useFavorites = () => {
 
   const favorites = ref<any[]>([])
   const loading = ref(false)
+  const error = ref<Error | null>(null)
 
   // Check if a specific product is favorited
   const isFavorited = async (productId: number) => {
@@ -17,14 +18,13 @@ export const useFavorites = () => {
       .select('id')
       .eq('user_id', user.value.id)
       .eq('product_id', productId)
-      .single()
 
-    if (error && error.code !== 'PGRST116') { // PGRST116: "No rows found" which is not an error here
+    if (error) {
       console.error('Error checking favorite status:', error)
       return false
     }
 
-    return !!data
+    return data && data.length > 0
   }
 
   // Add a product to favorites
@@ -63,19 +63,21 @@ export const useFavorites = () => {
     if (!user.value) return
 
     loading.value = true
+    error.value = null
     try {
-      const { data, error } = await supabase
+      const { data, error: dbError } = await supabase
         .from('favorites')
         .select('product:products(*, profiles(username))') // Fetch related product data and creator profile
         .eq('user_id', user.value.id)
 
-      if (error) throw error
+      if (dbError) throw dbError
 
       // The result is an array of objects like { product: ProductWithProfile }, so we map it
       favorites.value = data?.map(fav => fav.product).filter(p => p !== null) as Product[]
 
-    } catch (error) {
-      console.error('Error fetching favorite products:', error)
+    } catch (err: any) {
+      console.error('Error fetching favorite products:', err)
+      error.value = err
       favorites.value = []
     } finally {
       loading.value = false
@@ -86,6 +88,7 @@ export const useFavorites = () => {
   return {
     favorites,
     loading,
+    error,
     isFavorited,
     addFavorite,
     removeFavorite,
