@@ -18,14 +18,13 @@ export const useFavorites = () => {
       .select('id')
       .eq('user_id', user.value.id)
       .eq('product_id', productId)
-      .single()
 
-    if (error && error.code !== 'PGRST116') { // PGRST116: "No rows found" which is not an error here
+    if (error) {
       console.error('Error checking favorite status:', error)
       return false
     }
 
-    return !!data
+    return data && data.length > 0
   }
 
   // Add a product to favorites

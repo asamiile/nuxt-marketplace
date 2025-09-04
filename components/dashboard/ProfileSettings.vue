@@ -7,28 +7,28 @@
     <form v-else-if="profile" @submit.prevent="updateProfile" class="space-y-6 bg-card p-8 rounded-lg shadow-md">
       <div>
         <Label for="username">ユーザー名</Label>
-        <Input id="username" v-model="username" type="text" class="mt-1" />
+        <Input id="username" v-model="profile.username" type="text" class="mt-1" />
       </div>
       <div>
         <Label for="avatar_url">アバターURL</Label>
-        <Input id="avatar_url" v-model="avatar_url" type="text" class="mt-1" placeholder="https://..."/>
+        <Input id="avatar_url" v-model="profile.avatar_url" type="text" class="mt-1" placeholder="https://..."/>
         <p class="text-sm text-muted-foreground mt-1">画像URLを入力してください。</p>
       </div>
       <div>
         <Label for="bio">自己紹介</Label>
-        <Textarea id="bio" v-model="bio" class="mt-1" placeholder="こんにちは！..." />
+        <Textarea id="bio" v-model="profile.bio" class="mt-1" placeholder="こんにちは！..." />
       </div>
       <div>
         <Label for="website_url">ウェブサイトURL</Label>
-        <Input id="website_url" v-model="website_url" type="url" class="mt-1" placeholder="https://..."/>
+        <Input id="website_url" v-model="profile.website_url" type="url" class="mt-1" placeholder="https://..."/>
       </div>
       <div>
         <Label for="x_url">X (Twitter) URL</Label>
-        <Input id="x_url" v-model="x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
+        <Input id="x_url" v-model="profile.x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
       </div>
       <div>
         <Label for="youtube_url">YouTube URL</Label>
-        <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
+        <Input id="youtube_url" v-model="profile.youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
       </div>
       <div class="pt-2">
         <Button type="submit" :disabled="saving" class="w-full">
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref } from 'vue'
 import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
@@ -76,39 +76,19 @@ const { data: profile, pending: profilePending, refresh: refreshProfile } = useA
   watch: [user]
 })
 
-// Local state for form fields
-const username = ref('')
-const avatar_url = ref('')
-const bio = ref('')
-const website_url = ref('')
-const x_url = ref('')
-const youtube_url = ref('')
-
-// Watch for profile data to load/change and update local state
-watchEffect(() => {
-  if (profile.value) {
-    username.value = profile.value.username || ''
-    avatar_url.value = profile.value.avatar_url || ''
-    bio.value = profile.value.bio || ''
-    website_url.value = profile.value.website_url || ''
-    x_url.value = profile.value.x_url || ''
-    youtube_url.value = profile.value.youtube_url || ''
-  }
-})
-
 async function updateProfile() {
-  if (!user.value) return
+  if (!user.value || !profile.value) return
   saving.value = true
   try {
     const { error } = await supabase
       .from('profiles')
       .update({
-        username: username.value,
-        avatar_url: avatar_url.value,
-        bio: bio.value,
-        website_url: website_url.value,
-        x_url: x_url.value,
-        youtube_url: youtube_url.value,
+        username: profile.value.username,
+        avatar_url: profile.value.avatar_url,
+        bio: profile.value.bio,
+        website_url: profile.value.website_url,
+        x_url: profile.value.x_url,
+        youtube_url: profile.value.youtube_url,
       })
       .eq('id', user.value.id)
     if (error) throw error
