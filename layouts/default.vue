@@ -38,7 +38,15 @@
       </nav>
     </header>
 
-    <main class="flex-grow container py-20">
+    <main class="flex-grow container py-20 relative">
+      <!-- Global Alert -->
+      <div v-if="alert.show" class="fixed top-20 right-1/2 translate-x-1/2 z-50 w-full max-w-sm">
+        <Alert
+          :title="alert.title"
+          :description="alert.message"
+          :class="alert.type === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700'"
+        />
+      </div>
       <slot />
     </main>
 
@@ -56,7 +64,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import Alert from '~/components/ui/Alert.vue'
 
+const { alert } = useAlert()
 const user = useCurrentUser()
 const supabase = useSupabaseClient()
 const router = useRouter()

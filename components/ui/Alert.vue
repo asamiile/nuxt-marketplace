@@ -7,7 +7,7 @@ interface AlertProps {
   class?: string
 }
 
-defineProps<AlertProps>()
+const props = defineProps<AlertProps>()
 </script>
 
 <template>
