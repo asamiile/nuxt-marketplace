@@ -30,10 +30,13 @@
         <Label for="youtube_url">YouTube URL</Label>
         <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
       </div>
-      <div class="pt-2">
-        <Button type="submit" :disabled="saving" class="w-full">
+      <div class="pt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Button type="submit" :disabled="saving">
           {{ saving ? '保存中...' : 'プロフィールを更新' }}
         </Button>
+        <NuxtLink :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
+          プロフィールを見る
+        </NuxtLink>
       </div>
     </form>
   </div>
@@ -45,6 +48,7 @@ import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
 import Button from '~/components/ui/Button.vue'
+import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
