@@ -1,33 +1,50 @@
 <template>
   <div class="container py-8">
-    <h1 class="text-3xl font-bold mb-8 text-foreground">商品を出品する</h1>
-    <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-md space-y-6">
-      <div>
-        <Label for="name">商品名</Label>
-        <Input v-model="name" type="text" id="name" required class="mt-1" />
-      </div>
-      <div>
-        <Label for="description">説明</Label>
-        <Textarea v-model="description" id="description" :rows="4" required class="mt-1" />
-      </div>
-      <div>
-        <Label for="price">価格 (円)</Label>
-        <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
-      </div>
-      <div>
-        <Label for="image">サムネイル画像</Label>
-        <Input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
-      </div>
-      <div>
-        <Label for="file">デジタルアセット (zip, etc.)</Label>
-        <Input @change="handleFileUpload" type="file" id="file" required class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
-      </div>
-      <div class="pt-2">
-        <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting">
-          {{ isSubmitting ? 'アップロード中...' : '出品する' }}
-        </Button>
-      </div>
-    </form>
+    <div class="max-w-2xl mx-auto">
+      <UiCard>
+        <UiCardHeader>
+          <UiCardTitle>商品を出品する</UiCardTitle>
+          <UiCardDescription>以下のフォームに必要事項を入力して、新しい商品を販売してください。</UiCardDescription>
+        </UiCardHeader>
+        <UiCardContent>
+          <form @submit.prevent="handleSubmit" class="space-y-6">
+            <div>
+              <Label for="name">商品名</Label>
+              <Input v-model="name" type="text" id="name" required class="mt-1" />
+            </div>
+            <div>
+              <Label for="description">説明</Label>
+              <Textarea v-model="description" id="description" :rows="4" required class="mt-1" />
+            </div>
+            <div>
+              <Label for="price">価格 (円)</Label>
+              <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
+            </div>
+            <div>
+              <Label for="license_type">ライセンスの種類</Label>
+              <Input v-model="license_type" id="license_type" class="mt-1" placeholder="例: スタンダードライセンス" />
+            </div>
+            <div>
+              <Label for="terms_of_use">利用規約</Label>
+              <Textarea v-model="terms_of_use" id="terms_of_use" :rows="3" class="mt-1" placeholder="商用利用可、改変可など" />
+            </div>
+            <div>
+              <Label for="image">サムネイル画像</Label>
+              <Input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+            </div>
+            <div>
+              <Label for="file">デジタルアセット (zip, etc.)</Label>
+              <Input @change="handleFileUpload" type="file" id="file" required class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+            </div>
+            <div class="pt-2">
+              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting">
+                {{ isSubmitting ? 'アップロード中...' : '出品する' }}
+              </Button>
+            </div>
+          </form>
+        </UiCardContent>
+      </UiCard>
+    </div>
   </div>
 </template>
 
@@ -44,6 +61,8 @@ definePageMeta({
 const name = ref('')
 const description = ref('')
 const price = ref<number | null>(null)
+const license_type = ref('')
+const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
@@ -65,7 +84,7 @@ const handleFileUpload = (event: Event) => {
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const router = useRouter()
-const { alert, showAlert } = useAlert()
+const { showAlert } = useAlert()
 
 const handleSubmit = async () => {
   if (!name.value || !description.value || price.value === null || !imageFile.value || !assetFile.value || !user.value) {
@@ -102,7 +121,9 @@ const handleSubmit = async () => {
       price: price.value,
       image_url: imageUrlData.publicUrl,
       file_url: assetUrlData.publicUrl,
-      creator_id: user.value.id
+      creator_id: user.value.id,
+      license_type: license_type.value,
+      terms_of_use: terms_of_use.value
     }).select().single()
 
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
