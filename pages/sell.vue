@@ -18,7 +18,7 @@
             </div>
             <div>
               <Label for="price">価格 (円)</Label>
-              <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
+              <Input v-model="price" type="number" id="price" required min="0" class="mt-1" />
             </div>
             <div>
               <Label for="license_type">ライセンスの種類</Label>
@@ -60,7 +60,7 @@ definePageMeta({
 
 const name = ref('')
 const description = ref('')
-const price = ref<number | null>(null)
+const price = ref('')
 const license_type = ref('')
 const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
@@ -87,8 +87,9 @@ const router = useRouter()
 const { showAlert } = useAlert()
 
 const handleSubmit = async () => {
-  if (!name.value || !description.value || price.value === null || !imageFile.value || !assetFile.value || !user.value) {
-    showAlert('入力エラー', 'すべてのフィールドを入力してください。', 'error')
+  const priceNumber = Number(price.value)
+  if (!name.value || !description.value || !price.value || isNaN(priceNumber) || !imageFile.value || !assetFile.value || !user.value) {
+    showAlert('入力エラー', 'すべてのフィールドを正しく入力してください。', 'error')
     return
   }
 
@@ -118,7 +119,7 @@ const handleSubmit = async () => {
     const { data, error: dbError } = await supabase.from('products').insert({
       name: name.value,
       description: description.value,
-      price: price.value,
+      price: priceNumber,
       image_url: imageUrlData.publicUrl,
       file_url: assetUrlData.publicUrl,
       creator_id: user.value.id,
