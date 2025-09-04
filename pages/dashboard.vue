@@ -34,7 +34,6 @@
         </TabsContent>
       </div>
     </Tabs>
-    <Alert :show="alert.show" :title="alert.title" :message="alert.message" :type="alert.type" @close="alert.show = false" />
   </div>
 </template>
 
@@ -46,7 +45,6 @@ import TabsContent from '~/components/ui/tabs/TabsContent.vue'
 import ProfileSettings from '~/components/dashboard/ProfileSettings.vue'
 import FavoriteProducts from '~/components/dashboard/FavoriteProducts.vue'
 import UserListings from '~/components/dashboard/UserListings.vue'
-import Alert from '~/components/ui/Alert.vue'
 import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({
