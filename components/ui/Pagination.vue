@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from '~/components/ui/Button.vue'
+
 const props = defineProps({
   currentPage: {
     type: Number,
