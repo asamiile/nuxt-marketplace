@@ -18,6 +18,14 @@
           </div>
         </div>
 
+        <div class="flex items-center justify-between">
+          <div class="text-sm">
+            <NuxtLink to="/forgot-password" class="font-medium text-cyan-600 hover:text-cyan-500">
+              パスワードをお忘れですか？
+            </NuxtLink>
+          </div>
+        </div>
+
         <div>
           <button type="submit" :class="buttonVariants({ variant: 'gradient-blue' })" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium rounded-md">
             サインイン
