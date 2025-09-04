@@ -1,40 +1,42 @@
 <template>
-  <div>
+  <div class="container py-8">
     <h1 class="text-3xl font-bold mb-8 text-foreground">商品を出品する</h1>
-    <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-md">
-      <div class="space-y-6">
-        <div>
-          <label for="name" class="block text-sm font-medium text-foreground">商品名</label>
-          <input v-model="name" type="text" id="name" required class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground">
-        </div>
-        <div>
-          <label for="description" class="block text-sm font-medium text-foreground">説明</label>
-          <textarea v-model="description" id="description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground"></textarea>
-        </div>
-        <div>
-          <label for="price" class="block text-sm font-medium text-foreground">価格 (円)</label>
-          <input v-model.number="price" type="number" id="price" required min="0" class="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-background text-foreground">
-        </div>
-        <div>
-          <label for="image" class="block text-sm font-medium text-foreground">サムネイル画像</label>
-          <input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-950 file:text-pink-600 dark:file:text-pink-300 hover:file:bg-pink-100 dark:hover:file:bg-pink-900">
-        </div>
-        <div>
-          <label for="file" class="block text-sm font-medium text-foreground">デジタルアセット (zip, etc.)</label>
-          <input @change="handleFileUpload" type="file" id="file" required class="mt-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 dark:file:bg-pink-950 file:text-pink-600 dark:file:text-pink-300 hover:file:bg-pink-100 dark:hover:file:bg-pink-900">
-        </div>
+    <form @submit.prevent="handleSubmit" class="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-md space-y-6">
+      <div>
+        <Label for="name">商品名</Label>
+        <Input v-model="name" type="text" id="name" required class="mt-1" />
       </div>
-      <div class="mt-8">
-        <button type="submit" class="w-full px-6 py-3 text-lg font-bold text-white rounded-md bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50" :disabled="isSubmitting">
+      <div>
+        <Label for="description">説明</Label>
+        <Textarea v-model="description" id="description" :rows="4" required class="mt-1" />
+      </div>
+      <div>
+        <Label for="price">価格 (円)</Label>
+        <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
+      </div>
+      <div>
+        <Label for="image">サムネイル画像</Label>
+        <Input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+      </div>
+      <div>
+        <Label for="file">デジタルアセット (zip, etc.)</Label>
+        <Input @change="handleFileUpload" type="file" id="file" required class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+      </div>
+      <div class="pt-2">
+        <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting">
           {{ isSubmitting ? 'アップロード中...' : '出品する' }}
-        </button>
+        </Button>
       </div>
-      <p v-if="errorMessage" class="mt-4 text-sm text-red-600">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
+import Input from '~/components/ui/Input.vue'
+import Label from '~/components/ui/Label.vue'
+import Textarea from '~/components/ui/Textarea.vue'
+import Button from '~/components/ui/Button.vue'
+
 definePageMeta({
   middleware: 'auth'
 })
@@ -45,7 +47,6 @@ const price = ref<number | null>(null)
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
-const errorMessage = ref('')
 
 const handleImageUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -64,15 +65,15 @@ const handleFileUpload = (event: Event) => {
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const router = useRouter()
+const { alert, showAlert } = useAlert()
 
 const handleSubmit = async () => {
   if (!name.value || !description.value || price.value === null || !imageFile.value || !assetFile.value || !user.value) {
-    errorMessage.value = 'すべてのフィールドを入力してください。'
+    showAlert('入力エラー', 'すべてのフィールドを入力してください。', 'error')
     return
   }
 
   isSubmitting.value = true
-  errorMessage.value = ''
 
   try {
     // 1. Upload files to Supabase Storage
@@ -95,23 +96,23 @@ const handleSubmit = async () => {
     }
 
     // 3. Insert product record into the database
-    const { error: dbError } = await supabase.from('products').insert({
+    const { data, error: dbError } = await supabase.from('products').insert({
       name: name.value,
       description: description.value,
       price: price.value,
       image_url: imageUrlData.publicUrl,
       file_url: assetUrlData.publicUrl,
       creator_id: user.value.id
-    })
+    }).select().single()
 
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
 
     // 4. Handle success
-    alert('商品が正常にアップロードされました！')
-    router.push('/dashboard')
+    showAlert('成功', '商品が正常にアップロードされました！')
+    router.push(`/product/${data.id}`)
 
   } catch (error: any) {
-    errorMessage.value = error.message || '予期せぬエラーが発生しました。'
+    showAlert('エラー', error.message || '予期せぬエラーが発生しました。', 'error')
   } finally {
     isSubmitting.value = false
   }
