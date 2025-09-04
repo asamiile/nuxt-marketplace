@@ -3,7 +3,7 @@
     <div class="container flex h-14 items-center">
       <div class="mr-4 hidden md:flex">
         <NuxtLink to="/" class="mr-6 flex items-center space-x-2">
-          <span class="font-bold">SiteLogo</span>
+          <span class="font-bold">Marketplace</span>
         </NuxtLink>
         <nav class="flex items-center space-x-6 text-sm font-medium">
           <!-- Add any main navigation links here if needed -->
@@ -13,13 +13,13 @@
         <div class="w-full flex-1 md:w-auto md:flex-none">
           <!-- You can add a search bar here if needed -->
         </div>
-        <nav class="flex items-center">
+        <nav class="flex items-center gap-4">
           <template v-if="user">
-            <NuxtLink to="/sell" :class="buttonVariants({ variant: 'ghost', class: 'mr-2' })">
+            <NuxtLink to="/sell" :class="buttonVariants({ variant: 'gradient-pink' })">
               出品する
             </NuxtLink>
             <div ref="dropdownRef" class="relative">
-              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-2 border-background">
+              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background">
                 <template v-if="profile">
                   <template v-if="profile.avatar_url">
                     <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover">
@@ -48,11 +48,11 @@
                     </p>
                   </div>
                   <div class="my-1 h-px bg-border" />
-                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
-                    クリエイターページ
-                  </NuxtLink>
                   <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
                     ダッシュボード
+                  </NuxtLink>
+                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                    クリエイターページ
                   </NuxtLink>
                   <div class="my-1 h-px bg-border" />
                   <button @click="signOut" class="w-full text-left block px-4 py-2 text-sm text-destructive hover:bg-destructive/10">

@@ -2,7 +2,7 @@
   <footer class="py-6 md:px-8 md:py-0">
     <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
       <p class="text-center text-sm leading-loose text-muted-foreground md:text-left">
-        Built by Jules. The source code is available on GitHub.
+        © 2025 Marketplace All rights reserved.
       </p>
       <div class="flex items-center space-x-4">
         <NuxtLink to="/terms" class="text-sm font-medium text-muted-foreground hover:text-foreground">
