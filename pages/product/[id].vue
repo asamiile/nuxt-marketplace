@@ -45,7 +45,15 @@
           </div>
         </div>
 
-        <UiButton class="w-full mt-8" size="lg">
+        <div v-if="user && product.creator_id === user.id" class="flex items-center gap-4 mt-8">
+          <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', class: 'w-full' })">
+            編集
+          </NuxtLink>
+          <UiButton @click="handleDelete" variant="destructive" class="w-full">
+            削除
+          </UiButton>
+        </div>
+        <UiButton v-else class="w-full mt-8" size="lg">
           購入する
         </UiButton>
       </div>
@@ -59,7 +67,10 @@ import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const isTermsOpen = ref(false)
 const route = useRoute()
+const router = useRouter()
 const supabase = useSupabaseClient()
+const user = useCurrentUser()
+const { showAlert } = useAlert()
 const id = route.params.id
 
 const { data: product, pending, error } = await useAsyncData<Product | null>(`product-${id}`, async () => {
@@ -101,4 +112,42 @@ useHead({
     { name: 'description', content: product.value?.description || '商品の詳細ページです。' }
   ]
 })
+
+const getPathFromUrl = (url: string) => {
+  try {
+    const urlObject = new URL(url)
+    return urlObject.pathname.split('/assets/')[1]
+  } catch (error) {
+    console.error('Invalid URL:', url, error)
+    return null
+  }
+}
+
+const handleDelete = async () => {
+  if (!product.value) return
+
+  if (window.confirm(`本当に「${product.value.name}」を削除しますか？この操作は元に戻せません。`)) {
+    try {
+      // 1. Delete files from storage
+      const imagePath = getPathFromUrl(product.value.image_url)
+      const filePath = getPathFromUrl(product.value.file_url)
+
+      if (imagePath) {
+        await supabase.storage.from('assets').remove([imagePath])
+      }
+      if (filePath) {
+        await supabase.storage.from('assets').remove([filePath])
+      }
+
+      // 2. Delete product from database
+      await supabase.from('products').delete().eq('id', product.value.id)
+
+      showAlert('成功', '商品を削除しました。')
+      router.push('/dashboard')
+
+    } catch (error: any) {
+      showAlert('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
+    }
+  }
+}
 </script>
