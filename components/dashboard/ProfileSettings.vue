@@ -1,6 +1,11 @@
 <template>
   <div class="mb-12">
-    <h2 class="text-2xl font-semibold mb-4 text-foreground">プロフィール設定</h2>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-semibold text-foreground">プロフィール設定</h2>
+      <NuxtLink :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
+        プロフィールを見る
+      </NuxtLink>
+    </div>
     <div v-if="loading" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
@@ -30,13 +35,10 @@
         <Label for="youtube_url">YouTube URL</Label>
         <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
       </div>
-      <div class="pt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Button type="submit" :disabled="saving">
+      <div class="pt-2">
+        <Button type="submit" :disabled="saving" class="w-full">
           {{ saving ? '保存中...' : 'プロフィールを更新' }}
         </Button>
-        <NuxtLink :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
-          プロフィールを見る
-        </NuxtLink>
       </div>
     </form>
   </div>
