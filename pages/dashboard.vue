@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { buttonVariants } from '~/components/ui/buttonVariants'
 import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
@@ -46,13 +45,11 @@ import TabsContent from '~/components/ui/tabs/TabsContent.vue'
 import ProfileSettings from '~/components/dashboard/ProfileSettings.vue'
 import FavoriteProducts from '~/components/dashboard/FavoriteProducts.vue'
 import UserListings from '~/components/dashboard/UserListings.vue'
+import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({
   middleware: 'auth'
 })
-
-const supabase = useSupabaseClient()
-const user = useCurrentUser()
 
 // --- Alert State & Logic ---
 const { alert, showAlert } = useAlert()
@@ -60,7 +57,4 @@ const { alert, showAlert } = useAlert()
 function handleShowAlert(alertData: { title: string, message: string, type: 'success' | 'error' }) {
   showAlert(alertData.title, alertData.message, alertData.type)
 }
-
-
-
 </script>

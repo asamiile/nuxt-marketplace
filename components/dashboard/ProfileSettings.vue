@@ -1,34 +1,39 @@
 <template>
   <div class="mb-12">
-    <h2 class="text-2xl font-semibold mb-4 text-foreground">プロフィール設定</h2>
-    <div v-if="profilePending" class="text-center py-12 bg-secondary rounded-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-semibold text-foreground">プロフィール設定</h2>
+      <NuxtLink v-if="username" :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
+        プロフィールを見る
+      </NuxtLink>
+    </div>
+    <div v-if="loading" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
-    <form v-else-if="profile" @submit.prevent="updateProfile" class="space-y-6 bg-card p-8 rounded-lg shadow-md">
+    <form v-else @submit.prevent="updateProfile" class="space-y-6 bg-card p-8 rounded-lg shadow-md">
       <div>
         <Label for="username">ユーザー名</Label>
-        <Input id="username" v-model="profile.username" type="text" class="mt-1" />
+        <Input id="username" v-model="username" type="text" class="mt-1" />
       </div>
       <div>
         <Label for="avatar_url">アバターURL</Label>
-        <Input id="avatar_url" v-model="profile.avatar_url" type="text" class="mt-1" placeholder="https://..."/>
+        <Input id="avatar_url" v-model="avatar_url" type="text" class="mt-1" placeholder="https://..."/>
         <p class="text-sm text-muted-foreground mt-1">画像URLを入力してください。</p>
       </div>
       <div>
         <Label for="bio">自己紹介</Label>
-        <Textarea id="bio" v-model="profile.bio" class="mt-1" placeholder="こんにちは！..." />
+        <Textarea id="bio" v-model="bio" class="mt-1" placeholder="こんにちは！..." />
       </div>
       <div>
         <Label for="website_url">ウェブサイトURL</Label>
-        <Input id="website_url" v-model="profile.website_url" type="url" class="mt-1" placeholder="https://..."/>
+        <Input id="website_url" v-model="website_url" type="url" class="mt-1" placeholder="https://..."/>
       </div>
       <div>
         <Label for="x_url">X (Twitter) URL</Label>
-        <Input id="x_url" v-model="profile.x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
+        <Input id="x_url" v-model="x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
       </div>
-      <div>
+       <div>
         <Label for="youtube_url">YouTube URL</Label>
-        <Input id="youtube_url" v-model="profile.youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
+        <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
       </div>
       <div class="pt-2">
         <Button type="submit" :disabled="saving" class="w-full">
@@ -36,68 +41,83 @@
         </Button>
       </div>
     </form>
-    <div v-else class="text-center py-12 bg-secondary rounded-lg">
-      <p>プロフィールの読み込みに失敗しました。</p>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
 import Button from '~/components/ui/Button.vue'
+import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
-
 const emit = defineEmits(['show-alert'])
 
 // --- Profile State & Logic ---
+const loading = ref(true)
 const saving = ref(false)
+const username = ref('')
+const avatar_url = ref('')
+const bio = ref('')
+const website_url = ref('')
+const x_url = ref('')
+const youtube_url = ref('')
 
-const { data: profile, pending: profilePending, refresh: refreshProfile } = useAsyncData('profile-data', async () => {
-  if (!user.value) {
-    return null
-  }
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('username, avatar_url, bio, website_url, x_url, youtube_url')
-    .eq('id', user.value.id)
-    .single()
+async function fetchProfile() {
+  if (!user.value) return
+  loading.value = true
+  try {
+    const { data, error, status } = await supabase
+      .from('profiles')
+      .select(`username, website_url, avatar_url, bio, x_url, youtube_url`)
+      .eq('id', user.value.id)
+      .single()
 
-  if (error) {
-    console.error('Error fetching profile data:', error.message)
-    return null
+    if (error && status !== 406) throw error
+
+    if (data) {
+      username.value = data.username || ''
+      website_url.value = data.website_url || ''
+      avatar_url.value = data.avatar_url || ''
+      bio.value = data.bio || ''
+      x_url.value = data.x_url || ''
+      youtube_url.value = data.youtube_url || ''
+    }
+  } catch (error: any) {
+    emit('show-alert', { title: 'エラー', message: 'プロフィールの読み込みに失敗しました: ' + error.message, type: 'error' })
+  } finally {
+    loading.value = false
   }
-  return data
-}, {
-  watch: [user]
-})
+}
 
 async function updateProfile() {
-  if (!user.value || !profile.value) return
+  if (!user.value) return
   saving.value = true
   try {
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        username: profile.value.username,
-        avatar_url: profile.value.avatar_url,
-        bio: profile.value.bio,
-        website_url: profile.value.website_url,
-        x_url: profile.value.x_url,
-        youtube_url: profile.value.youtube_url,
-      })
-      .eq('id', user.value.id)
+    const updates = {
+      id: user.value.id,
+      username: username.value,
+      website_url: website_url.value,
+      avatar_url: avatar_url.value,
+      bio: bio.value,
+      x_url: x_url.value,
+      youtube_url: youtube_url.value,
+    }
+
+    const { error } = await supabase.from('profiles').upsert(updates)
     if (error) throw error
-    emit('show-alert', { title: '成功', message: 'プロフィールを更新しました！', type: 'success' })
-    await refreshProfile() // Re-fetch data after successful update
+    emit('show-alert', { title: '成功', message: 'プロフィールが正常に更新されました！', type: 'success' })
   } catch (error: any) {
-    emit('show-alert', { title: 'エラー', message: (error as Error).message, type: 'error' })
+    emit('show-alert', { title: 'エラー', message: 'プロフィールの更新に失敗しました: ' + error.message, type: 'error' })
   } finally {
     saving.value = false
   }
 }
+
+onMounted(() => {
+  fetchProfile()
+})
 </script>
