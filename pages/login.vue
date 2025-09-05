@@ -48,7 +48,7 @@
           Googleでサインイン
         </Button>
       </div>
-       <div v-if="errorMsg && !hasAttemptedSubmit" class="p-4 text-center text-red-500 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
+       <div v-if="errorMsg" class="p-4 text-center text-red-500 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
     </div>
   </div>
 </template>
