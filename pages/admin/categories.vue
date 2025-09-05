@@ -81,6 +81,9 @@ definePageMeta({
   middleware: 'admin',
 })
 
+const user = useSupabaseUser()
+console.log('User object for debugging RLS:', user.value)
+
 const supabase = useSupabaseClient<Database>()
 const { showToast } = useAlert()
 const loading = ref(false)
