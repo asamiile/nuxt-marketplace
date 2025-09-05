@@ -89,29 +89,18 @@ async function signUp() {
   errorMsg.value = null
   successMsg.value = null
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
     })
 
     if (error) throw error
 
-    // If the user is returned and their email is already confirmed, they are an existing user.
-    if (data.user && data.user.email_confirmed_at) {
-      errorMsg.value = 'このメールアドレスは既に使用されています。ログインしてください。'
-      return
-    }
-
-    // If the user is returned but the email is not confirmed, or it's a new user
-    if (data.user) {
-      successMsg.value = 'アカウントを確認するため、ご入力のメールアドレスに送信されたメールを確認してください。'
-      setTimeout(() => {
-        router.push('/login')
-      }, 5000)
-    } else {
-      // Fallback for unexpected responses
-      throw new Error('An unexpected error occurred during sign up.')
-    }
+    // Always show the confirmation message, as per Supabase security best practices.
+    successMsg.value = 'アカウントを確認するため、ご入力のメールアドレスに送信されたメールを確認してください。'
+    setTimeout(() => {
+      router.push('/login')
+    }, 5000)
 
   } catch (error: any) {
     errorMsg.value = 'アカウントの作成中にエラーが発生しました。'
