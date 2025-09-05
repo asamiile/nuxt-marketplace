@@ -80,6 +80,7 @@ const user = useCurrentUser()
 const route = useRoute()
 const router = useRouter()
 const { showAlert } = useAlert()
+const { getPathFromUrl } = useSupabaseHelpers()
 
 const id = route.params.id as string
 
@@ -186,16 +187,6 @@ const handleFileUpload = (event: Event) => {
   }
 }
 
-const getPathFromUrl = (url: string) => {
-  try {
-    const urlObject = new URL(url)
-    return urlObject.pathname.split('/assets/')[1]
-  } catch (error) {
-    console.error('Invalid URL:', url, error)
-    return null
-  }
-}
-
 const handleUpdate = async () => {
   hasAttemptedSubmit.value = true
   if (!validate() || !product.value || !user.value) {
@@ -215,7 +206,7 @@ const handleUpdate = async () => {
         await supabase.storage.from('assets').remove([oldImagePath])
       }
       const imageExt = imageFile.value.name.split('.').pop()
-      const imagePath = `${user.value.id}/${crypto.randomUUID()}.${imageExt}`
+      const imagePath = `products/${user.value.id}/${crypto.randomUUID()}.${imageExt}`
       const { error: imageError } = await supabase.storage.from('assets').upload(imagePath, imageFile.value)
       if (imageError) throw new Error(`画像アップロードエラー: ${imageError.message}`)
       const { data: imageUrlData } = supabase.storage.from('assets').getPublicUrl(imagePath)
@@ -229,7 +220,7 @@ const handleUpdate = async () => {
         await supabase.storage.from('assets').remove([oldFilePath])
       }
       const assetExt = assetFile.value.name.split('.').pop()
-      const assetPath = `${user.value.id}/${crypto.randomUUID()}.${assetExt}`
+      const assetPath = `products/${user.value.id}/${crypto.randomUUID()}.${assetExt}`
       const { error: assetError } = await supabase.storage.from('assets').upload(assetPath, assetFile.value)
       if (assetError) throw new Error(`ファイルアップロードエラー: ${assetError.message}`)
       const { data: assetUrlData } = supabase.storage.from('assets').getPublicUrl(assetPath)

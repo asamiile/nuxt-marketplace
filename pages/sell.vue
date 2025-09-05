@@ -156,12 +156,12 @@ const handleSubmit = async () => {
   try {
     // 1. Upload files to Supabase Storage
     const imageExt = imageFile.value.name.split('.').pop()
-    const imagePath = `${user.value.id}/${crypto.randomUUID()}.${imageExt}`
+    const imagePath = `products/${user.value.id}/${crypto.randomUUID()}.${imageExt}`
     const { error: imageError } = await supabase.storage.from('assets').upload(imagePath, imageFile.value)
     if (imageError) throw new Error(`画像アップロードエラー: ${imageError.message}`)
 
     const assetExt = assetFile.value.name.split('.').pop()
-    const assetPath = `${user.value.id}/${crypto.randomUUID()}.${assetExt}`
+    const assetPath = `products/${user.value.id}/${crypto.randomUUID()}.${assetExt}`
     const { error: assetError } = await supabase.storage.from('assets').upload(assetPath, assetFile.value)
     if (assetError) throw new Error(`ファイルアップロードエラー: ${assetError.message}`)
 
