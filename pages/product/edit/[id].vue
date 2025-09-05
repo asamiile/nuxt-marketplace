@@ -103,7 +103,7 @@ const errors = ref<Record<string, string>>({})
 const productSchema = z.object({
   name: z.string().min(1, { message: "商品名は必須です。" }).max(50, { message: "商品名は50文字以内で入力してください。" }),
   description: z.string().min(1, { message: "説明は必須です。" }),
-  price: z.number({ invalid_type_error: "価格は数値を入力してください。" }).min(0, { message: "価格は0以上の数値を入力してください。" }),
+  price: z.number({ invalid_type_error: "価格は数値を入力してください。" }).gt(0, { message: "価格は0より大きい数値を入力してください。" }),
   image: z.instanceof(File).optional(),
   file: z.instanceof(File).optional()
 })
