@@ -17,10 +17,10 @@ export default defineNuxtConfig({
       exclude: ['/signup', '/forgot-password', '/update-password'], // Exclude signup page from auth guard
     },
   },
-  devServer: {
-    https: {
-      key: './server.key',
-      cert: './server.crt'
-    }
-  },
+  // devServer: {
+  //   https: {
+  //     key: './server.key',
+  //     cert: './server.crt'
+  //   }
+  // },
 })
