@@ -19,7 +19,15 @@ FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
 
 -- 3. Admin Update/Delete Access: Only admins can rename or delete existing tags.
-CREATE POLICY "Admins can update and delete tags"
+-- 3. Admin Update Access: Only admins can rename existing tags.
+CREATE POLICY "Admins can update tags"
 ON public.tags
-FOR UPDATE, DELETE
+FOR UPDATE
+USING (public.is_claims_admin())
+WITH CHECK (public.is_claims_admin());
+
+-- 4. Admin Delete Access: Only admins can delete existing tags.
+CREATE POLICY "Admins can delete tags"
+ON public.tags
+FOR DELETE
 USING (public.is_claims_admin());
