@@ -1,7 +1,26 @@
 <template>
   <div class="container">
-    <div v-if="pending">
-      <p>商品を読み込んでいます...</p>
+    <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      <!-- Skeleton for Image -->
+      <div>
+        <Skeleton class="w-full aspect-square rounded-lg" />
+      </div>
+      <!-- Skeleton for Product Details -->
+      <div class="space-y-4">
+        <Skeleton class="h-10 w-3/4" />
+        <Skeleton class="h-6 w-1/4" />
+        <Skeleton class="h-8 w-1/3 mb-4" />
+        <div class="space-y-2">
+          <Skeleton class="h-4 w-full" />
+          <Skeleton class="h-4 w-full" />
+          <Skeleton class="h-4 w-5/6" />
+        </div>
+        <div class="border-t pt-6 mt-6 space-y-4">
+          <Skeleton class="h-6 w-1/2" />
+          <Skeleton class="h-10 w-full" />
+        </div>
+        <Skeleton class="h-12 w-full mt-4" />
+      </div>
     </div>
     <div v-else-if="error || !product" class="text-center">
       <h1 class="text-2xl font-bold">商品が見つかりません</h1>
@@ -64,6 +83,7 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
 import { buttonVariants } from '~/components/ui/buttonVariants'
+import Skeleton from '~/components/ui/Skeleton.vue'
 
 const isTermsOpen = ref(false)
 const route = useRoute()

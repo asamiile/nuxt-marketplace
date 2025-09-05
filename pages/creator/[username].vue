@@ -1,6 +1,36 @@
 <template>
-  <div v-if="pending" class="flex items-center justify-center container py-12">
-    <p class="text-lg">ページを読み込んでいます...</p>
+  <div v-if="pending" class="container py-8">
+    <!-- Skeleton for Creator Info Header -->
+    <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-8 rounded-2xl">
+      <Skeleton class="w-28 h-28 rounded-full border-4 border-background" />
+      <div class="flex-1 space-y-3 text-center sm:text-left">
+        <Skeleton class="h-8 w-48 mx-auto sm:mx-0" />
+        <Skeleton class="h-4 w-full max-w-lg mx-auto sm:mx-0" />
+        <Skeleton class="h-4 w-full max-w-md mx-auto sm:mx-0" />
+        <div class="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 pt-2">
+          <Skeleton class="h-4 w-20" />
+          <Skeleton class="h-4 w-20" />
+          <Skeleton class="h-4 w-20" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Skeleton for Creator's Products -->
+    <div>
+      <Skeleton class="h-7 w-64 mb-6" />
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div v-for="n in 8" :key="n" class="border rounded-lg p-4 shadow">
+          <div class="space-y-3">
+            <Skeleton class="h-48 w-full" />
+            <div class="space-y-2">
+              <Skeleton class="h-4 w-3/4" />
+              <Skeleton class="h-4 w-1/2" />
+              <Skeleton class="h-4 w-1/4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div v-else-if="error" class="flex flex-col items-center justify-center container py-12 text-center">
     <h1 class="text-2xl font-bold text-red-500">エラーが発生しました</h1>
@@ -63,6 +93,7 @@ import type { Profile } from '~/types/profile'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import ProductCard from '~/components/ProductCard.vue'
 import Pagination from '~/components/ui/Pagination.vue'
+import Skeleton from '~/components/ui/Skeleton.vue'
 
 const route = useRoute()
 const supabase = useSupabaseClient()
