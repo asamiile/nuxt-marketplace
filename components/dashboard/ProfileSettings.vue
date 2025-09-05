@@ -16,9 +16,15 @@
         <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
       </div>
       <div>
-        <Label for="avatar_url">アバターURL</Label>
-        <Input id="avatar_url" v-model="avatar_url" type="text" class="mt-1" placeholder="https://..."/>
-        <p class="text-sm text-muted-foreground mt-1">画像URLを入力してください。</p>
+        <Label for="avatar_url">アバター画像</Label>
+        <div class="flex items-center gap-4 mt-2">
+          <img v-if="avatar_url" :src="avatar_url" alt="Current Avatar" class="w-20 h-20 rounded-full object-cover bg-secondary">
+          <div v-else class="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-muted-foreground">
+            No Image
+          </div>
+          <Input id="avatar_file" type="file" @change="handleAvatarUpload" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
+        </div>
+        <p class="text-sm text-muted-foreground mt-1">新しい画像をアップロードしてアバターを変更します。</p>
       </div>
       <div>
         <Label for="bio">自己紹介</Label>
@@ -68,6 +74,7 @@ const username = ref('')
 const avatar_url = ref('')
 const bio = ref('')
 const website_url = ref('')
+const avatarFile = ref<File | null>(null)
 const x_url = ref('')
 const youtube_url = ref('')
 const hasAttemptedSubmit = ref(false)
@@ -119,6 +126,14 @@ watch(website_url, () => { if (hasAttemptedSubmit.value) validate() })
 watch(x_url, () => { if (hasAttemptedSubmit.value) validate() })
 watch(youtube_url, () => { if (hasAttemptedSubmit.value) validate() })
 
+function handleAvatarUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    avatarFile.value = target.files[0]
+    // Create a temporary URL for preview
+    avatar_url.value = URL.createObjectURL(avatarFile.value)
+  }
+}
 
 async function fetchProfile() {
   if (!user.value) return
@@ -154,30 +169,60 @@ async function updateProfile() {
   }
   saving.value = true
   try {
+    let publicUrl = avatar_url.value;
+
+    if (avatarFile.value) {
+      const filePath = `avatars/${user.value.id}`;
+      const { error: uploadError } = await supabase.storage
+        .from('assets')
+        .upload(filePath, avatarFile.value, {
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('assets')
+        .getPublicUrl(filePath);
+
+      if (!data) {
+        throw new Error('Failed to get public URL for avatar.');
+      }
+      publicUrl = data.publicUrl;
+    }
+
     const updates = {
       id: user.value.id,
       username: username.value,
       website_url: website_url.value,
-      avatar_url: avatar_url.value,
+      avatar_url: publicUrl,
       bio: bio.value,
       x_url: x_url.value,
       youtube_url: youtube_url.value,
+    };
+
+    const { error } = await supabase.from('profiles').upsert(updates);
+    if (error) throw error;
+
+    // After a successful upload and profile update, refresh the avatar_url to be the new public one, not the blob url
+    if(avatarFile.value) {
+      const { data: profileData } = await supabase.from('profiles').select('avatar_url').eq('id', user.value.id).single();
+      if(profileData) avatar_url.value = profileData.avatar_url;
     }
 
-    const { error } = await supabase.from('profiles').upsert(updates)
-    if (error) throw error
-    emit('show-alert', { title: '成功', message: 'プロフィールが正常に更新されました！', type: 'success' })
-    hasAttemptedSubmit.value = false
+    avatarFile.value = null; // Reset file input
+    emit('show-alert', { title: '成功', message: 'プロフィールが正常に更新されました！', type: 'success' });
+    hasAttemptedSubmit.value = false;
   } catch (error: any) {
     // Check for username uniqueness error
     if (error.message.includes('duplicate key value violates unique constraint "profiles_username_key"')) {
-       errors.value.username = 'このユーザー名は既に使用されています。'
-       emit('show-alert', { title: 'エラー', message: 'このユーザー名は既に使用されています。', type: 'error' })
+       errors.value.username = 'このユーザー名は既に使用されています。';
+       emit('show-alert', { title: 'エラー', message: 'このユーザー名は既に使用されています。', type: 'error' });
     } else {
-      emit('show-alert', { title: 'エラー', message: 'プロフィールの更新に失敗しました: ' + error.message, type: 'error' })
+      emit('show-alert', { title: 'エラー', message: 'プロフィールの更新に失敗しました: ' + error.message, type: 'error' });
     }
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
