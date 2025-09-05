@@ -35,7 +35,7 @@
       </div>
       <div>
         <div class="mb-2">
-          <span v-if="product.categories?.name" class="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+          <span v-if="product.categories?.name" class="text-sm font-semibold bg-secondary text-foreground px-3 py-1 rounded-full">
             {{ product.categories.name }}
           </span>
         </div>
