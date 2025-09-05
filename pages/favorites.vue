@@ -38,7 +38,7 @@ useHead({
   title: 'お気に入り商品',
 })
 
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 
 // Fetch favorite products
 const {
@@ -60,7 +60,7 @@ watch(currentPage, () => {
 
 watch(error, (newError) => {
   if (newError) {
-    showAlert('エラー', `お気に入り商品の読み込みに失敗しました: ${newError.message}`, 'error')
+    showToast('エラー', `お気に入り商品の読み込みに失敗しました: ${newError.message}`, 'error')
   }
 })
 </script>

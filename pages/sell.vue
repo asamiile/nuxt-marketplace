@@ -130,7 +130,7 @@ watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const router = useRouter()
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 
 const handleSubmit = async () => {
   hasAttemptedSubmit.value = true
@@ -175,12 +175,12 @@ const handleSubmit = async () => {
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
 
     // 4. Handle success
-    showAlert('成功', '商品が正常にアップロードされました！')
+    showToast('成功', '商品が正常にアップロードされました！')
     router.push(`/product/${data.id}`)
     hasAttemptedSubmit.value = false
 
   } catch (error: any) {
-    showAlert('エラー', error.message || '予期せぬエラーが発生しました。', 'error')
+    showToast('エラー', error.message || '予期せぬエラーが発生しました。', 'error')
   } finally {
     isSubmitting.value = false
   }

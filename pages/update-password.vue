@@ -38,7 +38,7 @@ import Label from '~/components/ui/Label.vue'
 
 const supabase = useSupabaseClient()
 const router = useRouter()
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -47,11 +47,11 @@ const loading = ref(false)
 
 const handleUpdatePassword = async () => {
   if (password.value !== confirmPassword.value) {
-    showAlert('エラー', 'パスワードが一致しません。', 'error')
+    showToast('エラー', 'パスワードが一致しません。', 'error')
     return
   }
   if (!password.value) {
-    showAlert('エラー', 'パスワードを入力してください。', 'error')
+    showToast('エラー', 'パスワードを入力してください。', 'error')
     return
   }
 
@@ -61,10 +61,10 @@ const handleUpdatePassword = async () => {
       password: password.value,
     })
     if (error) throw error
-    showAlert('成功', 'パスワードが正常に更新されました。')
+    showToast('成功', 'パスワードが正常に更新されました。')
     router.push('/login')
   } catch (error: any) {
-    showAlert('エラー', error.message, 'error')
+    showToast('エラー', error.message, 'error')
   } finally {
     loading.value = false
   }

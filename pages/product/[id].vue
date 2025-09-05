@@ -90,7 +90,7 @@ const route = useRoute()
 const router = useRouter()
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 const id = route.params.id
 
 const { data: product, pending, error } = await useAsyncData<Product | null>(`product-${id}`, async () => {
@@ -172,11 +172,11 @@ const handleDelete = async () => {
       // 2. Delete product from database
       await supabase.from('products').delete().eq('id', product.value.id)
 
-      showAlert('成功', '商品を削除しました。')
+      showToast('成功', '商品を削除しました。')
       router.push('/dashboard')
 
     } catch (error: any) {
-      showAlert('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
+      showToast('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
     }
   }
 }

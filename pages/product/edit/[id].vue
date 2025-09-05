@@ -79,7 +79,7 @@ const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const route = useRoute()
 const router = useRouter()
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 const { getPathFromUrl } = useSupabaseHelpers()
 
 const id = route.params.id as string
@@ -227,12 +227,12 @@ const handleUpdate = async () => {
     if (dbError) throw new Error(`データベース更新エラー: ${dbError.message}`)
 
     // 4. Handle success
-    showAlert('成功', '商品が正常に更新されました！')
+    showToast('成功', '商品が正常に更新されました！')
     router.push(`/product/${product.value.id}`)
     hasAttemptedSubmit.value = false
 
   } catch (error: any) {
-    showAlert('更新エラー', error.message || '予期せぬエラーが発生しました。', 'error')
+    showToast('更新エラー', error.message || '予期せぬエラーが発生しました。', 'error')
   } finally {
     isSubmitting.value = false
   }
