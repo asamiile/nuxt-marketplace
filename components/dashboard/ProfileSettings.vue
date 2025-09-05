@@ -17,14 +17,8 @@
       </div>
       <div>
         <Label for="avatar_url">アバター画像</Label>
-        <div class="flex items-center gap-4 mt-2">
-          <img v-if="avatar_url" :src="avatar_url" alt="Current Avatar" class="w-20 h-20 rounded-full object-cover bg-secondary">
-          <div v-else class="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-muted-foreground">
-            No Image
-          </div>
-          <Input id="avatar_file" type="file" @change="handleAvatarUpload" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
-        </div>
-        <p class="text-sm text-muted-foreground mt-1">新しい画像をアップロードしてアバターを変更します。</p>
+        <FileDropzone v-model="avatarFile" accept="image/*" :initial-preview-url="avatar_url" class="mt-1" />
+        <p class="text-sm text-muted-foreground mt-2">新しい画像をドラッグ＆ドロップするか、クリックしてアバターを変更します。</p>
       </div>
       <div>
         <Label for="bio">自己紹介</Label>
@@ -62,6 +56,7 @@ import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
 import Button from '~/components/ui/Button.vue'
 import { buttonVariants } from '~/components/ui/buttonVariants'
+import FileDropzone from '~/components/ui/FileDropzone.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
@@ -125,15 +120,6 @@ watch(username, () => { if (hasAttemptedSubmit.value) validate() })
 watch(website_url, () => { if (hasAttemptedSubmit.value) validate() })
 watch(x_url, () => { if (hasAttemptedSubmit.value) validate() })
 watch(youtube_url, () => { if (hasAttemptedSubmit.value) validate() })
-
-function handleAvatarUpload(event: Event) {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    avatarFile.value = target.files[0]
-    // Create a temporary URL for preview
-    avatar_url.value = URL.createObjectURL(avatarFile.value)
-  }
-}
 
 async function fetchProfile() {
   if (!user.value) return

@@ -42,13 +42,12 @@
             </div>
             <div>
               <Label for="image">サムネイル画像 (変更する場合)</Label>
-              <p class="text-sm text-muted-foreground mb-2">現在の画像: <a :href="product.image_url" target="_blank" class="underline hover:text-primary">表示</a></p>
-              <Input @change="handleImageUpload" type="file" id="image" accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <FileDropzone v-model="imageFile" accept="image/*" :initial-preview-url="product.image_url" class="mt-1" />
             </div>
             <div>
               <Label for="file">デジタルアセット (変更する場合)</Label>
-               <p class="text-sm text-muted-foreground mb-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-primary">ダウンロード</a></p>
-              <Input @change="handleFileUpload" type="file" id="file" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <FileDropzone v-model="assetFile" class="mt-1" />
+              <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-primary">ダウンロード</a></p>
             </div>
             <div class="pt-2">
               <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
@@ -70,6 +69,7 @@ import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
 import Button from '~/components/ui/Button.vue'
+import FileDropzone from '~/components/ui/FileDropzone.vue'
 
 definePageMeta({
   middleware: 'auth'
@@ -172,20 +172,6 @@ onMounted(async () => {
 
   pending.value = false
 })
-
-const handleImageUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    imageFile.value = target.files[0]
-  }
-}
-
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    assetFile.value = target.files[0]
-  }
-}
 
 const handleUpdate = async () => {
   hasAttemptedSubmit.value = true
