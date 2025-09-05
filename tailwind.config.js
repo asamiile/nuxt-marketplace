@@ -2,20 +2,20 @@
 module.exports = {
   darkMode: 'class',
   content: [
-    './components/**/*.{js,vue,ts}',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
-    './plugins/**/*.{js,ts}',
-    './nuxt.config.{js,ts}',
-    './app.vue'
+    "./components/**/*.{js,vue,ts}",
+    "./layouts/**/*.vue",
+    "./pages/**/*.vue",
+    "./plugins/**/*.{js,ts}",
+    "./nuxt.config.{js,ts}",
+    "./app.vue",
   ],
   theme: {
     container: {
       center: true,
       padding: '1rem',
       screens: {
-        '2xl': '1200px'
-      }
+        '2xl': '1200px',
+      },
     },
     extend: {
       colors: {
@@ -26,9 +26,9 @@ module.exports = {
         card: 'hsl(var(--card))',
         'card-foreground': 'hsl(var(--card-foreground))',
         border: 'hsl(var(--border))',
-        secondary: 'hsl(var(--secondary))'
-      }
-    }
+        secondary: 'hsl(var(--secondary))',
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 }
