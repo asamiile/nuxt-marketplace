@@ -51,7 +51,7 @@
               <Input @change="handleFileUpload" type="file" id="file" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || isFormInvalid">
+              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? '更新中...' : '更新する' }}
               </Button>
             </div>
@@ -87,6 +87,7 @@ const id = route.params.id as string
 const product = ref<Product | null>(null)
 const pending = ref(true)
 const isSubmitting = ref(false)
+const hasAttemptedSubmit = ref(false)
 
 // --- Form State ---
 const name = ref('')
@@ -141,11 +142,11 @@ const validate = () => {
 }
 
 // Watch for changes to validate fields individually
-watch(name, () => { if (errors.value.name) validate() })
-watch(description, () => { if (errors.value.description) validate() })
-watch(price, () => { if (errors.value.price) validate() })
-watch(imageFile, () => { if (errors.value.image) validate() })
-watch(assetFile, () => { if (errors.value.file) validate() })
+watch(name, () => { if (hasAttemptedSubmit.value) validate() })
+watch(description, () => { if (hasAttemptedSubmit.value) validate() })
+watch(price, () => { if (hasAttemptedSubmit.value) validate() })
+watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
+watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
 // Fetch product data
 onMounted(async () => {
@@ -196,6 +197,7 @@ const getPathFromUrl = (url: string) => {
 }
 
 const handleUpdate = async () => {
+  hasAttemptedSubmit.value = true
   if (!validate() || !product.value || !user.value) {
     return
   }
@@ -250,6 +252,7 @@ const handleUpdate = async () => {
     // 4. Handle success
     showAlert('成功', '商品が正常に更新されました！')
     router.push(`/product/${product.value.id}`)
+    hasAttemptedSubmit.value = false
 
   } catch (error: any) {
     showAlert('更新エラー', error.message || '予期せぬエラーが発生しました。', 'error')

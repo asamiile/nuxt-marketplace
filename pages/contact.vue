@@ -26,7 +26,7 @@
           <p v-if="errors.message" class="text-sm text-red-500 mt-1">{{ errors.message }}</p>
         </div>
         <div class="pt-2">
-          <Button type="submit" :disabled="loading || isFormInvalid" class="w-full">
+          <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
             <span v-if="loading">送信中...</span>
             <span v-else>送信</span>
           </Button>
@@ -54,6 +54,7 @@ const form = ref({
   message: '',
 })
 const loading = ref(false)
+const hasAttemptedSubmit = ref(false)
 
 // --- Validation ---
 const errors = ref<Record<string, string>>({})
@@ -84,15 +85,16 @@ const validate = () => {
 }
 
 // Watch for changes to validate fields individually
-watch(() => form.value.name, () => { if (errors.value.name) validate() })
-watch(() => form.value.email, () => { if (errors.value.email) validate() })
-watch(() => form.value.subject, () => { if (errors.value.subject) validate() })
-watch(() => form.value.message, () => { if (errors.value.message) validate() })
+watch(() => form.value.name, () => { if (hasAttemptedSubmit.value) validate() })
+watch(() => form.value.email, () => { if (hasAttemptedSubmit.value) validate() })
+watch(() => form.value.subject, () => { if (hasAttemptedSubmit.value) validate() })
+watch(() => form.value.message, () => { if (hasAttemptedSubmit.value) validate() })
 
 // --- Submission ---
 const supabase = useSupabaseClient()
 
 async function handleSubmit() {
+  hasAttemptedSubmit.value = true
   if (!validate()) {
     return
   }
@@ -117,6 +119,7 @@ async function handleSubmit() {
     }
     // エラーもリセット
     errors.value = {}
+    hasAttemptedSubmit.value = false
   } catch (err: any) {
     showAlert('エラー', `エラーが発生しました: ${err.message}`, 'error')
   } finally {

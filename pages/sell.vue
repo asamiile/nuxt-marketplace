@@ -42,7 +42,7 @@
               <p v-if="errors.file" class="text-sm text-red-500 mt-1">{{ errors.file }}</p>
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || isFormInvalid">
+              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? 'アップロード中...' : '出品する' }}
               </Button>
             </div>
@@ -73,6 +73,7 @@ const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
+const hasAttemptedSubmit = ref(false)
 
 // --- Validation ---
 const errors = ref<Record<string, string>>({})
@@ -118,11 +119,11 @@ const validate = () => {
 }
 
 // Watch for changes to validate fields individually
-watch(name, () => { if (errors.value.name) validate() })
-watch(description, () => { if (errors.value.description) validate() })
-watch(price, () => { if (errors.value.price) validate() })
-watch(imageFile, () => { if (errors.value.image) validate() })
-watch(assetFile, () => { if (errors.value.file) validate() })
+watch(name, () => { if (hasAttemptedSubmit.value) validate() })
+watch(description, () => { if (hasAttemptedSubmit.value) validate() })
+watch(price, () => { if (hasAttemptedSubmit.value) validate() })
+watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
+watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
 
 const handleImageUpload = (event: Event) => {
@@ -145,6 +146,7 @@ const router = useRouter()
 const { showAlert } = useAlert()
 
 const handleSubmit = async () => {
+  hasAttemptedSubmit.value = true
   if (!validate() || !user.value || !imageFile.value || !assetFile.value) {
     return
   }
@@ -188,6 +190,7 @@ const handleSubmit = async () => {
     // 4. Handle success
     showAlert('成功', '商品が正常にアップロードされました！')
     router.push(`/product/${data.id}`)
+    hasAttemptedSubmit.value = false
 
   } catch (error: any) {
     showAlert('エラー', error.message || '予期せぬエラーが発生しました。', 'error')

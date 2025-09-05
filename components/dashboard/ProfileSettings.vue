@@ -40,7 +40,7 @@
         <p v-if="errors.youtube_url" class="text-sm text-red-500 mt-1">{{ errors.youtube_url }}</p>
       </div>
       <div class="pt-2">
-        <Button type="submit" :disabled="saving || isFormInvalid" class="w-full">
+        <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
           {{ saving ? '保存中...' : 'プロフィールを更新' }}
         </Button>
       </div>
@@ -70,6 +70,7 @@ const bio = ref('')
 const website_url = ref('')
 const x_url = ref('')
 const youtube_url = ref('')
+const hasAttemptedSubmit = ref(false)
 
 // --- Validation ---
 const errors = ref<Record<string, string>>({})
@@ -113,10 +114,10 @@ const validate = () => {
 }
 
 // Watch for changes to validate fields individually
-watch(username, () => { if (errors.value.username) validate() })
-watch(website_url, () => { if (errors.value.website_url) validate() })
-watch(x_url, () => { if (errors.value.x_url) validate() })
-watch(youtube_url, () => { if (errors.value.youtube_url) validate() })
+watch(username, () => { if (hasAttemptedSubmit.value) validate() })
+watch(website_url, () => { if (hasAttemptedSubmit.value) validate() })
+watch(x_url, () => { if (hasAttemptedSubmit.value) validate() })
+watch(youtube_url, () => { if (hasAttemptedSubmit.value) validate() })
 
 
 async function fetchProfile() {
@@ -147,6 +148,7 @@ async function fetchProfile() {
 }
 
 async function updateProfile() {
+  hasAttemptedSubmit.value = true
   if (!validate() || !user.value) {
     return
   }
@@ -165,6 +167,7 @@ async function updateProfile() {
     const { error } = await supabase.from('profiles').upsert(updates)
     if (error) throw error
     emit('show-alert', { title: '成功', message: 'プロフィールが正常に更新されました！', type: 'success' })
+    hasAttemptedSubmit.value = false
   } catch (error: any) {
     // Check for username uniqueness error
     if (error.message.includes('duplicate key value violates unique constraint "profiles_username_key"')) {
