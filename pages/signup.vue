@@ -7,54 +7,105 @@
         </h2>
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="signUp">
-        <div class="space-y-2 rounded-md shadow-sm">
+        <div class="space-y-4 rounded-md">
           <div>
-            <label for="email-address" class="sr-only">メールアドレス</label>
-            <input id="email-address" v-model="email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-2 bg-background text-foreground placeholder-gray-500 border border-border rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm" placeholder="メールアドレス">
+            <Label for="email-address">メールアドレス</Label>
+            <Input id="email-address" v-model="email" name="email" type="email" autocomplete="email" class="mt-1" placeholder="メールアドレス" />
+            <p v-if="errors.email" class="text-sm text-red-500 mt-1">{{ errors.email }}</p>
           </div>
           <div>
-            <label for="password" class="sr-only">パスワード</label>
-            <input id="password" v-model="password" name="password" type="password" autocomplete="current-password" required class="relative block w-full px-3 py-2 bg-background text-foreground placeholder-gray-500 border border-border rounded-none appearance-none rounded-b-md focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm" placeholder="パスワード">
+            <Label for="password">パスワード</Label>
+            <Input id="password" v-model="password" name="password" type="password" autocomplete="new-password" class="mt-1" placeholder="パスワード" />
+            <p v-if="errors.password" class="text-sm text-red-500 mt-1">{{ errors.password }}</p>
           </div>
         </div>
 
         <div>
-          <button type="submit" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
-            新規登録
-          </button>
+          <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full" :class="buttonVariants({ variant: 'gradient-blue' })">
+            <span v-if="loading">登録中...</span>
+            <span v-else>新規登録</span>
+          </Button>
         </div>
       </form>
-      <div v-if="errorMsg" class="text-red-500">{{ errorMsg }}</div>
-      <div v-if="successMsg" class="text-green-500">{{ successMsg }}</div>
+      <div v-if="errorMsg" class="p-4 text-center text-red-500 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
+      <div v-if="successMsg" class="p-4 text-center text-green-500 bg-green-500/10 rounded-md">{{ successMsg }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { z } from 'zod'
+import { buttonVariants } from '~/components/ui/buttonVariants'
+import Input from '~/components/ui/Input.vue'
+import Label from '~/components/ui/Label.vue'
+import Button from '~/components/ui/Button.vue'
+
 const supabase = useSupabaseClient()
 const router = useRouter()
 
+// --- Form & State ---
 const email = ref('')
 const password = ref('')
 const errorMsg = ref<string | null>(null)
 const successMsg = ref<string | null>(null)
+const loading = ref(false)
+const hasAttemptedSubmit = ref(false)
 
+// --- Validation ---
+const errors = ref<Record<string, string>>({})
+const signupSchema = z.object({
+  email: z.string().email({ message: "有効なメールアドレスを入力してください。" }),
+  password: z.string().min(6, { message: "パスワードは6文字以上で入力してください。" }),
+})
+
+const isFormInvalid = computed(() => {
+  return !signupSchema.safeParse({ email: email.value, password: password.value }).success
+})
+
+const validate = () => {
+  const result = signupSchema.safeParse({ email: email.value, password: password.value })
+  if (!result.success) {
+    const newErrors: Record<string, string> = {}
+    result.error.issues.forEach((issue) => {
+      newErrors[issue.path[0]] = issue.message
+    })
+    errors.value = newErrors
+    return false
+  }
+  errors.value = {}
+  return true
+}
+
+watch(email, () => { if (hasAttemptedSubmit.value) validate() })
+watch(password, () => { if (hasAttemptedSubmit.value) validate() })
+
+// --- Auth Logic ---
 async function signUp() {
+  hasAttemptedSubmit.value = true
+  if (!validate()) return
+
+  loading.value = true
+  errorMsg.value = null
+  successMsg.value = null
   try {
-    errorMsg.value = null
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
     })
-    if (error) throw error
-    if (!data.user) throw new Error('User data is null after sign up.')
 
-    successMsg.value = 'アカウントを確認するため、メールを確認してください。'
+    if (error) throw error
+
+    // Always show the confirmation message, as per Supabase security best practices.
+    successMsg.value = 'アカウントを確認するため、ご入力のメールアドレスに送信されたメールを確認してください。'
     setTimeout(() => {
       router.push('/login')
-    }, 3000)
+    }, 5000)
+
   } catch (error: any) {
-    errorMsg.value = error.message
+    errorMsg.value = 'アカウントの作成中にエラーが発生しました。'
+  } finally {
+    loading.value = false
   }
 }
 </script>

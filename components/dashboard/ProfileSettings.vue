@@ -13,6 +13,7 @@
       <div>
         <Label for="username">ユーザー名</Label>
         <Input id="username" v-model="username" type="text" class="mt-1" />
+        <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
       </div>
       <div>
         <Label for="avatar_url">アバターURL</Label>
@@ -26,17 +27,20 @@
       <div>
         <Label for="website_url">ウェブサイトURL</Label>
         <Input id="website_url" v-model="website_url" type="url" class="mt-1" placeholder="https://..."/>
+         <p v-if="errors.website_url" class="text-sm text-red-500 mt-1">{{ errors.website_url }}</p>
       </div>
       <div>
         <Label for="x_url">X (Twitter) URL</Label>
         <Input id="x_url" v-model="x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
+        <p v-if="errors.x_url" class="text-sm text-red-500 mt-1">{{ errors.x_url }}</p>
       </div>
        <div>
         <Label for="youtube_url">YouTube URL</Label>
         <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
+        <p v-if="errors.youtube_url" class="text-sm text-red-500 mt-1">{{ errors.youtube_url }}</p>
       </div>
       <div class="pt-2">
-        <Button type="submit" :disabled="saving" class="w-full">
+        <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
           {{ saving ? '保存中...' : 'プロフィールを更新' }}
         </Button>
       </div>
@@ -45,7 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import { z } from 'zod'
 import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
@@ -56,7 +61,7 @@ const supabase = useSupabaseClient()
 const user = useCurrentUser()
 const emit = defineEmits(['show-alert'])
 
-// --- Profile State & Logic ---
+// --- Profile State ---
 const loading = ref(true)
 const saving = ref(false)
 const username = ref('')
@@ -65,6 +70,55 @@ const bio = ref('')
 const website_url = ref('')
 const x_url = ref('')
 const youtube_url = ref('')
+const hasAttemptedSubmit = ref(false)
+
+// --- Validation ---
+const errors = ref<Record<string, string>>({})
+
+const profileSchema = z.object({
+  username: z.string()
+    .min(1, { message: "ユーザー名は必須です。" })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: "ユーザー名は英数字とアンダースコアのみ使用できます。" }),
+  website_url: z.string().url({ message: "有効なURLを入力してください。" }).optional().or(z.literal('')),
+  x_url: z.string().url({ message: "有効なURLを入力してください。" }).optional().or(z.literal('')),
+  youtube_url: z.string().url({ message: "有効なURLを入力してください。" }).optional().or(z.literal('')),
+})
+
+const isFormInvalid = computed(() => {
+  return !profileSchema.safeParse({
+    username: username.value,
+    website_url: website_url.value,
+    x_url: x_url.value,
+    youtube_url: youtube_url.value,
+  }).success
+})
+
+const validate = () => {
+  const result = profileSchema.safeParse({
+    username: username.value,
+    website_url: website_url.value,
+    x_url: x_url.value,
+    youtube_url: youtube_url.value,
+  })
+
+  if (!result.success) {
+    const newErrors: Record<string, string> = {}
+    for (const issue of result.error.issues) {
+      newErrors[issue.path[0]] = issue.message
+    }
+    errors.value = newErrors
+    return false
+  }
+  errors.value = {}
+  return true
+}
+
+// Watch for changes to validate fields individually
+watch(username, () => { if (hasAttemptedSubmit.value) validate() })
+watch(website_url, () => { if (hasAttemptedSubmit.value) validate() })
+watch(x_url, () => { if (hasAttemptedSubmit.value) validate() })
+watch(youtube_url, () => { if (hasAttemptedSubmit.value) validate() })
+
 
 async function fetchProfile() {
   if (!user.value) return
@@ -94,7 +148,10 @@ async function fetchProfile() {
 }
 
 async function updateProfile() {
-  if (!user.value) return
+  hasAttemptedSubmit.value = true
+  if (!validate() || !user.value) {
+    return
+  }
   saving.value = true
   try {
     const updates = {
@@ -110,8 +167,15 @@ async function updateProfile() {
     const { error } = await supabase.from('profiles').upsert(updates)
     if (error) throw error
     emit('show-alert', { title: '成功', message: 'プロフィールが正常に更新されました！', type: 'success' })
+    hasAttemptedSubmit.value = false
   } catch (error: any) {
-    emit('show-alert', { title: 'エラー', message: 'プロフィールの更新に失敗しました: ' + error.message, type: 'error' })
+    // Check for username uniqueness error
+    if (error.message.includes('duplicate key value violates unique constraint "profiles_username_key"')) {
+       errors.value.username = 'このユーザー名は既に使用されています。'
+       emit('show-alert', { title: 'エラー', message: 'このユーザー名は既に使用されています。', type: 'error' })
+    } else {
+      emit('show-alert', { title: 'エラー', message: 'プロフィールの更新に失敗しました: ' + error.message, type: 'error' })
+    }
   } finally {
     saving.value = false
   }

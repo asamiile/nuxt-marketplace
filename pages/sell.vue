@@ -10,15 +10,18 @@
           <form @submit.prevent="handleSubmit" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>
-              <Input v-model="name" type="text" id="name" required class="mt-1" />
+              <Input v-model="name" type="text" id="name" class="mt-1" />
+              <p v-if="errors.name" class="text-sm text-red-500 mt-1">{{ errors.name }}</p>
             </div>
             <div>
               <Label for="description">説明</Label>
-              <Textarea v-model="description" id="description" :rows="4" required class="mt-1" />
+              <Textarea v-model="description" id="description" :rows="4" class="mt-1" />
+              <p v-if="errors.description" class="text-sm text-red-500 mt-1">{{ errors.description }}</p>
             </div>
             <div>
               <Label for="price">価格 (円)</Label>
-              <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
+              <Input v-model.number="price" type="number" id="price" class="mt-1" />
+               <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
             </div>
             <div>
               <Label for="license_type">ライセンスの種類</Label>
@@ -30,14 +33,16 @@
             </div>
             <div>
               <Label for="image">サムネイル画像</Label>
-              <Input @change="handleImageUpload" type="file" id="image" required accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <Input @change="handleImageUpload" type="file" id="image" accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <p v-if="errors.image" class="text-sm text-red-500 mt-1">{{ errors.image }}</p>
             </div>
             <div>
               <Label for="file">デジタルアセット (zip, etc.)</Label>
-              <Input @change="handleFileUpload" type="file" id="file" required class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <Input @change="handleFileUpload" type="file" id="file" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <p v-if="errors.file" class="text-sm text-red-500 mt-1">{{ errors.file }}</p>
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting">
+              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? 'アップロード中...' : '出品する' }}
               </Button>
             </div>
@@ -49,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { z } from 'zod'
 import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
@@ -58,6 +64,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
+// --- Form State ---
 const name = ref('')
 const description = ref('')
 const price = ref<number | null>(null)
@@ -66,6 +73,58 @@ const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
+const hasAttemptedSubmit = ref(false)
+
+// --- Validation ---
+const errors = ref<Record<string, string>>({})
+
+const productSchema = z.object({
+  name: z.string().min(1, { message: "商品名は必須です。" }).max(50, { message: "商品名は50文字以内で入力してください。" }),
+  description: z.string().min(1, { message: "説明は必須です。" }),
+  price: z.coerce.number({ invalid_type_error: "価格は数値を入力してください。" }).gt(0, { message: "価格は0より大きい数値を入力してください。" }),
+  image: z.instanceof(File, { message: "サムネイル画像は必須です。" }),
+  file: z.instanceof(File, { message: "デジタルアセットは必須です。" })
+})
+
+const isFormInvalid = computed(() => {
+  const result = productSchema.safeParse({
+    name: name.value,
+    description: description.value,
+    price: price.value,
+    image: imageFile.value,
+    file: assetFile.value
+  })
+  return !result.success
+})
+
+const validate = () => {
+  const result = productSchema.safeParse({
+    name: name.value,
+    description: description.value,
+    price: price.value,
+    image: imageFile.value,
+    file: assetFile.value
+  })
+
+  if (!result.success) {
+    const newErrors: Record<string, string> = {}
+    for (const issue of result.error.issues) {
+      newErrors[issue.path[0]] = issue.message
+    }
+    errors.value = newErrors
+    return false
+  }
+  errors.value = {}
+  return true
+}
+
+// Watch for changes to validate fields individually
+watch(name, () => { if (hasAttemptedSubmit.value) validate() })
+watch(description, () => { if (hasAttemptedSubmit.value) validate() })
+watch(price, () => { if (hasAttemptedSubmit.value) validate() })
+watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
+watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
+
 
 const handleImageUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -87,8 +146,8 @@ const router = useRouter()
 const { showAlert } = useAlert()
 
 const handleSubmit = async () => {
-  if (!name.value || !description.value || price.value === null || !imageFile.value || !assetFile.value || !user.value) {
-    showAlert('入力エラー', 'すべてのフィールドを入力してください。', 'error')
+  hasAttemptedSubmit.value = true
+  if (!validate() || !user.value || !imageFile.value || !assetFile.value) {
     return
   }
 
@@ -131,6 +190,7 @@ const handleSubmit = async () => {
     // 4. Handle success
     showAlert('成功', '商品が正常にアップロードされました！')
     router.push(`/product/${data.id}`)
+    hasAttemptedSubmit.value = false
 
   } catch (error: any) {
     showAlert('エラー', error.message || '予期せぬエラーが発生しました。', 'error')

@@ -7,14 +7,16 @@
         </h2>
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="signInWithPassword">
-        <div class="space-y-2 rounded-md shadow-sm">
+        <div class="space-y-4 rounded-md">
           <div>
-            <label for="email-address" class="sr-only">メールアドレス</label>
-            <input id="email-address" v-model="email" name="email" type="email" autocomplete="email" required class="relative block w-full px-3 py-2 bg-background text-foreground placeholder-gray-500 border border-border rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm" placeholder="メールアドレス">
+            <Label for="email-address">メールアドレス</Label>
+            <Input id="email-address" v-model="email" name="email" type="email" autocomplete="email" :required="false" class="mt-1" placeholder="メールアドレス" />
+            <p v-if="errors.email" class="text-sm text-red-500 mt-1">{{ errors.email }}</p>
           </div>
           <div>
-            <label for="password" class="sr-only">パスワード</label>
-            <input id="password" v-model="password" name="password" type="password" autocomplete="current-password" required class="relative block w-full px-3 py-2 bg-background text-foreground placeholder-gray-500 border border-border rounded-none appearance-none rounded-b-md focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 focus:z-10 sm:text-sm" placeholder="パスワード">
+            <Label for="password">パスワード</Label>
+            <Input id="password" v-model="password" name="password" type="password" autocomplete="current-password" :required="false" class="mt-1" placeholder="パスワード" />
+             <p v-if="errors.password" class="text-sm text-red-500 mt-1">{{ errors.password }}</p>
           </div>
         </div>
 
@@ -27,9 +29,10 @@
         </div>
 
         <div>
-          <button type="submit" :class="buttonVariants({ variant: 'gradient-blue' })" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium rounded-md">
-            サインイン
-          </button>
+          <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full" :class="buttonVariants({ variant: 'gradient-blue' })">
+            <span v-if="loading">サインイン中...</span>
+            <span v-else>サインイン</span>
+          </Button>
         </div>
       </form>
       <div class="relative">
@@ -41,26 +44,69 @@
         </div>
       </div>
       <div>
-        <button @click="signInWithGoogle" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-pink-500 bg-white border border-pink-500 rounded-md shadow-sm hover:bg-pink-50 dark:bg-transparent dark:text-pink-400 dark:border-pink-400 dark:hover:bg-pink-950/50">
+        <Button @click="signInWithGoogle" class="w-full" variant="outline">
           Googleでサインイン
-        </button>
+        </Button>
       </div>
-       <div v-if="errorMsg" class="text-red-500">{{ errorMsg }}</div>
+       <div v-if="errorMsg" class="p-4 text-center text-red-500 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { z } from 'zod'
 import { buttonVariants } from '~/components/ui/buttonVariants'
+import Input from '~/components/ui/Input.vue'
+import Label from '~/components/ui/Label.vue'
+import Button from '~/components/ui/Button.vue'
 
 const supabase = useSupabaseClient()
 const router = useRouter()
 
+// --- Form & Error State ---
 const email = ref('')
 const password = ref('')
 const errorMsg = ref<string | null>(null)
+const loading = ref(false)
+const hasAttemptedSubmit = ref(false)
 
+// --- Validation ---
+const errors = ref<Record<string, string>>({})
+const loginSchema = z.object({
+  email: z.string().email({ message: "有効なメールアドレスを入力してください。" }),
+  password: z.string().min(6, { message: "パスワードは6文字以上で入力してください。" }),
+})
+
+const isFormInvalid = computed(() => {
+  return !loginSchema.safeParse({ email: email.value, password: password.value }).success
+})
+
+const validate = () => {
+  const result = loginSchema.safeParse({ email: email.value, password: password.value })
+  if (!result.success) {
+    const newErrors: Record<string, string> = {}
+    result.error.issues.forEach((issue) => {
+      newErrors[issue.path[0]] = issue.message
+    })
+    errors.value = newErrors
+    return false
+  }
+  errors.value = {}
+  return true
+}
+
+watch(email, () => { if (hasAttemptedSubmit.value) validate() })
+watch(password, () => { if (hasAttemptedSubmit.value) validate() })
+
+
+// --- Auth Logic ---
 async function signInWithPassword() {
+  hasAttemptedSubmit.value = true
+  if (!validate()) return
+
+  loading.value = true
+  errorMsg.value = null
   try {
     const { error } = await supabase.auth.signInWithPassword({
       email: email.value,
@@ -69,18 +115,24 @@ async function signInWithPassword() {
     if (error) throw error
     // The redirect is handled by the watcher now.
   } catch (error: any) {
-    errorMsg.value = error.message
+    errorMsg.value = "メールアドレスまたはパスワードが正しくありません。"
+  } finally {
+    loading.value = false
   }
 }
 
 async function signInWithGoogle() {
+  loading.value = true
+  errorMsg.value = null
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
     })
     if (error) throw error
   } catch (error: any) {
-    errorMsg.value = error.message
+    errorMsg.value = "Googleでのサインイン中にエラーが発生しました。"
+  } finally {
+    loading.value = false
   }
 }
 

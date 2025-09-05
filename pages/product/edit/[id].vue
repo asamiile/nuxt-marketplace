@@ -19,15 +19,18 @@
           <form @submit.prevent="handleUpdate" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>
-              <Input v-model="name" type="text" id="name" required class="mt-1" />
+              <Input v-model="name" type="text" id="name" class="mt-1" />
+               <p v-if="errors.name" class="text-sm text-red-500 mt-1">{{ errors.name }}</p>
             </div>
             <div>
               <Label for="description">説明</Label>
-              <Textarea v-model="description" id="description" :rows="4" required class="mt-1" />
+              <Textarea v-model="description" id="description" :rows="4" class="mt-1" />
+              <p v-if="errors.description" class="text-sm text-red-500 mt-1">{{ errors.description }}</p>
             </div>
             <div>
               <Label for="price">価格 (円)</Label>
-              <Input v-model.number="price" type="number" id="price" required min="0" class="mt-1" />
+              <Input v-model.number="price" type="number" id="price" class="mt-1" />
+               <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
             </div>
             <div>
               <Label for="license_type">ライセンスの種類</Label>
@@ -48,7 +51,7 @@
               <Input @change="handleFileUpload" type="file" id="file" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting">
+              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? '更新中...' : '更新する' }}
               </Button>
             </div>
@@ -60,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import { z } from 'zod'
 import type { Product } from '~/types/product'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import Input from '~/components/ui/Input.vue'
@@ -79,9 +83,13 @@ const { showAlert } = useAlert()
 
 const id = route.params.id as string
 
+// --- Page State ---
 const product = ref<Product | null>(null)
 const pending = ref(true)
+const isSubmitting = ref(false)
+const hasAttemptedSubmit = ref(false)
 
+// --- Form State ---
 const name = ref('')
 const description = ref('')
 const price = ref<number | null>(null)
@@ -89,7 +97,56 @@ const license_type = ref('')
 const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
-const isSubmitting = ref(false)
+
+// --- Validation ---
+const errors = ref<Record<string, string>>({})
+
+const productSchema = z.object({
+  name: z.string().min(1, { message: "商品名は必須です。" }).max(50, { message: "商品名は50文字以内で入力してください。" }),
+  description: z.string().min(1, { message: "説明は必須です。" }),
+  price: z.coerce.number({ invalid_type_error: "価格は数値を入力してください。" }).gt(0, { message: "価格は0より大きい数値を入力してください。" }),
+  image: z.instanceof(File).optional().nullable(),
+  file: z.instanceof(File).optional().nullable()
+})
+
+const isFormInvalid = computed(() => {
+  const result = productSchema.safeParse({
+    name: name.value,
+    description: description.value,
+    price: price.value,
+    image: imageFile.value,
+    file: assetFile.value
+  })
+  return !result.success
+})
+
+const validate = () => {
+  const result = productSchema.safeParse({
+    name: name.value,
+    description: description.value,
+    price: price.value,
+    image: imageFile.value,
+    file: assetFile.value
+  })
+
+  if (!result.success) {
+    const newErrors: Record<string, string> = {}
+    for (const issue of result.error.issues) {
+      newErrors[issue.path[0]] = issue.message
+    }
+    errors.value = newErrors
+    return false
+  }
+  errors.value = {}
+  return true
+}
+
+// Watch for changes to validate fields individually
+watch(name, () => { if (hasAttemptedSubmit.value) validate() })
+watch(description, () => { if (hasAttemptedSubmit.value) validate() })
+watch(price, () => { if (hasAttemptedSubmit.value) validate() })
+watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
+watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
 // Fetch product data
 onMounted(async () => {
@@ -140,7 +197,10 @@ const getPathFromUrl = (url: string) => {
 }
 
 const handleUpdate = async () => {
-  if (!product.value || !user.value) return
+  hasAttemptedSubmit.value = true
+  if (!validate() || !product.value || !user.value) {
+    return
+  }
 
   isSubmitting.value = true
 
@@ -192,6 +252,7 @@ const handleUpdate = async () => {
     // 4. Handle success
     showAlert('成功', '商品が正常に更新されました！')
     router.push(`/product/${product.value.id}`)
+    hasAttemptedSubmit.value = false
 
   } catch (error: any) {
     showAlert('更新エラー', error.message || '予期せぬエラーが発生しました。', 'error')
