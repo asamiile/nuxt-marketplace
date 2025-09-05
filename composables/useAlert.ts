@@ -1,27 +1,40 @@
-import { reactive } from 'vue'
+import { reactive, readonly } from 'vue'
+
+interface Toast {
+  id: number
+  title: string
+  message: string
+  type: 'success' | 'error'
+}
 
 // Define the state outside the composable function to make it a singleton
-const alertState = reactive({
-  show: false,
-  title: '',
-  message: '',
-  type: 'success' as 'success' | 'error',
-})
+const toasts = reactive<Toast[]>([])
 
 export function useAlert() {
-  function showAlert(title: string, message: string, type: 'success' | 'error' = 'success', duration = 5000) {
-    alertState.title = title
-    alertState.message = message
-    alertState.type = type
-    alertState.show = true
+  function showToast(title: string, message: string, type: 'success' | 'error' = 'success', duration = 5000) {
+    const id = Date.now()
+    toasts.push({
+      id,
+      title,
+      message,
+      type,
+    })
 
     setTimeout(() => {
-      alertState.show = false
+      removeToast(id)
     }, duration)
   }
 
+  function removeToast(id: number) {
+    const index = toasts.findIndex(toast => toast.id === id)
+    if (index !== -1) {
+      toasts.splice(index, 1)
+    }
+  }
+
   return {
-    alert: alertState,
-    showAlert,
+    toasts: readonly(toasts),
+    showToast,
+    removeToast,
   }
 }

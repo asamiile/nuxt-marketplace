@@ -46,7 +46,7 @@ import { buttonVariants } from '~/components/ui/buttonVariants'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 
 const products = ref<Product[]>([])
 const pending = ref(true)
@@ -67,7 +67,7 @@ const fetchProducts = async () => {
     products.value = data || []
   } catch (e: any) {
     error.value = e
-    showAlert('エラー', '商品の読み込みに失敗しました。', 'error')
+    showToast('エラー', '商品の読み込みに失敗しました。', 'error')
   } finally {
     pending.value = false
   }
@@ -118,12 +118,12 @@ const handleDelete = async (product: Product) => {
     const { error: dbError } = await supabase.from('products').delete().eq('id', product.id)
     if (dbError) throw new Error(`データベースからの商品削除に失敗しました: ${dbError.message}`)
 
-    showAlert('成功', '商品を削除しました。')
+    showToast('成功', '商品を削除しました。')
     // Refresh the list
     await fetchProducts()
 
   } catch (error: any) {
-    showAlert('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
+    showToast('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
   }
 }
 </script>

@@ -44,7 +44,7 @@ import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
 import Button from '~/components/ui/Button.vue'
 
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 
 // --- Form State ---
 const form = ref({
@@ -109,7 +109,7 @@ async function handleSubmit() {
       throw new Error(error.message)
     }
 
-    showAlert('成功', 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。')
+    showToast('成功', 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。')
     // フォームをリセット
     form.value = {
       name: '',
@@ -121,7 +121,7 @@ async function handleSubmit() {
     errors.value = {}
     hasAttemptedSubmit.value = false
   } catch (err: any) {
-    showAlert('エラー', `エラーが発生しました: ${err.message}`, 'error')
+    showToast('エラー', `エラーが発生しました: ${err.message}`, 'error')
   } finally {
     loading.value = false
   }

@@ -36,14 +36,14 @@ import Button from '~/components/ui/Button.vue'
 import Label from '~/components/ui/Label.vue'
 
 const supabase = useSupabaseClient()
-const { showAlert } = useAlert()
+const { showToast } = useAlert()
 
 const email = ref('')
 const loading = ref(false)
 
 const handlePasswordReset = async () => {
   if (!email.value) {
-    showAlert('エラー', 'メールアドレスを入力してください。', 'error')
+    showToast('エラー', 'メールアドレスを入力してください。', 'error')
     return
   }
   loading.value = true
@@ -52,9 +52,9 @@ const handlePasswordReset = async () => {
       redirectTo: `${window.location.origin}/update-password`,
     })
     if (error) throw error
-    showAlert('成功', 'パスワード再設定メールを送信しました。メールをご確認ください。')
+    showToast('成功', 'パスワード再設定メールを送信しました。メールをご確認ください。')
   } catch (error: any) {
-    showAlert('エラー', error.message, 'error')
+    showToast('エラー', error.message, 'error')
   } finally {
     loading.value = false
   }

@@ -42,9 +42,9 @@ definePageMeta({
 })
 
 // --- Alert State & Logic ---
-const { alert, showAlert } = useAlert()
+const { showToast } = useAlert()
 
 function handleShowAlert(alertData: { title: string, message: string, type: 'success' | 'error' }) {
-  showAlert(alertData.title, alertData.message, alertData.type)
+  showToast(alertData.title, alertData.message, alertData.type)
 }
 </script>
