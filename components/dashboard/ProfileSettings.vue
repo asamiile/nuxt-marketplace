@@ -9,42 +9,46 @@
     <div v-if="loading" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
-    <form v-else @submit.prevent="updateProfile" class="space-y-6 bg-card p-8 rounded-lg shadow-md">
-      <div>
-        <Label for="username">ユーザー名</Label>
-        <Input id="username" v-model="username" type="text" class="mt-1" />
-        <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
-      </div>
-      <div>
-        <Label for="avatar_url">アバター画像</Label>
-        <FileDropzone v-model="avatarFile" accept="image/*" :initial-preview-url="avatar_url" class="mt-1" />
-        <p class="text-sm text-muted-foreground mt-2">新しい画像をドラッグ＆ドロップするか、クリックしてアバターを変更します。</p>
-      </div>
-      <div>
-        <Label for="bio">自己紹介</Label>
-        <Textarea id="bio" v-model="bio" class="mt-1" placeholder="こんにちは！..." />
-      </div>
-      <div>
-        <Label for="website_url">ウェブサイトURL</Label>
-        <Input id="website_url" v-model="website_url" type="url" class="mt-1" placeholder="https://..."/>
-         <p v-if="errors.website_url" class="text-sm text-red-500 mt-1">{{ errors.website_url }}</p>
-      </div>
-      <div>
-        <Label for="x_url">X (Twitter) URL</Label>
-        <Input id="x_url" v-model="x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
-        <p v-if="errors.x_url" class="text-sm text-red-500 mt-1">{{ errors.x_url }}</p>
-      </div>
-       <div>
-        <Label for="youtube_url">YouTube URL</Label>
-        <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
-        <p v-if="errors.youtube_url" class="text-sm text-red-500 mt-1">{{ errors.youtube_url }}</p>
-      </div>
-      <div class="pt-2">
-        <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
-          {{ saving ? '保存中...' : 'プロフィールを更新' }}
-        </Button>
-      </div>
-    </form>
+    <UiCard v-else class="border-0 shadow-md">
+      <UiCardContent class="p-8 pt-8">
+        <form @submit.prevent="updateProfile" class="space-y-6">
+          <div>
+            <Label for="username">ユーザー名</Label>
+            <Input id="username" v-model="username" type="text" class="mt-1" />
+            <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
+          </div>
+          <div>
+            <Label for="avatar_url">アバター画像</Label>
+            <FileDropzone v-model="avatarFile" accept="image/*" :initial-preview-url="avatar_url" class="mt-1" />
+            <p class="text-sm text-muted-foreground mt-2">新しい画像をドラッグ＆ドロップするか、クリックしてアバターを変更します。</p>
+          </div>
+          <div>
+            <Label for="bio">自己紹介</Label>
+            <Textarea id="bio" v-model="bio" class="mt-1" placeholder="こんにちは！..." />
+          </div>
+          <div>
+            <Label for="website_url">ウェブサイトURL</Label>
+            <Input id="website_url" v-model="website_url" type="url" class="mt-1" placeholder="https://..."/>
+            <p v-if="errors.website_url" class="text-sm text-red-500 mt-1">{{ errors.website_url }}</p>
+          </div>
+          <div>
+            <Label for="x_url">X (Twitter) URL</Label>
+            <Input id="x_url" v-model="x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
+            <p v-if="errors.x_url" class="text-sm text-red-500 mt-1">{{ errors.x_url }}</p>
+          </div>
+          <div>
+            <Label for="youtube_url">YouTube URL</Label>
+            <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
+            <p v-if="errors.youtube_url" class="text-sm text-red-500 mt-1">{{ errors.youtube_url }}</p>
+          </div>
+          <div class="pt-2">
+            <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
+              {{ saving ? '保存中...' : 'プロフィールを更新' }}
+            </Button>
+          </div>
+        </form>
+      </UiCardContent>
+    </UiCard>
   </div>
 </template>
 
