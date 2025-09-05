@@ -33,12 +33,12 @@
             </div>
             <div>
               <Label for="image">サムネイル画像</Label>
-              <Input @change="handleImageUpload" type="file" id="image" accept="image/*" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <FileDropzone v-model="imageFile" accept="image/*" class="mt-1" />
               <p v-if="errors.image" class="text-sm text-red-500 mt-1">{{ errors.image }}</p>
             </div>
             <div>
               <Label for="file">デジタルアセット (zip, etc.)</Label>
-              <Input @change="handleFileUpload" type="file" id="file" class="mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+              <FileDropzone v-model="assetFile" class="mt-1" />
               <p v-if="errors.file" class="text-sm text-red-500 mt-1">{{ errors.file }}</p>
             </div>
             <div class="pt-2">
@@ -59,6 +59,7 @@ import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
 import Textarea from '~/components/ui/Textarea.vue'
 import Button from '~/components/ui/Button.vue'
+import FileDropzone from '~/components/ui/FileDropzone.vue'
 
 definePageMeta({
   middleware: 'auth'
@@ -125,20 +126,6 @@ watch(price, () => { if (hasAttemptedSubmit.value) validate() })
 watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
 watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
-
-const handleImageUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    imageFile.value = target.files[0]
-  }
-}
-
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    assetFile.value = target.files[0]
-  }
-}
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
