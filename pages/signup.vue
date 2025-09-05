@@ -93,13 +93,24 @@ async function signUp() {
       email: email.value,
       password: password.value,
     })
-    if (error) throw error
-    if (!data.user) throw new Error('User data is null after sign up.')
 
-    successMsg.value = 'アカウントを確認するため、ご入力のメールアドレスに送信されたメールを確認してください。'
-    setTimeout(() => {
-      router.push('/login')
-    }, 5000)
+    if (error) throw error
+
+    // Supabase returns a user object even if the user is already registered.
+    // A new user will have an empty `identities` array.
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      successMsg.value = 'アカウントを確認するため、ご入力のメールアドレスに送信されたメールを確認してください。'
+      setTimeout(() => {
+        router.push('/login')
+      }, 5000)
+    } else if (data.user) {
+      // If identities exist, the user is already registered.
+      throw new Error('User already registered')
+    } else {
+      // Fallback for unexpected responses
+      throw new Error('An unexpected error occurred during sign up.')
+    }
+
   } catch (error: any) {
     if (error.message.includes('User already registered')) {
       errorMsg.value = 'このメールアドレスは既に使用されています。'
