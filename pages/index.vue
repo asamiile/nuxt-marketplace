@@ -3,7 +3,18 @@
     <h1 class="text-3xl font-bold mb-8">商品一覧</h1>
 
     <div v-if="pending">
-      <p>読み込み中...</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div v-for="n in 8" :key="n" class="border rounded-lg p-4 shadow">
+          <div class="space-y-3">
+            <Skeleton class="h-48 w-full" />
+            <div class="space-y-2">
+              <Skeleton class="h-4 w-3/4" />
+              <Skeleton class="h-4 w-1/2" />
+              <Skeleton class="h-4 w-1/4" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div v-else-if="error">
       <p>エラーが発生しました: {{ error.message }}</p>
@@ -30,6 +41,7 @@
 import { ref, watch } from 'vue'
 import type { Product } from '~/types/product'
 import Pagination from '~/components/ui/Pagination.vue'
+import Skeleton from '~/components/ui/Skeleton.vue'
 
 const supabase = useSupabaseClient()
 const itemsPerPage = 8
