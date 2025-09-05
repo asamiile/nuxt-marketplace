@@ -7,15 +7,15 @@
       <h2 class="text-xl font-semibold mb-4">新規カテゴリ作成</h2>
       <form @submit.prevent="handleCreateCategory">
         <div class="flex items-center gap-4">
-          <Input
+          <UiInput
             v-model="newCategoryName"
             placeholder="カテゴリ名"
             required
             class="flex-grow"
           />
-          <Button type="submit" :disabled="loading">
+          <UiButton type="submit" :disabled="loading">
             {{ loading ? '作成中...' : '作成' }}
-          </Button>
+          </UiButton>
         </div>
       </form>
     </div>
@@ -40,8 +40,8 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(category.created_at).toLocaleString() }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-              <Button variant="outline" size="sm" @click="openEditModal(category)">編集</Button>
-              <Button variant="destructive" size="sm" @click="handleDeleteCategory(category.id)">削除</Button>
+              <UiButton variant="outline" size="sm" @click="openEditModal(category)">編集</UiButton>
+              <UiButton variant="destructive" size="sm" @click="handleDeleteCategory(category.id)">削除</UiButton>
             </td>
           </tr>
         </tbody>
@@ -54,16 +54,16 @@
         <h2 class="text-xl font-semibold mb-4">カテゴリを編集</h2>
         <form @submit.prevent="handleUpdateCategory">
           <div class="space-y-4">
-            <Input
+            <UiInput
               v-model="editingCategoryName"
               placeholder="カテゴリ名"
               required
             />
             <div class="flex justify-end gap-4">
-              <Button type="button" variant="ghost" @click="closeEditModal">キャンセル</Button>
-              <Button type="submit" :disabled="loading">
+              <UiButton type="button" variant="ghost" @click="closeEditModal">キャンセル</UiButton>
+              <UiButton type="submit" :disabled="loading">
                 {{ loading ? '更新中...' : '更新' }}
-              </Button>
+              </UiButton>
             </div>
           </div>
         </form>
