@@ -73,7 +73,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import type { Database } from '~/types/supabase';
 import type { Category } from '~/types/product';
 
@@ -82,22 +81,9 @@ definePageMeta({
   middleware: 'admin',
 })
 
-const user = useSupabaseUser()
-console.log('User object for debugging RLS:', user.value)
-
 const supabase = useSupabaseClient<Database>()
 const { showToast } = useAlert()
 const loading = ref(false)
-
-onMounted(async () => {
-  try {
-    const { data, error } = await supabase.rpc('get_my_claim_as_text')
-    if (error) throw error
-    console.log('Result from DB function get_my_claim_as_text():', data)
-  } catch (error) {
-    console.error('Error calling get_my_claim_as_text():', error)
-  }
-})
 
 // Fetch categories
 const { data: categories, refresh } = await useAsyncData('categories', async () => {
