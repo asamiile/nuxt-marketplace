@@ -3,13 +3,11 @@ export const useSupabaseHelpers = () => {
     if (!url) return null
     try {
       const { pathname } = new URL(url)
-      // Supabase StorageのURL構造に合わせてパスを調整
-      // e.g. https://<project>.supabase.co/storage/v1/object/public/assets/products/image.jpg
-      // -> products/image.jpg
-      const path = pathname.split('/assets/')[1]
+      // "assets" バケット名の次に来る部分をパスとして抽出するように修正
+      const path = pathname.substring(pathname.indexOf('/assets/') + '/assets/'.length)
       return path
     } catch (error) {
-      console.error('Invalid URL provided to getPathFromUrl:', url, error)
+      console.error('Invalid URL for path extraction:', error)
       return null
     }
   }
