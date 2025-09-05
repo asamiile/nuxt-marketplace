@@ -12,7 +12,7 @@
     </div>
     <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       <div>
-        <img :src="product.image_url" :alt="product.name" class="w-full rounded-lg shadow-lg">
+        <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg shadow-lg">
       </div>
       <div>
         <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-foreground">{{ product.name }}</h1>
@@ -113,15 +113,25 @@ useHead({
   ]
 })
 
-const getPathFromUrl = (url: string) => {
-  try {
-    const urlObject = new URL(url)
-    return urlObject.pathname.split('/assets/')[1]
-  } catch (error) {
-    console.error('Invalid URL:', url, error)
-    return null
+const { getPathFromUrl } = useSupabaseHelpers()
+
+const optimizedImageUrl = computed(() => {
+  if (!product.value?.image_url) {
+    return '/placeholder.png'
   }
-}
+  const path = getPathFromUrl(product.value.image_url)
+  if (!path) {
+    return product.value.image_url
+  }
+  const { data } = supabase.storage.from('assets').getPublicUrl(path, {
+    transform: {
+      width: 800,
+      height: 800,
+      resize: 'contain',
+    },
+  })
+  return data.publicUrl
+})
 
 const handleDelete = async () => {
   if (!product.value) return

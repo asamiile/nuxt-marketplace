@@ -1,6 +1,6 @@
 <template>
   <UiCard @click="navigateToProduct" class="overflow-hidden hover:shadow-xl transition-shadow duration-300 relative cursor-pointer">
-    <img :src="product.image_url" alt="Product image" class="w-full h-48 object-cover">
+    <img :src="optimizedImageUrl" alt="Product image" class="w-full h-48 object-cover">
     <UiCardContent class="p-4">
       <UiCardTitle class="text-lg truncate">{{ product.name }}</UiCardTitle>
       <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" @click.stop class="text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -39,4 +39,24 @@ const formatPrice = (price: number | null) => {
   if (price === null) return ''
   return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
 }
+
+const supabase = useSupabaseClient()
+const { getPathFromUrl } = useSupabaseHelpers()
+
+// 最適化された画像URLを生成する算出プロパティ
+const optimizedImageUrl = computed(() => {
+  const path = getPathFromUrl(props.product.image_url)
+  if (!path) {
+    // パスが取得できない場合は元のURLかプレースホルダーを返す
+    return props.product.image_url || '/placeholder.png'
+  }
+  const { data } = supabase.storage.from('assets').getPublicUrl(path, {
+    transform: {
+      width: 300,
+      height: 300,
+      resize: 'cover',
+    },
+  })
+  return data.publicUrl
+})
 </script>
