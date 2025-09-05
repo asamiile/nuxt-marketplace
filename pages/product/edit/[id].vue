@@ -33,6 +33,29 @@
                <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
             </div>
             <div>
+              <Label for="category">カテゴリ</Label>
+              <select v-model="categoryId" id="category" class="w-full mt-1 p-2 border rounded-md bg-white dark:bg-gray-800">
+                <option :value="null" disabled>カテゴリを選択してください</option>
+                <option v-for="category in categories" :key="category.id" :value="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+              <p v-if="errors.categoryId" class="text-sm text-red-500 mt-1">{{ errors.categoryId }}</p>
+            </div>
+            <div>
+              <Label for="tags">タグ (カンマ区切りまたはEnterで追加)</Label>
+              <Input v-model="tagInput" @keydown.enter.prevent="addTag" @keydown.,.prevent="addTag" type="text" id="tags" class="mt-1" placeholder="例: イラスト, 3Dモデル" />
+              <div class="mt-2 flex flex-wrap gap-2">
+                <span v-for="tag in tags" :key="tag" class="inline-flex items-center px-2 py-1 bg-gray-200 dark:bg-gray-700 text-sm font-medium rounded-full">
+                  {{ tag }}
+                  <button @click="removeTag(tag)" type="button" class="ml-1.5 flex-shrink-0 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-600 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span class="sr-only">Remove tag</span>
+                    <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8"><path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" /></svg>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div>
               <Label for="license_type">ライセンスの種類</Label>
               <Input v-model="license_type" id="license_type" class="mt-1" placeholder="例: スタンダードライセンス" />
             </div>
@@ -63,7 +86,7 @@
 
 <script setup lang="ts">
 import { z } from 'zod'
-import type { Product } from '~/types/product'
+import type { ProductWithRelations } from '~/types/product'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import Input from '~/components/ui/Input.vue'
 import Label from '~/components/ui/Label.vue'
@@ -85,7 +108,7 @@ const { getPathFromUrl } = useSupabaseHelpers()
 const id = route.params.id as string
 
 // --- Page State ---
-const product = ref<Product | null>(null)
+const product = ref<ProductWithRelations | null>(null)
 const pending = ref(true)
 const isSubmitting = ref(false)
 const hasAttemptedSubmit = ref(false)
@@ -94,10 +117,16 @@ const hasAttemptedSubmit = ref(false)
 const name = ref('')
 const description = ref('')
 const price = ref<number | null>(null)
+const categoryId = ref<number | null>(null)
+const tags = ref<string[]>([])
+const tagInput = ref('')
 const license_type = ref('')
 const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
+
+// --- Data ---
+const categories = ref<{id: number; name: string}[]>([])
 
 // --- Validation ---
 const errors = ref<Record<string, string>>({})
@@ -106,6 +135,7 @@ const productSchema = z.object({
   name: z.string().min(1, { message: "商品名は必須です。" }).max(50, { message: "商品名は50文字以内で入力してください。" }),
   description: z.string().min(1, { message: "説明は必須です。" }),
   price: z.coerce.number({ invalid_type_error: "価格は数値を入力してください。" }).gt(0, { message: "価格は0より大きい数値を入力してください。" }),
+  categoryId: z.coerce.number().min(1, { message: "カテゴリは必須です。" }),
   image: z.instanceof(File).optional().nullable(),
   file: z.instanceof(File).optional().nullable()
 })
@@ -115,6 +145,7 @@ const isFormInvalid = computed(() => {
     name: name.value,
     description: description.value,
     price: price.value,
+    categoryId: categoryId.value,
     image: imageFile.value,
     file: assetFile.value
   })
@@ -126,6 +157,7 @@ const validate = () => {
     name: name.value,
     description: description.value,
     price: price.value,
+    categoryId: categoryId.value,
     image: imageFile.value,
     file: assetFile.value
   })
@@ -146,27 +178,61 @@ const validate = () => {
 watch(name, () => { if (hasAttemptedSubmit.value) validate() })
 watch(description, () => { if (hasAttemptedSubmit.value) validate() })
 watch(price, () => { if (hasAttemptedSubmit.value) validate() })
+watch(categoryId, () => { if (hasAttemptedSubmit.value) validate() })
 watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
 watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
-// Fetch product data
-onMounted(async () => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('id', id)
-    .single()
+// --- Category & Tag Logic ---
+const fetchCategories = async () => {
+  const { data, error } = await supabase.from('categories').select('id, name').order('name')
+  if (error) {
+    showToast('エラー', 'カテゴリの読み込みに失敗しました。', 'error')
+  } else {
+    categories.value = data
+  }
+}
 
+const addTag = () => {
+  const newTag = tagInput.value.trim()
+  if (newTag && !tags.value.includes(newTag)) {
+    tags.value.push(newTag)
+  }
+  tagInput.value = ''
+}
+
+const removeTag = (tagToRemove: string) => {
+  tags.value = tags.value.filter(tag => tag !== tagToRemove)
+}
+
+// Fetch initial data
+onMounted(async () => {
+  // Fetch both product and categories in parallel
+  const [productResult, categoriesResult] = await Promise.all([
+    supabase.from('products').select('*, tags(name)').eq('id', id).single(),
+    supabase.from('categories').select('id, name').order('name')
+  ])
+
+  // Handle categories loading
+  if (categoriesResult.error) {
+    showToast('エラー', 'カテゴリの読み込みに失敗しました。', 'error')
+  } else {
+    categories.value = categoriesResult.data
+  }
+
+  // Handle product loading
+  const { data, error } = productResult
   if (error || !data || data.creator_id !== user.value?.id) {
     product.value = null
     pending.value = false
     return
   }
 
-  product.value = data
+  product.value = data as ProductWithRelations
   name.value = data.name
   description.value = data.description
   price.value = data.price
+  categoryId.value = data.category_id
+  tags.value = data.tags.map((t: any) => t.name)
   license_type.value = data.license_type || ''
   terms_of_use.value = data.terms_of_use || ''
 
@@ -182,15 +248,29 @@ const handleUpdate = async () => {
   isSubmitting.value = true
 
   try {
+    // 1. Upsert tags and get their IDs
+    let tagIds: number[] = []
+    if (tags.value.length > 0) {
+      const tagsToUpsert = tags.value.map(name => ({ name }))
+      const { data: upsertedTags, error: tagError } = await supabase
+        .from('tags')
+        .upsert(tagsToUpsert, { onConflict: 'name', ignoreDuplicates: false })
+        .select('id')
+
+      if (tagError) throw new Error(`タグの保存エラー: ${tagError.message}`)
+      if (upsertedTags) {
+        tagIds = upsertedTags.map(tag => tag.id)
+      }
+    }
+
     let newImageUrl = product.value.image_url
     let newFileUrl = product.value.file_url
 
-    // 1. Handle image file update
+    // 2. Handle file updates (image and asset)
     if (imageFile.value) {
       const oldImagePath = getPathFromUrl(product.value.image_url)
-      if (oldImagePath) {
-        await supabase.storage.from('assets').remove([oldImagePath])
-      }
+      if (oldImagePath) await supabase.storage.from('assets').remove([oldImagePath])
+
       const imageExt = imageFile.value.name.split('.').pop()
       const imagePath = `products/${user.value.id}/${crypto.randomUUID()}.${imageExt}`
       const { error: imageError } = await supabase.storage.from('assets').upload(imagePath, imageFile.value)
@@ -199,12 +279,10 @@ const handleUpdate = async () => {
       newImageUrl = imageUrlData.publicUrl
     }
 
-    // 2. Handle asset file update
     if (assetFile.value) {
       const oldFilePath = getPathFromUrl(product.value.file_url)
-      if (oldFilePath) {
-        await supabase.storage.from('assets').remove([oldFilePath])
-      }
+      if (oldFilePath) await supabase.storage.from('assets').remove([oldFilePath])
+
       const assetExt = assetFile.value.name.split('.').pop()
       const assetPath = `products/${user.value.id}/${crypto.randomUUID()}.${assetExt}`
       const { error: assetError } = await supabase.storage.from('assets').upload(assetPath, assetFile.value)
@@ -218,6 +296,7 @@ const handleUpdate = async () => {
       name: name.value,
       description: description.value,
       price: price.value,
+      category_id: categoryId.value,
       image_url: newImageUrl,
       file_url: newFileUrl,
       license_type: license_type.value,
@@ -226,7 +305,21 @@ const handleUpdate = async () => {
 
     if (dbError) throw new Error(`データベース更新エラー: ${dbError.message}`)
 
-    // 4. Handle success
+    // 4. Clear old tag relations
+    const { error: deleteError } = await supabase.from('product_tags').delete().eq('product_id', product.value.id)
+    if (deleteError) throw new Error(`既存タグの削除エラー: ${deleteError.message}`)
+
+    // 5. Insert new tag relations
+    if (tagIds.length > 0) {
+      const productTags = tagIds.map(tag_id => ({
+        product_id: product.value!.id,
+        tag_id: tag_id,
+      }))
+      const { error: productTagError } = await supabase.from('product_tags').insert(productTags)
+      if (productTagError) throw new Error(`商品とタグの関連付けエラー: ${productTagError.message}`)
+    }
+
+    // 6. Handle success
     showToast('成功', '商品が正常に更新されました！')
     router.push(`/product/${product.value.id}`)
     hasAttemptedSubmit.value = false

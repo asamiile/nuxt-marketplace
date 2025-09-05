@@ -34,6 +34,12 @@
         <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg shadow-lg">
       </div>
       <div>
+        <div class="mb-2">
+          <span v-if="product.categories?.name" class="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+            {{ product.categories.name }}
+          </span>
+        </div>
+
         <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-foreground">{{ product.name }}</h1>
         <p class="text-lg text-foreground mb-4">
           作成者:
@@ -43,7 +49,18 @@
           <span v-else class="font-semibold">N/A</span>
         </p>
         <p class="text-3xl font-bold text-foreground mb-6">{{ formatPrice(product.price) }}</p>
-        <p class="text-foreground mb-8 whitespace-pre-wrap">{{ product.description }}</p>
+        <p class="text-foreground mb-6 whitespace-pre-wrap">{{ product.description }}</p>
+
+        <!-- Tags Section -->
+        <div v-if="product.tags && product.tags.length > 0" class="mb-8">
+          <h2 class="text-lg font-semibold text-foreground mb-3">タグ</h2>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="tag in product.tags" :key="tag.name" class="bg-secondary text-secondary-foreground px-3 py-1 text-sm rounded-full">
+              #{{ tag.name }}
+            </span>
+          </div>
+        </div>
+
 
         <!-- License and Terms Section -->
         <div v-if="product.license_type || product.terms_of_use" class="border-t pt-6 mt-6">
@@ -81,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Product } from '~/types/product'
+import type { ProductWithRelations } from '~/types/product'
 import { buttonVariants } from '~/components/ui/buttonVariants'
 import Skeleton from '~/components/ui/Skeleton.vue'
 
@@ -93,14 +110,14 @@ const user = useCurrentUser()
 const { showToast } = useAlert()
 const id = route.params.id
 
-const { data: product, pending, error } = await useAsyncData<Product | null>(`product-${id}`, async () => {
+const { data: product, pending, error } = await useAsyncData<ProductWithRelations | null>(`product-${id}`, async () => {
   const { data, error } = await supabase
     .from('products')
     .select(`
       *,
-      profiles (
-        username
-      )
+      profiles (username),
+      categories (name),
+      tags (name)
     `)
     .eq('id', id)
     .single()

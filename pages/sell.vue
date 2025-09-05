@@ -23,6 +23,32 @@
               <Input v-model.number="price" type="number" id="price" class="mt-1" />
                <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
             </div>
+
+            <div>
+              <Label for="category">カテゴリ</Label>
+              <select v-model="categoryId" id="category" class="w-full mt-1 p-2 border rounded-md bg-white dark:bg-gray-800">
+                <option :value="null" disabled>カテゴリを選択してください</option>
+                <option v-for="category in categories" :key="category.id" :value="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+              <p v-if="errors.categoryId" class="text-sm text-red-500 mt-1">{{ errors.categoryId }}</p>
+            </div>
+
+            <div>
+              <Label for="tags">タグ (カンマ区切りまたはEnterで追加)</Label>
+              <Input v-model="tagInput" @keydown.enter.prevent="addTag" @keydown.,.prevent="addTag" type="text" id="tags" class="mt-1" placeholder="例: イラスト, 3Dモデル" />
+              <div class="mt-2 flex flex-wrap gap-2">
+                <span v-for="tag in tags" :key="tag" class="inline-flex items-center px-2 py-1 bg-gray-200 dark:bg-gray-700 text-sm font-medium rounded-full">
+                  {{ tag }}
+                  <button @click="removeTag(tag)" type="button" class="ml-1.5 flex-shrink-0 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-600 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span class="sr-only">Remove tag</span>
+                    <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8"><path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" /></svg>
+                  </button>
+                </span>
+              </div>
+            </div>
+
             <div>
               <Label for="license_type">ライセンスの種類</Label>
               <Input v-model="license_type" id="license_type" class="mt-1" placeholder="例: スタンダードライセンス" />
@@ -65,16 +91,27 @@ definePageMeta({
   middleware: 'auth'
 })
 
+const supabase = useSupabaseClient()
+const user = useCurrentUser()
+const router = useRouter()
+const { showToast } = useAlert()
+
 // --- Form State ---
 const name = ref('')
 const description = ref('')
 const price = ref<number | null>(null)
+const categoryId = ref<number | null>(null)
+const tags = ref<string[]>([])
+const tagInput = ref('')
 const license_type = ref('')
 const terms_of_use = ref('')
 const imageFile = ref<File | null>(null)
 const assetFile = ref<File | null>(null)
 const isSubmitting = ref(false)
 const hasAttemptedSubmit = ref(false)
+
+// --- Data ---
+const categories = ref<{id: number; name: string}[]>([])
 
 // --- Validation ---
 const errors = ref<Record<string, string>>({})
@@ -83,6 +120,7 @@ const productSchema = z.object({
   name: z.string().min(1, { message: "商品名は必須です。" }).max(50, { message: "商品名は50文字以内で入力してください。" }),
   description: z.string().min(1, { message: "説明は必須です。" }),
   price: z.coerce.number({ invalid_type_error: "価格は数値を入力してください。" }).gt(0, { message: "価格は0より大きい数値を入力してください。" }),
+  categoryId: z.coerce.number().min(1, { message: "カテゴリは必須です。" }),
   image: z.instanceof(File, { message: "サムネイル画像は必須です。" }),
   file: z.instanceof(File, { message: "デジタルアセットは必須です。" })
 })
@@ -92,6 +130,7 @@ const isFormInvalid = computed(() => {
     name: name.value,
     description: description.value,
     price: price.value,
+    categoryId: categoryId.value,
     image: imageFile.value,
     file: assetFile.value
   })
@@ -103,6 +142,7 @@ const validate = () => {
     name: name.value,
     description: description.value,
     price: price.value,
+    categoryId: categoryId.value,
     image: imageFile.value,
     file: assetFile.value
   })
@@ -123,15 +163,38 @@ const validate = () => {
 watch(name, () => { if (hasAttemptedSubmit.value) validate() })
 watch(description, () => { if (hasAttemptedSubmit.value) validate() })
 watch(price, () => { if (hasAttemptedSubmit.value) validate() })
+watch(categoryId, () => { if (hasAttemptedSubmit.value) validate() })
 watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
 watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
+// --- Category & Tag Logic ---
+const fetchCategories = async () => {
+  const { data, error } = await supabase.from('categories').select('id, name').order('name')
+  if (error) {
+    showToast('エラー', 'カテゴリの読み込みに失敗しました。', 'error')
+  } else {
+    categories.value = data
+  }
+}
 
-const supabase = useSupabaseClient()
-const user = useCurrentUser()
-const router = useRouter()
-const { showToast } = useAlert()
+const addTag = () => {
+  const newTag = tagInput.value.trim()
+  if (newTag && !tags.value.includes(newTag)) {
+    tags.value.push(newTag)
+  }
+  tagInput.value = ''
+}
 
+const removeTag = (tagToRemove: string) => {
+  tags.value = tags.value.filter(tag => tag !== tagToRemove)
+}
+
+onMounted(() => {
+  fetchCategories()
+})
+
+
+// --- Form Submission ---
 const handleSubmit = async () => {
   hasAttemptedSubmit.value = true
   if (!validate() || !user.value || !imageFile.value || !assetFile.value) {
@@ -141,7 +204,22 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
-    // 1. Upload files to Supabase Storage
+    // 1. Upsert tags and get their IDs
+    let tagIds: number[] = []
+    if (tags.value.length > 0) {
+      const tagsToUpsert = tags.value.map(name => ({ name }))
+      const { data: upsertedTags, error: tagError } = await supabase
+        .from('tags')
+        .upsert(tagsToUpsert, { onConflict: 'name', ignoreDuplicates: false })
+        .select('id')
+
+      if (tagError) throw new Error(`タグの保存エラー: ${tagError.message}`)
+      if (upsertedTags) {
+        tagIds = upsertedTags.map(tag => tag.id)
+      }
+    }
+
+    // 2. Upload files to Supabase Storage
     const imageExt = imageFile.value.name.split('.').pop()
     const imagePath = `products/${user.value.id}/${crypto.randomUUID()}.${imageExt}`
     const { error: imageError } = await supabase.storage.from('assets').upload(imagePath, imageFile.value)
@@ -152,7 +230,7 @@ const handleSubmit = async () => {
     const { error: assetError } = await supabase.storage.from('assets').upload(assetPath, assetFile.value)
     if (assetError) throw new Error(`ファイルアップロードエラー: ${assetError.message}`)
 
-    // 2. Get public URLs
+    // 3. Get public URLs
     const { data: imageUrlData } = supabase.storage.from('assets').getPublicUrl(imagePath)
     const { data: assetUrlData } = supabase.storage.from('assets').getPublicUrl(assetPath)
 
@@ -160,23 +238,35 @@ const handleSubmit = async () => {
       throw new Error('ファイルURLの取得に失敗しました。')
     }
 
-    // 3. Insert product record into the database
-    const { data, error: dbError } = await supabase.from('products').insert({
+    // 4. Insert product record into the database
+    const { data: productData, error: dbError } = await supabase.from('products').insert({
       name: name.value,
       description: description.value,
       price: price.value,
       image_url: imageUrlData.publicUrl,
       file_url: assetUrlData.publicUrl,
       creator_id: user.value.id,
+      category_id: categoryId.value,
       license_type: license_type.value,
       terms_of_use: terms_of_use.value
     }).select().single()
 
     if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
+    if (!productData) throw new Error('商品IDの取得に失敗しました。')
 
-    // 4. Handle success
+    // 5. Link tags to the product
+    if (tagIds.length > 0) {
+      const productTags = tagIds.map(tag_id => ({
+        product_id: productData.id,
+        tag_id: tag_id,
+      }))
+      const { error: productTagError } = await supabase.from('product_tags').insert(productTags)
+      if (productTagError) throw new Error(`商品とタグの関連付けエラー: ${productTagError.message}`)
+    }
+
+    // 6. Handle success
     showToast('成功', '商品が正常にアップロードされました！')
-    router.push(`/product/${data.id}`)
+    router.push(`/product/${productData.id}`)
     hasAttemptedSubmit.value = false
 
   } catch (error: any) {
