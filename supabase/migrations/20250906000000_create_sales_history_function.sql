@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_sales_history()
+CREATE OR REPLACE FUNCTION public.get_sales_history()
 RETURNS TABLE (
   product_id BIGINT,
   product_name TEXT,
@@ -6,15 +6,15 @@ RETURNS TABLE (
   purchased_at TIMESTAMPTZ,
   purchaser_username TEXT
 )
-AS $$
+LANGUAGE plpgsql STABLE SECURITY INVOKER AS $$
 BEGIN
   RETURN QUERY
   SELECT
-    p.id AS product_id,
-    p.name AS product_name,
+    p.id,
+    p.name,
     p.price,
-    pu.created_at AS purchased_at,
-    purchaser_profile.username AS purchaser_username
+    pu.created_at,
+    purchaser_profile.username
   FROM
     public.purchases pu
   JOIN
@@ -26,4 +26,4 @@ BEGIN
   ORDER BY
     pu.created_at DESC;
 END;
-$$ LANGUAGE plpgsql;
+$$;
