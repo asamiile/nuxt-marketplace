@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Category } from '~/types/product'
+import Input from '~/components/ui/Input.vue'
 
 const props = defineProps<{
   categories: Category[]
@@ -16,7 +17,7 @@ const filters = ref({
 })
 
 watch(filters, (newFilters) => {
-  emit('update:filters', newFilters)
+  emit('update:filters', { ...newFilters })
 }, { deep: true })
 </script>
 
