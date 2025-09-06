@@ -9,17 +9,21 @@
         <TabsTrigger value="listings" class="w-full justify-start">
           出品した商品
         </TabsTrigger>
+        <TabsTrigger value="sales" class="w-full justify-start">
+          販売管理
+        </TabsTrigger>
         <TabsTrigger value="profile" class="w-full justify-start">
           プロフィール設定
         </TabsTrigger>
       </TabsList>
 
       <div class="flex-1">
-        <!-- Listings Content -->
         <TabsContent value="listings">
           <UserListings />
         </TabsContent>
-        <!-- Profile Settings Content -->
+        <TabsContent value="sales">
+          <SalesHistory />
+        </TabsContent>
         <TabsContent value="profile">
           <ProfileSettings @show-alert="handleShowAlert" />
         </TabsContent>
@@ -35,13 +39,13 @@ import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
 import TabsContent from '~/components/ui/tabs/TabsContent.vue'
 import ProfileSettings from '~/components/dashboard/ProfileSettings.vue'
 import UserListings from '~/components/dashboard/UserListings.vue'
+import SalesHistory from '~/components/dashboard/SalesHistory.vue'
 import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({
   middleware: 'auth'
 })
 
-// --- Alert State & Logic ---
 const { showToast } = useAlert()
 
 function handleShowAlert(alertData: { title: string, message: string, type: 'success' | 'error' }) {
