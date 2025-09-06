@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watchEffect } from 'vue'
-import { buttonVariants } from '~/components/ui/buttonVariants'
+import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import type { Profile } from '~/types/profile'
 
 const user = useCurrentUser()

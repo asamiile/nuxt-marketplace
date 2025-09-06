@@ -56,10 +56,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { z } from 'zod'
-import { buttonVariants } from '~/components/ui/buttonVariants'
-import Input from '~/components/ui/Input.vue'
-import Label from '~/components/ui/Label.vue'
-import Button from '~/components/ui/Button.vue'
+import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import Input from '~/components/ui/form/Input.vue'
+import Label from '~/components/ui/form/Label.vue'
+import Button from '~/components/ui/button/Button.vue'
 
 const supabase = useSupabaseClient()
 const router = useRouter()

@@ -87,12 +87,12 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { ProductWithRelations } from '~/types/product'
-import { buttonVariants } from '~/components/ui/buttonVariants'
-import Input from '~/components/ui/Input.vue'
-import Label from '~/components/ui/Label.vue'
-import Textarea from '~/components/ui/Textarea.vue'
-import Button from '~/components/ui/Button.vue'
-import FileDropzone from '~/components/ui/FileDropzone.vue'
+import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import Input from '~/components/ui/form/Input.vue'
+import Label from '~/components/ui/form/Label.vue'
+import Textarea from '~/components/ui/form/Textarea.vue'
+import Button from '~/components/ui/button/Button.vue'
+import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 definePageMeta({
   middleware: 'auth'

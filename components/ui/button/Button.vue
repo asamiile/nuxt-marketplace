@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'class-variance-authority'
 import { cn } from '~/lib/utils'
-import { buttonVariants } from '~/components/ui/buttonVariants'
+import { buttonVariants } from './buttonVariants'
 type ButtonProps = VariantProps<typeof buttonVariants>
 interface Props {
   variant?: ButtonProps['variant']

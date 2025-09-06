@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Category } from '~/types/product'
-import Input from '~/components/ui/Input.vue'
+import Input from '~/components/ui/form/Input.vue'
 
 const props = defineProps<{
   categories: Category[]

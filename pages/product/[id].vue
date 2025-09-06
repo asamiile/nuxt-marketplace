@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import type { ProductWithRelations } from '~/types/product'
-import { buttonVariants } from '~/components/ui/buttonVariants'
+import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import Skeleton from '~/components/ui/Skeleton.vue'
 
 const route = useRoute()
