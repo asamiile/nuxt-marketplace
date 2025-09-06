@@ -2,6 +2,12 @@
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8">商品一覧</h1>
 
+    <ProductFilters
+      v-if="categories"
+      :categories="categories"
+      @update:filters="updateFilters"
+    />
+
     <div v-if="pending">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div v-for="n in 8" :key="n" class="border rounded-lg p-4 shadow">
@@ -32,43 +38,43 @@
       </div>
     </div>
     <div v-else>
-      <p>商品はまだありません。</p>
+      <p>該当する商品は見つかりませんでした。</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { Product } from '~/types/product'
+import type { Product, Category } from '~/types/product'
 import Pagination from '~/components/ui/Pagination.vue'
 import Skeleton from '~/components/ui/Skeleton.vue'
+import ProductFilters from '~/components/ProductFilters.vue'
 
 const supabase = useSupabaseClient()
 const itemsPerPage = 8
 const currentPage = ref(1)
 
+const filters = ref({
+  keyword: '',
+  categoryId: null,
+  minPrice: null,
+  maxPrice: null,
+})
+
+const { data: categories } = await useAsyncData('categories', async () => {
+  const { data } = await supabase.from('categories').select('*').order('name')
+  return data as Category[]
+})
+
+function updateFilters(newFilters: typeof filters.value) {
+  filters.value = newFilters
+}
+
 const { data, pending, error, refresh } = await useAsyncData(
-  'products',
+  'products-filtered',
   async () => {
-    // First, get the total count of products
-    const { count, error: countError } = await supabase
-      .from('products')
-      .select('*', { count: 'exact', head: true })
-
-    if (countError) {
-      console.error('Error fetching product count:', countError)
-      throw countError
-    }
-
-    const totalPages = count ? Math.ceil(count / itemsPerPage) : 1
-
-    // Then, fetch the products for the current page
-    const from = (currentPage.value - 1) * itemsPerPage
-    const to = from + itemsPerPage - 1
-
-    const { data: productsData, error: productsError } = await supabase
-      .from('products')
-      .select(`
+    let query = supabase.from('products').select(
+      `
         id,
         name,
         price,
@@ -76,7 +82,42 @@ const { data, pending, error, refresh } = await useAsyncData(
         profiles (
           username
         )
-      `)
+      `,
+      { count: 'exact' },
+    )
+
+    if (filters.value.keyword) {
+      query = query.ilike('name', `%${filters.value.keyword}%`)
+    }
+    if (filters.value.categoryId) {
+      query = query.eq('category_id', filters.value.categoryId)
+    }
+    if (filters.value.minPrice) {
+      query = query.gte('price', filters.value.minPrice)
+    }
+    if (filters.value.maxPrice) {
+      query = query.lte('price', filters.value.maxPrice)
+    }
+
+    // First, get the total count of filtered products
+    const { count, error: countError } = await query
+
+    if (countError) {
+      console.error('Error fetching product count:', countError)
+      throw countError
+    }
+
+    const totalPages = count ? Math.ceil(count / itemsPerPage) : 1
+    // Reset to page 1 if current page is out of bounds
+    if (currentPage.value > totalPages) {
+      currentPage.value = 1
+    }
+
+    // Then, fetch the products for the current page
+    const from = (currentPage.value - 1) * itemsPerPage
+    const to = from + itemsPerPage - 1
+
+    const { data: productsData, error: productsError } = await query
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -91,14 +132,7 @@ const { data, pending, error, refresh } = await useAsyncData(
     }
   },
   {
-    // By default, useAsyncData caches the result.
-    // We set watch to an empty array to prevent this default behavior,
-    // so that we can manually trigger a refresh.
-    watch: [],
+    watch: [filters, currentPage],
   },
 )
-
-watch(currentPage, () => {
-  refresh()
-})
 </script>
