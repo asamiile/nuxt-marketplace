@@ -7,7 +7,7 @@
       <h2 class="text-xl font-semibold mb-4">新規カテゴリ作成</h2>
       <form @submit.prevent="handleCreateCategory">
         <div class="flex items-center gap-4">
-          <UiInput
+          <UiFormInput
             v-model="newCategoryName"
             placeholder="カテゴリ名"
             required
@@ -54,7 +54,7 @@
         <h2 class="text-xl font-semibold mb-4">カテゴリを編集</h2>
         <form @submit.prevent="handleUpdateCategory">
           <div class="space-y-4">
-            <UiInput
+            <UiFormInput
               v-model="editingCategoryName"
               placeholder="カテゴリ名"
               required
