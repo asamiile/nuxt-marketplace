@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-8">商品一覧</h1>
-
     <ProductFilters
       v-if="categories"
       :categories="categories"
@@ -9,7 +7,7 @@
     />
 
     <div v-if="pending">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <div v-for="n in 8" :key="n" class="border rounded-lg p-4 shadow">
           <div class="space-y-3">
             <Skeleton class="h-48 w-full" />
@@ -26,7 +24,7 @@
       <p>エラーが発生しました: {{ error.message }}</p>
     </div>
     <div v-else-if="data && data.products && data.products.length > 0">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <ProductCard v-for="product in data.products" :key="product.id" :product="product" />
       </div>
       <div class="mt-8">
