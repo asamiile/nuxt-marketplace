@@ -19,7 +19,7 @@
           </div>
           <div>
             <Label for="avatar_url">アバター画像</Label>
-            <FileDropzone v-model="avatarFile" accept="image/*" :initial-preview-url="avatar_url" class="mt-1" />
+            <FileDropzone v-model="avatarFile" accept="image/*" :initial-preview-url="optimizedAvatarUrl" class="mt-1" />
             <p class="text-sm text-muted-foreground mt-2">新しい画像をドラッグ＆ドロップするか、クリックしてアバターを変更します。</p>
           </div>
           <div>
@@ -64,6 +64,7 @@ import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
+const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 const emit = defineEmits(['show-alert'])
 
 // --- Profile State ---
@@ -77,6 +78,14 @@ const avatarFile = ref<File | null>(null)
 const x_url = ref('')
 const youtube_url = ref('')
 const hasAttemptedSubmit = ref(false)
+
+const optimizedAvatarUrl = computed(() => {
+  if (!avatar_url.value || avatar_url.value.startsWith('data:')) {
+    return avatar_url.value
+  }
+  const path = getPathFromUrl(avatar_url.value)
+  return getOptimizedPublicUrl(path, { width: 100, height: 100 })
+})
 
 // --- Validation ---
 const errors = ref<Record<string, string>>({})

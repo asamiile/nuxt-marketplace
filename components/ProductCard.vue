@@ -40,23 +40,11 @@ const formatPrice = (price: number | null) => {
   return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
 }
 
-const supabase = useSupabaseClient()
-const { getPathFromUrl } = useSupabaseHelpers()
+const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 
 // 最適化された画像URLを生成する算出プロパティ
 const optimizedImageUrl = computed(() => {
   const path = getPathFromUrl(props.product.image_url)
-  if (!path) {
-    // パスが取得できない場合は元のURLかプレースホルダーを返す
-    return props.product.image_url || 'https://placehold.jp/300x300.png'
-  }
-  const { data } = supabase.storage.from('assets').getPublicUrl(path, {
-    transform: {
-      width: 300,
-      height: 300,
-      resize: 'cover',
-    },
-  })
-  return data.publicUrl
+  return getOptimizedPublicUrl(path, { width: 300, height: 300 })
 })
 </script>

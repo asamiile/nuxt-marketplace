@@ -1,4 +1,8 @@
+import { useSupabaseClient } from '#imports'
+
 export const useSupabaseHelpers = () => {
+  const supabase = useSupabaseClient()
+
   const getPathFromUrl = (url: string | null): string | null => {
     if (!url) return null
     try {
@@ -12,7 +16,21 @@ export const useSupabaseHelpers = () => {
     }
   }
 
+  const getOptimizedPublicUrl = (path: string | null, options: { width: number; height: number; resize?: 'cover' | 'contain' | 'fill' }) => {
+    if (!path) {
+      return 'https://placehold.co/600x400' // プレースホルダー画像
+    }
+    const { data } = supabase.storage.from('assets').getPublicUrl(path, {
+      transform: {
+        ...options,
+        resize: options.resize || 'cover',
+      },
+    })
+    return data.publicUrl
+  }
+
   return {
     getPathFromUrl,
+    getOptimizedPublicUrl,
   }
 }

@@ -144,24 +144,11 @@ useHead({
   ]
 })
 
-const { getPathFromUrl } = useSupabaseHelpers()
+const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 
 const optimizedImageUrl = computed(() => {
-  if (!product.value?.image_url) {
-    return '/placeholder.png'
-  }
-  const path = getPathFromUrl(product.value.image_url)
-  if (!path) {
-    return product.value.image_url
-  }
-  const { data } = supabase.storage.from('assets').getPublicUrl(path, {
-    transform: {
-      width: 800,
-      height: 800,
-      resize: 'contain',
-    },
-  })
-  return data.publicUrl
+  const path = getPathFromUrl(product.value?.image_url)
+  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' })
 })
 
 const handleDelete = async () => {
