@@ -14,13 +14,13 @@
       <div v-else-if="products.length === 0" class="text-center text-muted-foreground">
         <p>まだ出品した商品がありません。</p>
         <NuxtLink to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
-          最初のを出品する
+          最初の商品を出品する
         </NuxtLink>
       </div>
       <div v-else class="space-y-4">
         <div v-for="product in products" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
           <div class="flex items-center gap-4">
-            <img :src="product.image_url" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
+            <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
             <div>
               <h3 class="font-semibold">{{ product.name }}</h3>
               <p class="text-muted-foreground">{{ formatPrice(product.price) }}</p>
