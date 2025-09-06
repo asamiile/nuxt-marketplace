@@ -43,7 +43,7 @@
         <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-foreground">{{ product.name }}</h1>
         <p class="text-lg text-foreground mb-4">
           作成者:
-          <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" class="font-semibold hover:text-primary transition-colors">
+          <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" class="font-semibold hover:text-sky-500 transition-colors">
             {{ product.profiles.username }}
           </NuxtLink>
           <span v-else class="font-semibold">N/A</span>
