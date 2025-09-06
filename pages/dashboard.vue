@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-8">
+  <div>
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-foreground">マイダッシュボード</h1>
     </div>

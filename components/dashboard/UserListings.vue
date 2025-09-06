@@ -14,7 +14,7 @@
       <div v-else-if="products.length === 0" class="text-center text-muted-foreground">
         <p>まだ出品した商品がありません。</p>
         <NuxtLink to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
-          最初の商品を出品する
+          最初のを出品する
         </NuxtLink>
       </div>
       <div v-else class="space-y-4">

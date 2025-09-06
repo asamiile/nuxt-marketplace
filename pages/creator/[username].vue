@@ -1,5 +1,5 @@
 <template>
-  <div v-if="pending" class="container py-8">
+  <div v-if="pending">
     <!-- Skeleton for Creator Info Header -->
     <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-8 rounded-2xl">
       <Skeleton class="w-28 h-28 rounded-full border-4 border-background" />
@@ -39,7 +39,7 @@
       ホームに戻る
     </NuxtLink>
   </div>
-  <div v-else-if="data && data.profile" class="container py-8">
+  <div v-else-if="data && data.profile">
     <!-- Creator Info Header -->
     <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-8 rounded-2xl">
       <template v-if="data.profile.avatar_url">

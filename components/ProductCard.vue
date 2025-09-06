@@ -48,7 +48,7 @@ const optimizedImageUrl = computed(() => {
   const path = getPathFromUrl(props.product.image_url)
   if (!path) {
     // パスが取得できない場合は元のURLかプレースホルダーを返す
-    return props.product.image_url || '/placeholder.png'
+    return props.product.image_url || 'https://placehold.jp/300x300.png'
   }
   const { data } = supabase.storage.from('assets').getPublicUrl(path, {
     transform: {
