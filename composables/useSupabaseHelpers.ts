@@ -18,7 +18,7 @@ export const useSupabaseHelpers = () => {
 
   const getOptimizedPublicUrl = (path: string | null, options: { width: number; height: number; resize?: 'cover' | 'contain' | 'fill' }) => {
     if (!path) {
-      return 'https://placehold.co/600x400' // プレースホルダー画像
+      return null
     }
     const { data } = supabase.storage.from('assets').getPublicUrl(path, {
       transform: {

@@ -148,7 +148,7 @@ const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 
 const optimizedImageUrl = computed(() => {
   const path = getPathFromUrl(product.value?.image_url)
-  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' })
+  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' }) || 'https://placehold.co/800x800'
 })
 
 const handleDelete = async () => {
