@@ -28,6 +28,13 @@
           >
             <span class="mx-4">タグ管理</span>
           </NuxtLink>
+          <NuxtLink
+            to="/admin/purchases"
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+            exact-active-class="bg-gray-300 dark:bg-gray-700"
+          >
+            <span class="mx-4">購入管理</span>
+          </NuxtLink>
         </nav>
       </div>
     </aside>
