@@ -21,10 +21,10 @@
             <div ref="dropdownRef" class="relative">
               <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background">
                 <template v-if="profile">
-                  <template v-if="optimizedAvatarUrl">
-                    <img :src="optimizedAvatarUrl" alt="User Avatar" class="h-full w-full rounded-full object-cover">
+                  <template v-if="profile.avatar_url">
+                    <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover">
                   </template>
-                  <template v-else-if="profile.username">
+                  <template v-else>
                     <span class="text-lg font-semibold">
                       {{ profile.username?.charAt(0).toUpperCase() }}
                     </span>
@@ -92,8 +92,6 @@ const isMenuOpen = ref(false)
 const dropdownRef = ref<HTMLElement>()
 const profile = ref<Profile | null>(null)
 
-const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
-
 watchEffect(async () => {
   if (user.value) {
     try {
@@ -112,14 +110,6 @@ watchEffect(async () => {
       profile.value = null
     }
   }
-})
-
-const optimizedAvatarUrl = computed(() => {
-  if (!profile.value?.avatar_url) {
-    return null
-  }
-  const path = getPathFromUrl(profile.value.avatar_url)
-  return getOptimizedPublicUrl(path, { width: 100, height: 100 })
 })
 
 const handleClickOutside = (event: MouseEvent) => {
