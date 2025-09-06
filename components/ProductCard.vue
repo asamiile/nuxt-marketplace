@@ -45,6 +45,6 @@ const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 // 最適化された画像URLを生成する算出プロパティ
 const optimizedImageUrl = computed(() => {
   const path = getPathFromUrl(props.product.image_url)
-  return getOptimizedPublicUrl(path, { width: 300, height: 300 }) || 'https://placehold.co/300x300'
+  return getOptimizedPublicUrl(path, { width: 300, height: 300, resize: 'contain' }) || 'https://placehold.co/300x300'
 })
 </script>
