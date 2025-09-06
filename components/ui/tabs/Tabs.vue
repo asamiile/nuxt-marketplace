@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { provide, ref } from 'vue'
-import type { Ref } from 'vue'
+import { provide } from 'vue'
 
-const props = defineProps<{
-  defaultValue: string
-}>()
+const modelValue = defineModel<string>()
 
-const activeTab = ref(props.defaultValue)
-
-provide('activeTab', activeTab)
+provide('activeTab', modelValue)
 </script>
 
 <template>

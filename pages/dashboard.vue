@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold text-foreground">マイダッシュボード</h1>
     </div>
 
-    <Tabs default-value="listings" class="flex flex-col md:flex-row gap-8">
+    <Tabs v-model="activeTab" class="flex flex-col md:flex-row gap-8">
       <TabsList class="flex md:flex-col md:w-1/4 shrink-0">
         <TabsTrigger value="listings" class="w-full justify-start">
           出品した商品
@@ -33,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
@@ -44,6 +46,16 @@ import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({
   middleware: 'auth'
+})
+
+const route = useRoute()
+const router = useRouter()
+
+const activeTab = computed({
+  get: () => (route.query.tab as string) || 'listings',
+  set: (newValue) => {
+    router.push({ query: { tab: newValue } })
+  },
 })
 
 const { showToast } = useAlert()
