@@ -14,8 +14,7 @@
         商品を編集する
       </h1>
       <p class="text-center mb-8">フォームの内容を更新して、商品情報を変更します。</p>
-      <UiCard class="border-0 shadow-md">
-        <UiCardContent class="p-8 pt-8">
+      <div class="text-card-foreground rounded shadow-md dark:shadow-sky-500/20 border-0 p-8 pt-8">
           <form @submit.prevent="handleUpdate" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>
@@ -78,8 +77,7 @@
               </Button>
             </div>
           </form>
-        </UiCardContent>
-      </UiCard>
+      </div>
     </div>
   </div>
 </template>
