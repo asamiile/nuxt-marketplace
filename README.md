@@ -31,6 +31,7 @@ pnpm preview
 - Applying the migration file
 
 ```bash
+supabase link --project-ref [project-ref]
 supabase db push
 ```
 
@@ -43,5 +44,5 @@ supabase migration list
 - Repairing migration history
 
 ```bash
-supabase migration repair 【TIMESTAMP】 --status applied
+supabase migration repair [TIMESTAMP] --status applied
 ```
