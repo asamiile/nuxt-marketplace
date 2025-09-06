@@ -81,20 +81,29 @@ definePageMeta({
   middleware: 'admin',
 })
 
-const supabase = useSupabaseClient<Database>()
 const { showToast } = useAlert()
 
-// Fetch tags
-const { data: tags, pending, error, refresh } = await useAsyncData('tags', async () => {
+// Define the function to fetch tags
+const fetchTags = async () => {
+  const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase.from('tags').select('*').order('created_at', { ascending: false })
-  if (error) throw error
+  if (error) {
+    showToast({ title: 'エラー', description: `タグの取得に失敗しました: ${error.message}`, variant: 'destructive' })
+    return []
+  }
   return data
+}
+
+// Fetch tags using the defined function
+const { data: tags, pending, error, refresh } = await useAsyncData('tags', fetchTags, {
+  default: () => [],
 })
 
 // Create
 const newTagName = ref('')
 const handleCreateTag = async () => {
   if (!newTagName.value.trim()) return
+  const supabase = useSupabaseClient<Database>()
   try {
     const { error } = await supabase.from('tags').insert({ name: newTagName.value.trim() })
     if (error) throw error
@@ -126,6 +135,7 @@ const closeEditModal = () => {
 // Update
 const handleUpdateTag = async () => {
   if (!editingTag.value || !editingTagName.value.trim()) return
+  const supabase = useSupabaseClient<Database>()
   try {
     const { error } = await supabase
       .from('tags')
@@ -143,6 +153,7 @@ const handleUpdateTag = async () => {
 // Delete
 const handleDeleteTag = async (id: number) => {
   if (!confirm('本当にこのタグを削除しますか？')) return
+  const supabase = useSupabaseClient<Database>()
   try {
     const { error } = await supabase.from('tags').delete().eq('id', id)
     if (error) throw error

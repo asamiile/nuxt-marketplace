@@ -81,20 +81,29 @@ definePageMeta({
   middleware: 'admin',
 })
 
-const supabase = useSupabaseClient<Database>()
 const { showToast } = useAlert()
 
-// Fetch categories
-const { data: categories, pending, error, refresh } = await useAsyncData('categories', async () => {
+// Define the function to fetch categories
+const fetchCategories = async () => {
+  const supabase = useSupabaseClient<Database>()
   const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false })
-  if (error) throw error
+  if (error) {
+    showToast({ title: 'エラー', description: `カテゴリの取得に失敗しました: ${error.message}`, variant: 'destructive' })
+    return []
+  }
   return data
+}
+
+// Fetch categories using the defined function
+const { data: categories, pending, error, refresh } = await useAsyncData('categories', fetchCategories, {
+  default: () => [],
 })
 
 // Create
 const newCategoryName = ref('')
 const handleCreateCategory = async () => {
   if (!newCategoryName.value.trim()) return
+  const supabase = useSupabaseClient<Database>()
   try {
     const { error } = await supabase.from('categories').insert({ name: newCategoryName.value.trim() })
     if (error) throw error
@@ -126,6 +135,7 @@ const closeEditModal = () => {
 // Update
 const handleUpdateCategory = async () => {
   if (!editingCategory.value || !editingCategoryName.value.trim()) return
+  const supabase = useSupabaseClient<Database>()
   try {
     const { error } = await supabase
       .from('categories')
@@ -143,6 +153,7 @@ const handleUpdateCategory = async () => {
 // Delete
 const handleDeleteCategory = async (id: number) => {
   if (!confirm('本当にこのカテゴリを削除しますか？')) return
+  const supabase = useSupabaseClient<Database>()
   try {
     const { error } = await supabase.from('categories').delete().eq('id', id)
     if (error) throw error
