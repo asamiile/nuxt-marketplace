@@ -7,7 +7,7 @@
       <h2 class="text-xl font-semibold mb-4">新規タグ作成</h2>
       <form @submit.prevent="handleCreateTag">
         <div class="flex items-center gap-4">
-          <UiInput
+          <UiFormInput
             v-model="newTagName"
             placeholder="タグ名"
             required
@@ -54,7 +54,7 @@
         <h2 class="text-xl font-semibold mb-4">タグを編集</h2>
         <form @submit.prevent="handleUpdateTag">
           <div class="space-y-4">
-            <UiInput
+            <UiFormInput
               v-model="editingTagName"
               placeholder="タグ名"
               required
