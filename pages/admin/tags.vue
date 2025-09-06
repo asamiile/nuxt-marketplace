@@ -13,8 +13,8 @@
             required
             class="flex-grow"
           />
-          <UiButton type="submit" :disabled="loading">
-            {{ loading ? '作成中...' : '作成' }}
+          <UiButton type="submit" :disabled="pending">
+            {{ pending ? '作成中...' : '作成' }}
           </UiButton>
         </div>
       </form>
@@ -61,8 +61,8 @@
             />
             <div class="flex justify-end gap-4">
               <UiButton type="button" variant="ghost" @click="closeEditModal">キャンセル</UiButton>
-              <UiButton type="submit" :disabled="loading">
-                {{ loading ? '更新中...' : '更新' }}
+              <UiButton type="submit" :disabled="pending">
+                {{ pending ? '更新中...' : '更新' }}
               </UiButton>
             </div>
           </div>
@@ -83,10 +83,9 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 const { showToast } = useAlert()
-const loading = ref(false)
 
 // Fetch tags
-const { data: tags, refresh } = await useAsyncData('tags', async () => {
+const { data: tags, pending, error, refresh } = await useAsyncData('tags', async () => {
   const { data, error } = await supabase.from('tags').select('*').order('created_at', { ascending: false })
   if (error) throw error
   return data
@@ -96,7 +95,6 @@ const { data: tags, refresh } = await useAsyncData('tags', async () => {
 const newTagName = ref('')
 const handleCreateTag = async () => {
   if (!newTagName.value.trim()) return
-  loading.value = true
   try {
     const { error } = await supabase.from('tags').insert({ name: newTagName.value.trim() })
     if (error) throw error
@@ -105,8 +103,6 @@ const handleCreateTag = async () => {
     await refresh()
   } catch (error: any) {
     showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
-  } finally {
-    loading.value = false
   }
 }
 
@@ -130,7 +126,6 @@ const closeEditModal = () => {
 // Update
 const handleUpdateTag = async () => {
   if (!editingTag.value || !editingTagName.value.trim()) return
-  loading.value = true
   try {
     const { error } = await supabase
       .from('tags')
@@ -142,15 +137,12 @@ const handleUpdateTag = async () => {
     await refresh()
   } catch (error: any) {
     showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
-  } finally {
-    loading.value = false
   }
 }
 
 // Delete
 const handleDeleteTag = async (id: number) => {
   if (!confirm('本当にこのタグを削除しますか？')) return
-  loading.value = true
   try {
     const { error } = await supabase.from('tags').delete().eq('id', id)
     if (error) throw error
@@ -158,8 +150,6 @@ const handleDeleteTag = async (id: number) => {
     await refresh()
   } catch (error: any) {
     showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
-  } finally {
-    loading.value = false
   }
 }
 </script>

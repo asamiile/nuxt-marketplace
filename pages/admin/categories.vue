@@ -13,8 +13,8 @@
             required
             class="flex-grow"
           />
-          <UiButton type="submit" :disabled="loading">
-            {{ loading ? '作成中...' : '作成' }}
+          <UiButton type="submit" :disabled="pending">
+            {{ pending ? '作成中...' : '作成' }}
           </UiButton>
         </div>
       </form>
@@ -61,8 +61,8 @@
             />
             <div class="flex justify-end gap-4">
               <UiButton type="button" variant="ghost" @click="closeEditModal">キャンセル</UiButton>
-              <UiButton type="submit" :disabled="loading">
-                {{ loading ? '更新中...' : '更新' }}
+              <UiButton type="submit" :disabled="pending">
+                {{ pending ? '更新中...' : '更新' }}
               </UiButton>
             </div>
           </div>
@@ -83,10 +83,9 @@ definePageMeta({
 
 const supabase = useSupabaseClient<Database>()
 const { showToast } = useAlert()
-const loading = ref(false)
 
 // Fetch categories
-const { data: categories, refresh } = await useAsyncData('categories', async () => {
+const { data: categories, pending, error, refresh } = await useAsyncData('categories', async () => {
   const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false })
   if (error) throw error
   return data
@@ -96,7 +95,6 @@ const { data: categories, refresh } = await useAsyncData('categories', async () 
 const newCategoryName = ref('')
 const handleCreateCategory = async () => {
   if (!newCategoryName.value.trim()) return
-  loading.value = true
   try {
     const { error } = await supabase.from('categories').insert({ name: newCategoryName.value.trim() })
     if (error) throw error
@@ -105,8 +103,6 @@ const handleCreateCategory = async () => {
     await refresh()
   } catch (error: any) {
     showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
-  } finally {
-    loading.value = false
   }
 }
 
@@ -130,7 +126,6 @@ const closeEditModal = () => {
 // Update
 const handleUpdateCategory = async () => {
   if (!editingCategory.value || !editingCategoryName.value.trim()) return
-  loading.value = true
   try {
     const { error } = await supabase
       .from('categories')
@@ -142,15 +137,12 @@ const handleUpdateCategory = async () => {
     await refresh()
   } catch (error: any) {
     showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
-  } finally {
-    loading.value = false
   }
 }
 
 // Delete
 const handleDeleteCategory = async (id: number) => {
   if (!confirm('本当にこのカテゴリを削除しますか？')) return
-  loading.value = true
   try {
     const { error } = await supabase.from('categories').delete().eq('id', id)
     if (error) throw error
@@ -158,8 +150,6 @@ const handleDeleteCategory = async (id: number) => {
     await refresh()
   } catch (error: any) {
     showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
-  } finally {
-    loading.value = false
   }
 }
 </script>
