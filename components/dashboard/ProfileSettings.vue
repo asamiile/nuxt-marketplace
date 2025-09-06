@@ -14,7 +14,7 @@
         <form @submit.prevent="updateProfile" class="space-y-6">
           <div>
             <Label for="username">ユーザー名</Label>
-            <Input id="username" v-model="username" type="text" class="mt-1" />
+            <Input id="username" v-model="username" type="text" class="mt-1" placeholder="例: tanaka_taro" />
             <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
           </div>
           <div>

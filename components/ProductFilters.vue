@@ -27,8 +27,8 @@ watch(filters, (newFilters) => {
       <Input
         v-model="filters.keyword"
         type="text"
-        placeholder="キーワード"
-        class="w-full"
+        placeholder="キーワードで検索..."
+        class="w-full placeholder:text-gray-500 dark:placeholder:text-gray-400"
       />
     </div>
     <div class="filter-group">
