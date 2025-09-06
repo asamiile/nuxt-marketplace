@@ -22,7 +22,7 @@ watch(filters, (newFilters) => {
 </script>
 
 <template>
-  <div class="filters-bar grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-100 rounded-lg">
+  <div class="filters-bar grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="filter-group">
       <Input
         v-model="filters.keyword"
@@ -34,7 +34,7 @@ watch(filters, (newFilters) => {
     <div class="filter-group">
       <select
         v-model="filters.categoryId"
-        class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        class="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
       >
         <option :value="null">すべてのカテゴリ</option>
         <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -66,8 +66,6 @@ watch(filters, (newFilters) => {
   margin-bottom: 1.5rem;
 }
 select {
-    height: 40px;
-    padding-left: 0.75rem;
     padding-right: 2.5rem;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.5rem center;
