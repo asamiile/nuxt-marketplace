@@ -23,3 +23,15 @@ export interface ProductWithRelations extends Product {
     name: string;
   }[];
 }
+
+export interface Category {
+  id: number;
+  name: string;
+  created_at: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  created_at: string;
+}
