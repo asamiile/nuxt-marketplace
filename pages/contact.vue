@@ -43,10 +43,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { z } from 'zod'
-import Input from '~/components/ui/Input.vue'
-import Label from '~/components/ui/Label.vue'
-import Textarea from '~/components/ui/Textarea.vue'
-import Button from '~/components/ui/Button.vue'
+import Input from '~/components/ui/form/Input.vue'
+import Label from '~/components/ui/form/Label.vue'
+import Textarea from '~/components/ui/form/Textarea.vue'
+import Button from '~/components/ui/button/Button.vue'
 
 const { showToast } = useAlert()
 

@@ -31,9 +31,9 @@
 import { ref } from 'vue'
 import { useSupabaseClient } from '#imports'
 import { useAlert } from '~/composables/useAlert'
-import Input from '~/components/ui/Input.vue'
-import Button from '~/components/ui/Button.vue'
-import Label from '~/components/ui/Label.vue'
+import Input from '~/components/ui/form/Input.vue'
+import Button from '~/components/ui/button/Button.vue'
+import Label from '~/components/ui/form/Label.vue'
 
 const supabase = useSupabaseClient()
 const { showToast } = useAlert()

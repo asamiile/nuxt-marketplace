@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import type { Product } from '~/types/product'
-import { buttonVariants } from '~/components/ui/buttonVariants'
+import { buttonVariants } from '~/components/ui/button/buttonVariants'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()

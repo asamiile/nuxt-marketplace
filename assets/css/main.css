@@ -17,11 +17,23 @@
     --foreground: 0 0% 100%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 100%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 3.7% 25%;
     --secondary: 240 3.7% 15.9%;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Hide arrows from number inputs */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
   }
 }

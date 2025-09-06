@@ -14,7 +14,7 @@
         <form @submit.prevent="updateProfile" class="space-y-6">
           <div>
             <Label for="username">ユーザー名</Label>
-            <Input id="username" v-model="username" type="text" class="mt-1" />
+            <Input id="username" v-model="username" type="text" class="mt-1" placeholder="例: tanaka_taro" />
             <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
           </div>
           <div>
@@ -55,12 +55,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { z } from 'zod'
-import Input from '~/components/ui/Input.vue'
-import Label from '~/components/ui/Label.vue'
-import Textarea from '~/components/ui/Textarea.vue'
-import Button from '~/components/ui/Button.vue'
-import { buttonVariants } from '~/components/ui/buttonVariants'
-import FileDropzone from '~/components/ui/FileDropzone.vue'
+import Input from '~/components/ui/form/Input.vue'
+import Label from '~/components/ui/form/Label.vue'
+import Textarea from '~/components/ui/form/Textarea.vue'
+import Button from '~/components/ui/button/Button.vue'
+import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()

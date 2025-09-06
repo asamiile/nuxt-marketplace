@@ -10,23 +10,23 @@
           <form @submit.prevent="handleSubmit" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>
-              <Input v-model="name" type="text" id="name" class="mt-1" />
+              <Input v-model="name" type="text" id="name" class="mt-1" placeholder="例: 高品質3Dキャラクターモデル" />
               <p v-if="errors.name" class="text-sm text-red-500 mt-1">{{ errors.name }}</p>
             </div>
             <div>
               <Label for="description">説明</Label>
-              <Textarea v-model="description" id="description" :rows="4" class="mt-1" />
+              <Textarea v-model="description" id="description" :rows="4" class="mt-1" placeholder="商品の特徴、含まれるファイル、使い方などを詳しく説明します。" />
               <p v-if="errors.description" class="text-sm text-red-500 mt-1">{{ errors.description }}</p>
             </div>
             <div>
               <Label for="price">価格 (円)</Label>
-              <Input v-model.number="price" type="number" id="price" class="mt-1" />
+              <Input v-model.number="price" type="number" id="price" class="mt-1" placeholder="例: 1500" />
                <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
             </div>
 
             <div>
               <Label for="category">カテゴリ</Label>
-              <select v-model="categoryId" id="category" class="w-full mt-1 p-2 border rounded-md bg-white dark:bg-gray-800">
+              <select v-model="categoryId" id="category" :class="['flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50', categoryId === null ? 'text-muted-foreground' : 'text-foreground']">
                 <option :value="null" disabled>カテゴリを選択してください</option>
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                   {{ category.name }}
@@ -81,11 +81,11 @@
 
 <script setup lang="ts">
 import { z } from 'zod'
-import Input from '~/components/ui/Input.vue'
-import Label from '~/components/ui/Label.vue'
-import Textarea from '~/components/ui/Textarea.vue'
-import Button from '~/components/ui/Button.vue'
-import FileDropzone from '~/components/ui/FileDropzone.vue'
+import Input from '~/components/ui/form/Input.vue'
+import Label from '~/components/ui/form/Label.vue'
+import Textarea from '~/components/ui/form/Textarea.vue'
+import Button from '~/components/ui/button/Button.vue'
+import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 definePageMeta({
   middleware: 'auth'
@@ -276,3 +276,16 @@ const handleSubmit = async () => {
   }
 }
 </script>
+
+<style scoped>
+select {
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+</style>
