@@ -20,7 +20,7 @@
       <div v-else class="space-y-4">
         <div v-for="product in products" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
           <div class="flex items-center gap-4">
-            <img :src="product.image_url" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
+            <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
             <div>
               <h3 class="font-semibold">{{ product.name }}</h3>
               <p class="text-muted-foreground">{{ formatPrice(product.price) }}</p>

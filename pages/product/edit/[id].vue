@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-8">
+  <div>
     <div v-if="pending" class="text-center">
       <p>商品を読み込んでいます...</p>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div>
     <h1 class="text-3xl font-bold mb-8">商品一覧</h1>
 
     <ProductFilters

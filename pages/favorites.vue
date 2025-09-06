@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-8">
+  <div>
     <h1 class="text-3xl font-bold mb-8">お気に入り商品</h1>
 
     <div v-if="loading">
