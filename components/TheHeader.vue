@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <header class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
     <div class="container flex px-6 h-20 items-center">
       <div class="mr-4 md:flex">
         <NuxtLink to="/" class="mr-6 flex items-center space-x-2">

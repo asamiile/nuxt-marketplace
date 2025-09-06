@@ -10,12 +10,12 @@
       </NuxtLink>
     </div>
     <div v-else class="max-w-2xl mx-auto">
-      <UiCard>
-        <UiCardHeader>
-          <UiCardTitle>商品を編集する</UiCardTitle>
-          <UiCardDescription>フォームの内容を更新して、商品情報を変更します。</UiCardDescription>
-        </UiCardHeader>
-        <UiCardContent>
+      <h1 class="text-3xl font-bold text-center mb-4 text-foreground">
+        商品を編集する
+      </h1>
+      <p class="text-center mb-8">フォームの内容を更新して、商品情報を変更します。</p>
+      <UiCard class="border-0 shadow-md">
+        <UiCardContent class="p-8 pt-8">
           <form @submit.prevent="handleUpdate" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>
@@ -34,7 +34,7 @@
             </div>
             <div>
               <Label for="category">カテゴリ</Label>
-              <select v-model="categoryId" id="category" class="w-full mt-1 p-2 border rounded-md bg-white dark:bg-gray-800">
+              <select v-model="categoryId" id="category" class="flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-muted-foreground">
                 <option :value="null" disabled>カテゴリを選択してください</option>
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                   {{ category.name }}
@@ -70,7 +70,7 @@
             <div>
               <Label for="file">デジタルアセット (変更する場合)</Label>
               <FileDropzone v-model="assetFile" class="mt-1" />
-              <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-primary">ダウンロード</a></p>
+              <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-sky-500">ダウンロード</a></p>
             </div>
             <div class="pt-2">
               <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
@@ -331,3 +331,16 @@ const handleUpdate = async () => {
   }
 }
 </script>
+
+<style scoped>
+select {
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+</style>

@@ -22,7 +22,7 @@ watch(filters, (newFilters) => {
 </script>
 
 <template>
-  <div class="filters-bar grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="filter-group">
       <Input
         v-model="filters.keyword"
@@ -62,9 +62,6 @@ watch(filters, (newFilters) => {
 </template>
 
 <style scoped>
-.filters-bar {
-  margin-bottom: 1.5rem;
-}
 select {
     padding-right: 2.5rem;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");

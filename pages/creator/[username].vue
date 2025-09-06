@@ -56,9 +56,9 @@
         <p v-if="data.profile.bio" class="mt-2 max-w-xl text-muted-foreground">{{ data.profile.bio }}</p>
         <!-- Social Links -->
         <div class="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 mt-4">
-          <a v-if="data.profile.website_url" :href="data.profile.website_url" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">ウェブサイト</a>
-          <a v-if="data.profile.x_url" :href="data.profile.x_url" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">X/Twitter</a>
-          <a v-if="data.profile.youtube_url" :href="data.profile.youtube_url" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">YouTube</a>
+          <a v-if="data.profile.website_url" :href="data.profile.website_url" target="_blank" rel="noopener noreferrer" class="hover:text-sky-500 transition-colors">ウェブサイト</a>
+          <a v-if="data.profile.x_url" :href="data.profile.x_url" target="_blank" rel="noopener noreferrer" class="hover:text-sky-500 transition-colors">X/Twitter</a>
+          <a v-if="data.profile.youtube_url" :href="data.profile.youtube_url" target="_blank" rel="noopener noreferrer" class="hover:text-sky-500 transition-colors">YouTube</a>
         </div>
       </div>
     </div>

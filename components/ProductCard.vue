@@ -3,7 +3,7 @@
     <img :src="optimizedImageUrl" alt="Product image" class="w-full h-48 object-cover">
     <UiCardContent class="p-4">
       <UiCardTitle class="text-lg truncate">{{ product.name }}</UiCardTitle>
-      <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" @click.stop class="text-sm text-muted-foreground hover:text-primary transition-colors">
+      <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" @click.stop class="text-sm text-muted-foreground hover:text-sky-500 transition-colors">
         {{ product.profiles.username }}
       </NuxtLink>
       <p v-else class="text-sm text-muted-foreground">Unknown Creator</p>
@@ -11,7 +11,7 @@
     </UiCardContent>
     <button
       @click.prevent.stop="toggleFavorite"
-      class="absolute top-2 right-2 p-1 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition-colors z-10"
+      class="absolute top-2 right-2 z-10"
       aria-label="Toggle Favorite"
     >
       <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>
