@@ -82,7 +82,13 @@ INSERT INTO public.purchases (user_id, product_id) VALUES
 ('【userのUUIDを貼り付け】', 8),
 ('【userのUUIDを貼り付け】', 1),
 ('【userのUUIDを貼り付け】', 3),
-('【userのUUIDを貼り付け】', 8);
+('【userのUUIDを貼り付け】', 8),
+('【userのUUIDを貼り付け】', 2),
+('【userのUUIDを貼り付け】', 5),
+('【userのUUIDを貼り付け】', 7),
+('【userのUUIDを貼り付け】', 11),
+('【userのUUIDを貼り付け】', 14),
+('【userのUUIDを貼り付け】', 20);
 
 -- `favorites` テーブル: `normal_user` がいくつかの商品をお気に入り登録した履歴を作成します
 -- 【重要】 user_id を user のUUIDに書き換えてください
