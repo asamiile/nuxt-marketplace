@@ -1,43 +1,45 @@
 <template>
-  <UiCard>
-    <UiCardHeader>
+  <div>
+    <div class="mb-4">
       <h2 class="text-2xl font-semibold text-foreground mb-3">出品した商品</h2>
       <p class="text-muted-foreground">作成した商品を管理します。</p>
-    </UiCardHeader>
-    <UiCardContent>
-      <div v-if="pending" class="text-center">
-        <p>商品を読み込んでいます...</p>
-      </div>
-      <div v-else-if="error" class="text-center text-destructive">
-        <p>商品の読み込み中にエラーが発生しました。</p>
-      </div>
-      <div v-else-if="products.length === 0" class="text-center text-muted-foreground">
-        <p>まだ出品した商品がありません。</p>
-        <NuxtLink to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
-          最初の商品を出品する
-        </NuxtLink>
-      </div>
-      <div v-else class="space-y-4">
-        <div v-for="product in products" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
-          <div class="flex items-center gap-4">
-            <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
-            <div>
-              <h3 class="font-semibold">{{ product.name }}</h3>
-              <p class="text-muted-foreground">{{ formatPrice(product.price) }}</p>
+    </div>
+    <UiCard>
+      <UiCardContent class="p-8">
+        <div v-if="pending" class="text-center">
+          <p>商品を読み込んでいます...</p>
+        </div>
+        <div v-else-if="error" class="text-center text-destructive">
+          <p>商品の読み込み中にエラーが発生しました。</p>
+        </div>
+        <div v-else-if="products.length === 0" class="text-center text-muted-foreground">
+          <p>まだ出品した商品がありません。</p>
+          <NuxtLink to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
+            最初の商品を出品する
+          </NuxtLink>
+        </div>
+        <div v-else class="space-y-4">
+          <div v-for="product in products" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
+            <div class="flex items-center gap-4">
+              <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
+              <div>
+                <h3 class="font-semibold">{{ product.name }}</h3>
+                <p class="text-muted-foreground">{{ formatPrice(product.price) }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', size: 'sm' })">
+                編集
+              </NuxtLink>
+              <UiButton @click="confirmDelete(product)" variant="destructive" size="sm">
+                削除
+              </UiButton>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', size: 'sm' })">
-              編集
-            </NuxtLink>
-            <UiButton @click="confirmDelete(product)" variant="destructive" size="sm">
-              削除
-            </UiButton>
-          </div>
         </div>
-      </div>
-    </UiCardContent>
-  </UiCard>
+      </UiCardContent>
+    </UiCard>
+  </div>
 </template>
 
 <script setup lang="ts">
