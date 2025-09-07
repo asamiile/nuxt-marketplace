@@ -24,7 +24,8 @@ TRUNCATE
   public.products, 
   public.purchases, 
   public.favorites, 
-  public.product_tags 
+  public.product_tags,
+  public.contacts
 RESTART IDENTITY CASCADE;
 
 
@@ -69,3 +70,11 @@ INSERT INTO public.favorites (user_id, product_id) VALUES
 ('2287c81e-b416-4657-be22-c720310364dc', 2), -- アイスランドのオーロラ
 ('2287c81e-b416-4657-be22-c720310364dc', 6), -- 雨の東京
 ('2287c81e-b416-4657-be22-c720310364dc', 9); -- 秋色のポートレート
+
+
+-- =========== お問い合わせデータの作成 ===========
+-- `contacts` テーブルへのサンプルデータ
+INSERT INTO public.contacts (name, email, subject, message, is_read) VALUES
+('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', false),
+('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', false),
+('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', true);
