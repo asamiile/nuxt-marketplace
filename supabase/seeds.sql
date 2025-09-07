@@ -59,11 +59,11 @@ INSERT INTO public.products (name, description, price, image_url, file_url, crea
 INSERT INTO public.product_tags (product_id, tag_id) VALUES
 (1, 1), (1, 6), (2, 1), (2, 6), (3, 7), (4, 4), (4, 6), (5, 3), (6, 7), (7, 4), (8, 1), (8, 5), (9, 2), (10, 3), (11, 1), (11, 6), (12, 2);
 
--- `purchases` テーブル: `empty_user` が `creator_a` の商品を購入した履歴を作成します
+-- `purchases` テーブル: `creator_a` が商品を購入した履歴を作成します
 INSERT INTO public.purchases (user_id, product_id) VALUES
-('a1e83c03-dbe2-4276-8df8-ab833087d0a2', 1), -- 「夜明けの海」を購入
-('a1e83c03-dbe2-4276-8df8-ab833087d0a2', 3), -- 「サイバーシティ」を購入
-('a1e83c03-dbe2-4276-8df8-ab833087d0a2', 4); -- 「森の守り神」を購入
+('2287c81e-b416-4657-be22-c720310364dc', 2), -- 「アイスランドのオーロラ」を購入
+('2287c81e-b416-4657-be22-c720310364dc', 5), -- 「心の渦」を購入
+('2287c81e-b416-4657-be22-c720310364dc', 7); -- 「夢見る猫」を購入
 
 -- `favorites` テーブル: `creator_a` がいくつかの商品をお気に入り登録した履歴を作成します
 INSERT INTO public.favorites (user_id, product_id) VALUES
