@@ -19,7 +19,7 @@
               出品する
             </NuxtLink>
             <div ref="dropdownRef" class="relative">
-              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background">
+              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background hover:bg-secondary">
                 <template v-if="profile">
                   <template v-if="profile.avatar_url">
                     <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover">
