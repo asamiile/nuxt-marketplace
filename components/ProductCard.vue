@@ -44,7 +44,19 @@ const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 
 // 最適化された画像URLを生成する算出プロパティ
 const optimizedImageUrl = computed(() => {
-  const path = getPathFromUrl(props.product.image_url)
-  return getOptimizedPublicUrl(path, { width: 300, height: 300, resize: 'contain' }) || 'https://placehold.co/300x300'
+  const imageUrl = props.product.image_url
+  if (!imageUrl) {
+    return 'https://placehold.co/300x300'
+  }
+  // Use the robust getPathFromUrl to check if it's a Supabase URL
+  const path = getPathFromUrl(imageUrl)
+
+  // If path is null, it's likely an external URL (like the seed data)
+  if (!path) {
+    return imageUrl
+  }
+
+  // Otherwise, get the optimized URL
+  return getOptimizedPublicUrl(path, { width: 300, height: 300, resize: 'contain' })
 })
 </script>

@@ -147,8 +147,19 @@ useHead({
 const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 
 const optimizedImageUrl = computed(() => {
-  const path = getPathFromUrl(product.value?.image_url)
-  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' }) || 'https://placehold.co/800x800'
+  if (!product.value?.image_url) {
+    return 'https://placehold.co/800x800'
+  }
+  // Use the robust getPathFromUrl to check if it's a Supabase URL
+  const path = getPathFromUrl(product.value.image_url)
+
+  // If path is null, it's likely an external URL (like the seed data)
+  if (!path) {
+    return product.value.image_url
+  }
+
+  // Otherwise, get the optimized URL
+  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' })
 })
 
 const handleDelete = async () => {
