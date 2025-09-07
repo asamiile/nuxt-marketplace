@@ -1,92 +1,28 @@
--- =========== ユーザープロフィールの設定 ===========
--- 【重要】事前にAuthで作成した1人目のユーザーUUIDに書き換えてください
-UPDATE public.profiles
-SET
-  username = 'creator_a',
-  bio = '風景や日常をテーマに作品を制作しています。',
-  website_url = 'https://example.com'
-WHERE id = '2287c81e-b416-4657-be22-c720310364dc';
+-- supabase/seeds.sql
 
--- 【重要】事前にAuthで作成した2人目のユーザーUUIDに書き換えてください
-UPDATE public.profiles
-SET
-  username = 'empty_user',
-  bio = '作品を見るのが好きです。',
-  website_url = null
-WHERE id = 'a1e83c03-dbe2-4276-8df8-ab833087d0a2';
+-- Clear existing data to avoid conflicts
+TRUNCATE TABLE public.categories RESTART IDENTITY CASCADE;
+TRUNCATE TABLE public.tags RESTART IDENTITY CASCADE;
+-- TRUNCATE other tables if needed for a clean seed
 
--- 【重要】事前にAuthで作成した3人目のユーザー（管理者）UUIDに書き換えてください
-UPDATE public.profiles
-SET
-  username = 'admin_user',
-  bio = 'このアプリケーションの管理者です。',
-  website_url = null
-WHERE id = '00000000-0000-0000-0000-000000000003'; -- Replace with actual admin user UUID
+-- Seed initial categories
+INSERT INTO public.categories (name)
+VALUES
+  ('イラスト'),
+  ('3Dモデル'),
+  ('UIキット'),
+  ('アイコン'),
+  ('写真'),
+  ('動画素材'),
+  ('音楽・効果音');
 
+-- Seed initial tags (optional example)
+INSERT INTO public.tags (name)
+VALUES
+  ('可愛い'),
+  ('クール'),
+  ('サイバーパンク'),
+  ('ファンタジー');
 
--- =========== テーブルデータのリセット ===========
--- TRUNCATEを使ってテーブルのデータをすべて削除し、IDの連番もリセットします。
-TRUNCATE 
-  public.categories, 
-  public.tags, 
-  public.products, 
-  public.purchases, 
-  public.favorites, 
-  public.product_tags,
-  public.contacts
-RESTART IDENTITY CASCADE;
-
-
--- =========== マスターデータの作成 ===========
--- `categories` テーブルへのサンプルデータ
-INSERT INTO public.categories (name) VALUES
-('油絵'), ('写真'), ('デジタルアート'), ('彫刻');
-
--- `tags` テーブルへのサンプルデータ
-INSERT INTO public.tags (name) VALUES
-('風景'), ('ポートレート'), ('抽象画'), ('動物'), ('ミニマリズム'), ('自然'), ('都市');
-
-
--- =========== ユーザー1 (`creator_a`) のデータ作成 ===========
--- `products` テーブル: 商品はすべて `creator_a` が所有します
-INSERT INTO public.products (name, description, price, image_url, file_url, creator_id, category_id, license_type, terms_of_use) VALUES
-('夜明けの海', '静かな夜明けの海の情景を描いた油絵です。', 25000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 1, '個人利用ライセンス', '商用利用、再配布は禁止です。'),
-('アイスランドのオーロラ', 'アイスランドで撮影した神秘的なオーロラの写真です。', 8000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 2, '商用利用ライセンス', 'ウェブサイトや広告など、商用目的で利用可能です。'),
-('サイバーシティ', 'ネオンきらめく未来都市をテーマにしたデジタルアート作品。', 12000, 'https://placehold.jp/300x300.png', 'https://example.com/file.png', '2287c81e-b416-4657-be22-c720310364dc', 3, '商用利用ライセンス', '改変可。クレジット表記をお願いします。'),
-('森の守り神', '森に佇む鹿を捉えた、生命力あふれる一枚。', 7500, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 2, '個人利用ライセンス', '壁紙や個人のSNS投稿にご利用いただけます。'),
-('心の渦', '感情の渦を表現した抽象的な油絵。', 35000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 1, '個人利用ライセンス', '個人の鑑賞目的でのみ利用可能です。'),
-('雨の東京', '雨に濡れる東京の交差点を撮影したスナップ写真。', 6000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 2, '商用利用ライセンス', '雑誌やウェブメディアでご利用いただけます。'),
-('夢見る猫', 'パステルカラーで描かれた、眠る猫のデジタルイラスト。', 5000, 'https://placehold.jp/300x300.png', 'https://example.com/file.png', '2287c81e-b416-4657-be22-c720310364dc', 3, '個人利用ライセンス', 'SNSアイコンなどにご利用ください。'),
-('静寂', 'ミニマリズムを追求した、モノクロの風景写真。', 9000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 2, '商用利用ライセンス', 'どのような媒体でもご利用いただけます。'),
-('秋色のポートレート', '秋の公園で撮影した女性のポートレート写真。', 10000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 2, '個人利用ライセンス', '個人ブログやSNSでの利用に限ります。'),
-('無限の階層', 'フラクタルアートで生成された幾何学模様のデジタルアート。', 15000, 'https://placehold.jp/300x300.png', 'https://example.com/file.png', '2287c81e-b416-4657-be22-c720310364dc', 3, '商用利用ライセンス', '背景やテクスチャとしてご利用いただけます。'),
-('ひまわり畑', '夏の太陽を浴びるひまわり畑の油絵。', 28000, 'https://placehold.jp/300x300.png', 'https://example.com/file.jpg', '2287c81e-b416-4657-be22-c720310364dc', 1, '個人利用ライセンス', '個人の鑑賞目的でのみ利用可能です。'),
-('青銅の思考者', '思索にふける人物を模した小さなブロンズ風彫刻の3Dモデル。', 18000, 'https://placehold.jp/300x300.png', 'https://example.com/file.obj', '2287c81e-b416-4657-be22-c720310364dc', 4, '商用利用ライセンス', '3Dプリントやゲームアセットとして利用可能です。');
-
--- `product_tags` テーブル: 上記の商品にタグを紐付けます
-INSERT INTO public.product_tags (product_id, tag_id) VALUES
-(1, 1), (1, 6), (2, 1), (2, 6), (3, 7), (4, 4), (4, 6), (5, 3), (6, 7), (7, 4), (8, 1), (8, 5), (9, 2), (10, 3), (11, 1), (11, 6), (12, 2);
-
--- `purchases` テーブル: `creator_a` が商品を購入した履歴を作成します
-INSERT INTO public.purchases (user_id, product_id) VALUES
-('2287c81e-b416-4657-be22-c720310364dc', 2), -- 「アイスランドのオーロラ」を購入
-('2287c81e-b416-4657-be22-c720310364dc', 5), -- 「心の渦」を購入
-('2287c81e-b416-4657-be22-c720310364dc', 7); -- 「夢見る猫」を購入
-
--- `favorites` テーブル: `creator_a` がいくつかの商品をお気に入り登録した履歴を作成します
-INSERT INTO public.favorites (user_id, product_id) VALUES
-('2287c81e-b416-4657-be22-c720310364dc', 2), -- アイスランドのオーロラ
-('2287c81e-b416-4657-be22-c720310364dc', 6), -- 雨の東京
-('2287c81e-b416-4657-be22-c720310364dc', 9); -- 秋色のポートレート
-
-
--- =========== お問い合わせデータの作成 ===========
--- `contacts` テーブルへのサンプルデータ
-INSERT INTO public.contacts (name, email, subject, message, is_read) VALUES
-('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', false),
-('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', false),
-('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', true);
-
--- =========== 管理者権限の設定 ===========
--- 3人目のユーザーに管理者権限を付与します
-SELECT public.set_admin_status('00000000-0000-0000-0000-000000000003', true); -- Replace with actual admin user UUID
+-- You can add seed data for test users or products below if necessary.
+-- Make sure to use existing user IDs from your test environment.
