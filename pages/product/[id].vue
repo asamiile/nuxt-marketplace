@@ -31,7 +31,7 @@
     </div>
     <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       <div>
-        <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg shadow-lg">
+        <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg">
       </div>
       <div>
         <div class="mb-2">
@@ -70,9 +70,7 @@
           </div>
           <div v-if="product.terms_of_use">
             <h2 class="text-lg font-semibold text-foreground mb-2">利用規約</h2>
-            <div class="mt-2 p-4 bg-muted rounded-md">
-              <p class="text-sm text-muted-foreground whitespace-pre-wrap">{{ product.terms_of_use }}</p>
-            </div>
+            <p class="text-foreground whitespace-pre-wrap">{{ product.terms_of_use }}</p>
           </div>
         </div>
 
@@ -147,8 +145,19 @@ useHead({
 const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
 
 const optimizedImageUrl = computed(() => {
-  const path = getPathFromUrl(product.value?.image_url)
-  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' }) || 'https://placehold.co/800x800'
+  if (!product.value?.image_url) {
+    return 'https://placehold.co/800x800'
+  }
+  // Use the robust getPathFromUrl to check if it's a Supabase URL
+  const path = getPathFromUrl(product.value.image_url)
+
+  // If path is null, it's likely an external URL (like the seed data)
+  if (!path) {
+    return product.value.image_url
+  }
+
+  // Otherwise, get the optimized URL
+  return getOptimizedPublicUrl(path, { width: 800, height: 800, resize: 'contain' })
 })
 
 const handleDelete = async () => {

@@ -1,6 +1,7 @@
 // supabase/functions/contact/index.ts
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { Resend } from 'https://esm.sh/resend@2.0.0'
 
 // 定数としてCORSヘッダーを定義（コードの重複を避けるため）
@@ -18,7 +19,25 @@ serve(async (req) => {
 
   try {
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'))
-    const { name, email: replyTo, subject, message } = await req.json()
+    const { name, email, subject, message } = await req.json()
+
+    // ★★★ Supabaseクライアントを初期化 ★★★
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+
+    // ★★★ contactsテーブルにデータを挿入 ★★★
+    const { error: insertError } = await supabase.from('contacts').insert({
+      name,
+      email,
+      subject,
+      message,
+    })
+
+    if (insertError) {
+      throw insertError
+    }
 
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
@@ -28,12 +47,13 @@ serve(async (req) => {
         <p>お問い合わせがありました。</p>
         <ul>
           <li><strong>お名前:</strong> ${name}</li>
-          <li><strong>返信先:</strong> ${replyTo}</li>
+          <li><strong>返信先:</strong> ${email}</li>
         </ul>
         <hr>
         <p><strong>内容:</strong></p>
         <p>${message}</p>
       `,
+      reply_to: email,
     })
 
     if (error) {

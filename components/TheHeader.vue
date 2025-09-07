@@ -19,10 +19,10 @@
               出品する
             </NuxtLink>
             <div ref="dropdownRef" class="relative">
-              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background">
+              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background hover:bg-secondary bg-secondary">
                 <template v-if="profile">
-                  <template v-if="profile.avatar_url">
-                    <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover">
+                  <template v-if="avatarSrc">
+                    <img :src="avatarSrc" alt="User Avatar" class="h-full w-full rounded-full object-cover">
                   </template>
                   <template v-else>
                     <span class="text-lg font-semibold">
@@ -37,7 +37,7 @@
                   </span>
                 </template>
               </button>
-              <div v-if="isMenuOpen && profile" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+              <div v-if="isMenuOpen && profile" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                 <div class="px-1 py-1">
                   <div class="px-4 py-2">
                     <p class="text-sm font-medium text-foreground">
@@ -48,13 +48,13 @@
                     </p>
                   </div>
                   <div class="my-1 h-px bg-border" />
-                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     クリエイターページ
                   </NuxtLink>
-                  <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     お気に入り商品
                   </NuxtLink>
-                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     ダッシュボード
                   </NuxtLink>
                   <div class="my-1 h-px bg-border" />
@@ -80,9 +80,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watchEffect } from 'vue'
+import { ref, onMounted, onUnmounted, watchEffect, computed } from 'vue'
 import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import type { Profile } from '~/types/profile'
+import { useSupabaseHelpers } from '~/composables/useSupabaseHelpers'
 
 const user = useCurrentUser()
 const supabase = useSupabaseClient()
@@ -91,6 +92,20 @@ const router = useRouter()
 const isMenuOpen = ref(false)
 const dropdownRef = ref<HTMLElement>()
 const profile = ref<Profile | null>(null)
+
+const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
+
+const avatarSrc = computed(() => {
+  if (!profile.value?.avatar_url) {
+    return null
+  }
+  const path = getPathFromUrl(profile.value.avatar_url)
+  if (!path) {
+    // It might be a full URL from a social provider
+    return profile.value.avatar_url
+  }
+  return getOptimizedPublicUrl(path, { width: 36, height: 36, resize: 'cover' })
+})
 
 watchEffect(async () => {
   if (user.value) {

@@ -1,15 +1,12 @@
 -- 1. Add new columns to the profiles table for creator-specific information.
 ALTER TABLE public.profiles
-ADD COLUMN bio TEXT,
-ADD COLUMN website_url TEXT,
-ADD COLUMN x_url TEXT,
-ADD COLUMN youtube_url TEXT;
+ADD COLUMN IF NOT EXISTS bio TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS x_url TEXT,
+ADD COLUMN IF NOT EXISTS youtube_url TEXT;
 
 -- 2. Add new RLS policy to allow public viewing of profiles.
--- This policy allows anyone to view all records in the profiles table.
--- This is necessary for the public creator profile pages.
--- It works in conjunction with the existing "Users can view their own profile." policy.
--- For SELECT, RLS policies are combined with OR, so if either is true, access is granted.
+DROP POLICY IF EXISTS "Anyone can view all profiles." ON profiles;
 CREATE POLICY "Anyone can view all profiles."
 ON profiles FOR SELECT
 USING (true);

@@ -14,7 +14,7 @@
         商品を編集する
       </h1>
       <p class="text-center mb-8">フォームの内容を更新して、商品情報を変更します。</p>
-      <div class="text-card-foreground shadow-md dark:border rounded-lg border-0 p-8 pt-8">
+      <div class="text-card-foreground bg-card rounded-lg p-8 pt-8">
           <form @submit.prevent="submit" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>
@@ -72,7 +72,7 @@
               <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-sky-500">ダウンロード</a></p>
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
+              <Button type="submit" class="w-full hover:bg-gray-700 transition-colors duration-200" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? '更新中...' : '更新する' }}
               </Button>
             </div>

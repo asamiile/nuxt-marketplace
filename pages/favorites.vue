@@ -3,7 +3,9 @@
     <h1 class="text-3xl font-bold mb-8">お気に入り商品</h1>
 
     <div v-if="loading">
-      <p>お気に入りを読み込んでいます...</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <Skeleton v-for="n in 8" :key="n" />
+      </div>
     </div>
     <div v-else-if="favorites && favorites.length > 0">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -28,6 +30,7 @@ import { onMounted, watch } from 'vue'
 import { useFavorites } from '~/composables/useFavorites'
 import ProductCard from '~/components/ProductCard.vue'
 import Pagination from '~/components/ui/Pagination.vue'
+import Skeleton from '~/components/ui/Skeleton.vue'
 import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({

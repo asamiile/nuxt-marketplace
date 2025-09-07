@@ -1,16 +1,20 @@
 import { ref } from 'vue'
 import type { Product } from '~/types/product'
 
+// --- Shared State ---
+// By defining state outside the composable function, it becomes a singleton
+// and is shared across all components that use this composable.
+const favorites = ref<any[]>([])
+const loading = ref(false)
+const error = ref<Error | null>(null)
+const itemsPerPage = 8
+const currentPage = ref(1)
+const totalPages = ref(1)
+// --- End Shared State ---
+
 export const useFavorites = () => {
   const supabase = useSupabaseClient()
   const user = useCurrentUser()
-
-  const favorites = ref<any[]>([])
-  const loading = ref(false)
-  const error = ref<Error | null>(null)
-  const itemsPerPage = 8
-  const currentPage = ref(1)
-  const totalPages = ref(1)
 
   // Check if a specific product is favorited
   const isFavorited = async (productId: number) => {
@@ -53,17 +57,29 @@ export const useFavorites = () => {
   const removeFavorite = async (productId: number) => {
     if (!user.value) return
 
-    const { error } = await supabase
-      .from('favorites')
-      .delete()
-      .eq('user_id', user.value.id)
-      .eq('product_id', productId)
+    // Optimistic UI update
+    const initialFavorites = [...favorites.value]
+    const productIndex = favorites.value.findIndex(p => p.id === productId)
+    if (productIndex > -1) {
+      favorites.value.splice(productIndex, 1)
+    }
 
-    if (error) {
-      console.error('Error removing from favorites:', error)
-    } else {
-        // Refresh the current page of favorites after removing one
-        fetchFavoriteProducts()
+    try {
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .eq('user_id', user.value.id)
+        .eq('product_id', productId)
+
+      if (error) throw error
+
+      // On success, refetch to ensure pagination and total count are correct
+      await fetchFavoriteProducts()
+    } catch (err) {
+      // Revert on error
+      favorites.value = initialFavorites
+      console.error('Error removing from favorites:', err)
+      // Optionally, show a toast to the user
     }
   }
 
