@@ -13,25 +13,30 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  const contactId = event.context.params?.id
 
-  // Fetch all users from the auth schema
-  const { data: usersData, error } = await client.auth.admin.listUsers()
-
-  if (error) {
-    console.error('Error fetching users:', error)
+  if (!contactId) {
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch users',
+      statusCode: 400,
+      statusMessage: 'Contact ID is required',
     })
   }
 
-  // Map the user data to include the is_admin flag
-  const users = usersData.users.map(user => ({
-    ...user,
-    is_admin: user.app_metadata?.claims_admin === true,
-  }))
+  const { data, error } = await client
+    .from('contacts')
+    .update({ is_read: true })
+    .eq('id', contactId)
+    .select()
+    .single()
 
-  return users
+  if (error) {
+    console.error(`Error updating contact ${contactId}:`, error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to update contact',
+    })
+  }
+
+  return data
 })

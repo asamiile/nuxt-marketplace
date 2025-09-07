@@ -13,25 +13,38 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  const categoryId = event.context.params?.id
+  const { name } = await readBody(event)
 
-  // Fetch all users from the auth schema
-  const { data: usersData, error } = await client.auth.admin.listUsers()
-
-  if (error) {
-    console.error('Error fetching users:', error)
+  if (!categoryId) {
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch users',
+      statusCode: 400,
+      statusMessage: 'Category ID is required',
     })
   }
 
-  // Map the user data to include the is_admin flag
-  const users = usersData.users.map(user => ({
-    ...user,
-    is_admin: user.app_metadata?.claims_admin === true,
-  }))
+  if (!name || typeof name !== 'string') {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Category name is required',
+    })
+  }
 
-  return users
+  const { data, error } = await client
+    .from('categories')
+    .update({ name: name.trim() })
+    .eq('id', categoryId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error(`Error updating category ${categoryId}:`, error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to update category',
+    })
+  }
+
+  return data
 })

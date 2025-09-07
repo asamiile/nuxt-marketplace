@@ -13,7 +13,7 @@
             required
             class="flex-grow"
           />
-          <UiButton type="submit" :disabled="pending">
+          <UiButton type="submit" :disabled="pending" class="whitespace-nowrap">
             {{ pending ? '作成中...' : '作成' }}
           </UiButton>
         </div>
@@ -73,8 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Database } from '~/types/supabase';
-import type { Category } from '~/types/product';
+import type { Category } from '~/types/product'
 
 definePageMeta({
   layout: 'admin',
@@ -83,35 +82,28 @@ definePageMeta({
 
 const { showToast } = useAlert()
 
-// Define the function to fetch categories
-const fetchCategories = async () => {
-  const supabase = useSupabaseClient<Database>()
-  const { data, error } = await supabase.from('categories').select('*').order('created_at', { ascending: false })
-  if (error) {
-    showToast({ title: 'エラー', description: `カテゴリの取得に失敗しました: ${error.message}`, variant: 'destructive' })
-    return []
-  }
-  return data
-}
-
-// Fetch categories using the defined function
-const { data: categories, pending, error, refresh } = await useAsyncData('categories', fetchCategories, {
-  default: () => [],
-})
+// Fetch categories
+const { data: categories, pending, error, refresh } = await useAsyncData(
+  'categories',
+  () => $fetch('/api/admin/categories'),
+  { default: () => [] },
+)
 
 // Create
 const newCategoryName = ref('')
 const handleCreateCategory = async () => {
   if (!newCategoryName.value.trim()) return
-  const supabase = useSupabaseClient<Database>()
   try {
-    const { error } = await supabase.from('categories').insert({ name: newCategoryName.value.trim() })
-    if (error) throw error
+    await $fetch('/api/admin/categories', {
+      method: 'POST',
+      body: { name: newCategoryName.value.trim() },
+    })
     showToast({ title: '成功', description: 'カテゴリが作成されました。' })
     newCategoryName.value = ''
     await refresh()
-  } catch (error: any) {
-    showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
+  }
+  catch (error: any) {
+    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの作成に失敗しました。', variant: 'destructive' })
   }
 }
 
@@ -135,32 +127,32 @@ const closeEditModal = () => {
 // Update
 const handleUpdateCategory = async () => {
   if (!editingCategory.value || !editingCategoryName.value.trim()) return
-  const supabase = useSupabaseClient<Database>()
   try {
-    const { error } = await supabase
-      .from('categories')
-      .update({ name: editingCategoryName.value.trim() })
-      .eq('id', editingCategory.value.id)
-    if (error) throw error
+    await $fetch(`/api/admin/categories/${editingCategory.value.id}`, {
+      method: 'PUT',
+      body: { name: editingCategoryName.value.trim() },
+    })
     showToast({ title: '成功', description: 'カテゴリが更新されました。' })
     closeEditModal()
     await refresh()
-  } catch (error: any) {
-    showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
+  }
+  catch (error: any) {
+    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの更新に失敗しました。', variant: 'destructive' })
   }
 }
 
 // Delete
 const handleDeleteCategory = async (id: number) => {
   if (!confirm('本当にこのカテゴリを削除しますか？')) return
-  const supabase = useSupabaseClient<Database>()
   try {
-    const { error } = await supabase.from('categories').delete().eq('id', id)
-    if (error) throw error
+    await $fetch(`/api/admin/categories/${id}`, {
+      method: 'DELETE',
+    })
     showToast({ title: '成功', description: 'カテゴリが削除されました。' })
     await refresh()
-  } catch (error: any) {
-    showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
+  }
+  catch (error: any) {
+    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの削除に失敗しました。', variant: 'destructive' })
   }
 }
 </script>

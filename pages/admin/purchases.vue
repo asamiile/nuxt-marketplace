@@ -40,30 +40,9 @@ definePageMeta({
   middleware: 'admin',
 })
 
-const supabase = useSupabaseClient<Database>()
-const { showToast } = useAlert()
-
-const { data: purchases, pending, error } = await useAsyncData('purchases', async () => {
-  const { data, error } = await supabase
-    .from('purchases')
-    .select(`
-      id,
-      created_at,
-      user:profiles(username),
-      product:products(name, price)
-    `)
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    showToast({
-      title: 'エラー',
-      description: `購入履歴の取得に失敗しました: ${error.message}`,
-      variant: 'destructive',
-    })
-    return []
-  }
-  return data
-}, {
-  default: () => [],
-})
+const { data: purchases, pending, error } = await useAsyncData(
+  'purchases',
+  () => $fetch('/api/admin/purchases'),
+  { default: () => [] },
+)
 </script>

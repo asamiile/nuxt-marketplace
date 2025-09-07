@@ -13,25 +13,25 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
-  // Fetch all users from the auth schema
-  const { data: usersData, error } = await client.auth.admin.listUsers()
+  const { data, error } = await client
+    .from('purchases')
+    .select(`
+      id,
+      created_at,
+      user:profiles(username),
+      product:products(name, price)
+    `)
+    .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching users:', error)
+    console.error('Error fetching purchases:', error)
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to fetch users',
+      statusMessage: 'Failed to fetch purchases',
     })
   }
 
-  // Map the user data to include the is_admin flag
-  const users = usersData.users.map(user => ({
-    ...user,
-    is_admin: user.app_metadata?.claims_admin === true,
-  }))
-
-  return users
+  return data
 })

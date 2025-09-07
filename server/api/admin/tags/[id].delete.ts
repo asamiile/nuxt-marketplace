@@ -13,25 +13,28 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  const tagId = event.context.params?.id
 
-  // Fetch all users from the auth schema
-  const { data: usersData, error } = await client.auth.admin.listUsers()
-
-  if (error) {
-    console.error('Error fetching users:', error)
+  if (!tagId) {
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch users',
+      statusCode: 400,
+      statusMessage: 'Tag ID is required',
     })
   }
 
-  // Map the user data to include the is_admin flag
-  const users = usersData.users.map(user => ({
-    ...user,
-    is_admin: user.app_metadata?.claims_admin === true,
-  }))
+  const { error } = await client
+    .from('tags')
+    .delete()
+    .eq('id', tagId)
 
-  return users
+  if (error) {
+    console.error(`Error deleting tag ${tagId}:`, error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to delete tag',
+    })
+  }
+
+  return { status: 204, statusText: 'No Content' }
 })
