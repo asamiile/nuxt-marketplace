@@ -14,7 +14,16 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/', // Redirect to home after login
-      exclude: ['/signup', '/forgot-password', '/update-password'], // Exclude signup page from auth guard
+      exclude: [
+        '/',
+        '/signup',
+        '/forgot-password',
+        '/update-password',
+        '/terms',
+        '/privacy',
+        '/product/*',
+        '/creator/*',
+      ],
     },
   },
   devServer: {
