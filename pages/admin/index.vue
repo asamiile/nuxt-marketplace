@@ -1,7 +1,12 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-6">ようこそ、管理者パネルへ</h1>
-    <p class="text-lg">左のメニューから操作を選択してください。</p>
+    <h1 class="text-3xl font-bold mb-6">ダッシュボード</h1>
+    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg">
+      <h2 class="text-xl font-semibold mb-4">ようこそ、管理者パネルへ</h2>
+      <p class="text-gray-600 dark:text-gray-300">
+        左側のナビゲーションメニューから、管理したい項目を選択してください。
+      </p>
+    </div>
   </div>
 </template>
 

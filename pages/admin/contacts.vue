@@ -40,44 +40,48 @@ const closeModal = () => {
 }
 
 const formatDate = (dateString: string) => {
+  if (!dateString) return ''
   return format(new Date(dateString), 'yyyy/MM/dd HH:mm')
 }
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-4">お問い合わせ管理</h1>
-    <div class="bg-white rounded-lg overflow-hidden">
-      <table class="min-w-full leading-normal">
-        <thead>
+    <h1 class="text-3xl font-bold mb-6">お問い合わせ管理</h1>
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+      <table class="min-w-full">
+        <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               受信日時
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               名前
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               件名
             </th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               ステータス
             </th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="contact in contacts" :key="contact.id" @click="openModal(contact)" class="cursor-pointer hover:bg-gray-100">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <p class="text-gray-900 whitespace-no-wrap">{{ formatDate(contact.created_at) }}</p>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+          <tr v-if="!contacts || contacts.length === 0">
+            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">お問い合わせが見つかりません。</td>
+          </tr>
+          <tr v-for="contact in contacts" :key="contact.id" @click="openModal(contact)" class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              {{ formatDate(contact.created_at) }}
             </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <p class="text-gray-900 whitespace-no-wrap">{{ contact.name }}</p>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+              {{ contact.name }}
             </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <p class="text-gray-900 whitespace-no-wrap">{{ contact.subject }}</p>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+              {{ contact.subject }}
             </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <span :class="contact.is_read ? 'text-gray-500' : 'text-green-500 font-bold'">
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <span :class="contact.is_read ? 'text-gray-500 dark:text-gray-400' : 'text-green-500 font-bold'">
                 {{ contact.is_read ? '既読' : '未読' }}
               </span>
             </td>
@@ -87,31 +91,19 @@ const formatDate = (dateString: string) => {
     </div>
 
     <!-- Modal -->
-    <div v-if="isModalOpen" class="fixed z-10 inset-0 overflow-y-auto">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" @click="closeModal">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+    <div v-if="isModalOpen && selectedContact" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
+        <h2 class="text-xl font-semibold mb-4">お問い合わせ詳細</h2>
+        <div class="space-y-2 text-sm">
+          <p><strong class="font-semibold text-gray-600 dark:text-gray-400">受信日時:</strong> <span class="text-gray-800 dark:text-gray-200">{{ formatDate(selectedContact.created_at) }}</span></p>
+          <p><strong class="font-semibold text-gray-600 dark:text-gray-400">名前:</strong> <span class="text-gray-800 dark:text-gray-200">{{ selectedContact.name }}</span></p>
+          <p><strong class="font-semibold text-gray-600 dark:text-gray-400">Email:</strong> <span class="text-gray-800 dark:text-gray-200">{{ selectedContact.email }}</span></p>
+          <p><strong class="font-semibold text-gray-600 dark:text-gray-400">件名:</strong> <span class="text-gray-800 dark:text-gray-200">{{ selectedContact.subject }}</span></p>
+          <hr class="my-4 dark:border-gray-600">
+          <p class="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{{ selectedContact.message }}</p>
         </div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
-              お問い合わせ詳細
-            </h3>
-            <div class="mt-4">
-              <p><strong class="font-semibold">受信日時:</strong> {{ formatDate(selectedContact.created_at) }}</p>
-              <p><strong class="font-semibold">名前:</strong> {{ selectedContact.name }}</p>
-              <p><strong class="font-semibold">Email:</strong> {{ selectedContact.email }}</p>
-              <p><strong class="font-semibold">件名:</strong> {{ selectedContact.subject }}</p>
-              <hr class="my-4">
-              <p class="text-sm text-gray-800 whitespace-pre-wrap">{{ selectedContact.message }}</p>
-            </div>
-          </div>
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button @click="closeModal" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-              閉じる
-            </button>
-          </div>
+        <div class="flex justify-end gap-4 mt-6">
+          <UiButton type="button" variant="ghost" @click="closeModal">閉じる</UiButton>
         </div>
       </div>
     </div>
