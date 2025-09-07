@@ -27,6 +27,19 @@
           </Button>
         </div>
       </form>
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-border"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-background text-foreground">または以下で続ける</span>
+        </div>
+      </div>
+      <div>
+        <Button @click="signInWithGoogle" class="w-full" variant="outline">
+          Googleで登録
+        </Button>
+      </div>
       <div v-if="errorMsg" class="p-4 text-center text-red-500 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
       <div v-if="successMsg" class="p-4 text-center text-green-500 bg-green-500/10 rounded-md">{{ successMsg }}</div>
     </div>
@@ -108,4 +121,26 @@ async function signUp() {
     loading.value = false
   }
 }
+
+async function signInWithGoogle() {
+  loading.value = true
+  errorMsg.value = null
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    })
+    if (error) throw error
+  } catch (error: any) {
+    errorMsg.value = "Googleでの登録中にエラーが発生しました。"
+  } finally {
+    loading.value = false
+  }
+}
+
+const user = useCurrentUser()
+watch(user, () => {
+  if (user.value) {
+    router.push('/')
+  }
+}, { immediate: true })
 </script>
