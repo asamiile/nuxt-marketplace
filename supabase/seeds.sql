@@ -15,6 +15,14 @@ SET
   website_url = null
 WHERE id = 'a1e83c03-dbe2-4276-8df8-ab833087d0a2';
 
+-- 【重要】事前にAuthで作成した3人目のユーザー（管理者）UUIDに書き換えてください
+UPDATE public.profiles
+SET
+  username = 'admin_user',
+  bio = 'このアプリケーションの管理者です。',
+  website_url = null
+WHERE id = '00000000-0000-0000-0000-000000000003'; -- Replace with actual admin user UUID
+
 
 -- =========== テーブルデータのリセット ===========
 -- TRUNCATEを使ってテーブルのデータをすべて削除し、IDの連番もリセットします。
@@ -78,3 +86,7 @@ INSERT INTO public.contacts (name, email, subject, message, is_read) VALUES
 ('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', false),
 ('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', false),
 ('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', true);
+
+-- =========== 管理者権限の設定 ===========
+-- 3人目のユーザーに管理者権限を付与します
+SELECT public.set_admin_status('00000000-0000-0000-0000-000000000003', true); -- Replace with actual admin user UUID

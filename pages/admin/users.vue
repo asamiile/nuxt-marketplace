@@ -4,7 +4,6 @@ definePageMeta({
   middleware: 'admin',
 })
 
-const supabase = useSupabaseClient()
 const { showToast } = useAlert()
 
 const { data: users, refresh } = await useFetch('/api/admin/users', {
@@ -24,35 +23,32 @@ const formatDate = (date: string | null) => {
   return new Date(date).toLocaleString('ja-JP')
 }
 
+const ADMIN_EMAIL = 'admin@example.com' // The email of the primary admin to protect
+
 const handleAdminStatusChange = async (user: any) => {
   // Immediately update the UI for responsiveness
   const originalStatus = user.is_admin
   user.is_admin = !user.is_admin
 
   try {
-    const { error } = await supabase.rpc('set_admin_status', {
-      user_id: user.id,
-      p_is_admin: user.is_admin,
+    await $fetch(`/api/admin/users/${user.id}`, {
+      method: 'PUT',
+      body: { is_admin: user.is_admin },
     })
-
-    if (error) {
-      throw error
-    }
 
     showToast({
       title: '成功',
       description: '管理者権限を更新しました。',
     })
-    // No need to call refresh() as the local state is already updated.
-    // Call it if you want to be sure data is in sync with the DB.
     await refresh()
-  } catch (error: any) {
+  }
+  catch (error: any) {
     // Revert the switch on error
     user.is_admin = originalStatus
     console.error(error)
     showToast({
       title: 'エラー',
-      description: `管理者権限の更新に失敗しました: ${error.message}`,
+      description: error.data?.message || '管理者権限の更新に失敗しました。',
       variant: 'destructive',
     })
   }
@@ -104,9 +100,10 @@ const handleAdminStatusChange = async (user: any) => {
                   type="checkbox"
                   v-model="user.is_admin"
                   class="sr-only peer"
+                  :disabled="user.email === ADMIN_EMAIL"
                   @change="handleAdminStatusChange(user)"
                 >
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" :class="{ 'cursor-not-allowed opacity-50': user.email === ADMIN_EMAIL }"></div>
               </label>
             </td>
           </tr>
