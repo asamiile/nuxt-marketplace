@@ -2,7 +2,7 @@
   <div class="mb-12">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-semibold text-foreground">プロフィール設定</h2>
-      <NuxtLink v-if="username" :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline' })">
+      <NuxtLink v-if="username" :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline', class: 'hover:text-white hover:bg-gray-500' })">
         プロフィールを見る
       </NuxtLink>
     </div>
@@ -42,7 +42,7 @@
             <p v-if="errors.youtube_url" class="text-sm text-red-500 mt-1">{{ errors.youtube_url }}</p>
           </div>
           <div class="pt-2">
-            <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
+            <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full hover:bg-gray-700">
               {{ saving ? '保存中...' : 'プロフィールを更新' }}
             </Button>
           </div>

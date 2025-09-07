@@ -77,7 +77,7 @@
         </div>
 
         <div v-if="user && product.creator_id === user.id" class="flex items-center gap-4 mt-8">
-          <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', class: 'w-full' })">
+          <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', class: 'w-full hover:text-white hover:bg-gray-500' })">
             編集
           </NuxtLink>
           <UiButton @click="handleDelete" variant="destructive" class="w-full">

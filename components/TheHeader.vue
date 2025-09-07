@@ -48,13 +48,13 @@
                     </p>
                   </div>
                   <div class="my-1 h-px bg-border" />
-                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     クリエイターページ
                   </NuxtLink>
-                  <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     お気に入り商品
                   </NuxtLink>
-                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     ダッシュボード
                   </NuxtLink>
                   <div class="my-1 h-px bg-border" />

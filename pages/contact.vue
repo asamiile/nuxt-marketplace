@@ -26,7 +26,7 @@
             <p v-if="errors.message" class="text-sm text-red-500 mt-1">{{ errors.message }}</p>
           </div>
           <div class="pt-2">
-            <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full">
+            <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full hover:bg-gray-700 transition-colors duration-200">
               <span v-if="loading">送信中...</span>
               <span v-else>送信</span>
             </Button>
