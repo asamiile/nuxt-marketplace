@@ -13,7 +13,7 @@
             required
             class="flex-grow"
           />
-          <UiButton type="submit" :disabled="pending">
+          <UiButton type="submit" :disabled="pending" class="whitespace-nowrap">
             {{ pending ? '作成中...' : '作成' }}
           </UiButton>
         </div>
