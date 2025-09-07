@@ -7,17 +7,14 @@ definePageMeta({
 const supabase = useSupabaseClient()
 const { alert } = useAlert()
 
-const { data: users, refresh } = await useAsyncData('users', async () => {
-  const { data, error } = await supabase.rpc('get_all_users')
-  if (error) {
-    console.error(error)
+const { data: users, refresh, error } = await useFetch('/api/admin/users', {
+  onResponseError: ({ response }) => {
+    console.error(response._data)
     alert({
       type: 'error',
       message: 'ユーザー情報の取得に失敗しました。',
     })
-    return []
-  }
-  return data
+  },
 })
 
 const formatDate = (date: string) => {
