@@ -11,16 +11,19 @@
     </UiCardContent>
     <button
       @click.prevent.stop="toggleFavorite"
-      class="absolute top-2 right-2 z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+      class="absolute top-2 right-2 z-10 p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors duration-200"
       aria-label="Toggle Favorite"
     >
-      <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>
+      <HeartIconSolid v-if="isFavoritedState" class="w-6 h-6 text-red-500" />
+      <HeartIcon v-else class="w-6 h-6 text-gray-400 dark:text-gray-300" />
     </button>
   </UiCard>
 </template>
 
 <script setup lang="ts">
 import type { Product } from '~/types/product'
+import HeartIcon from '~/components/icons/HeartIcon.vue'
+import HeartIconSolid from '~/components/icons/HeartIconSolid.vue'
 
 interface ProductCardProps {
   product: Product;

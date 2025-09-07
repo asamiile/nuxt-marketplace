@@ -32,6 +32,7 @@
 import { ref } from 'vue'
 import { useSupabaseClient } from '#imports'
 import { useAlert } from '~/composables/useAlert'
+import { useErrorTranslator } from '~/composables/useErrorTranslator'
 import Input from '~/components/ui/form/Input.vue'
 import Button from '~/components/ui/button/Button.vue'
 import Label from '~/components/ui/form/Label.vue'
@@ -39,6 +40,7 @@ import Label from '~/components/ui/form/Label.vue'
 const supabase = useSupabaseClient()
 const router = useRouter()
 const { showToast } = useAlert()
+const { translateError } = useErrorTranslator()
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -64,7 +66,7 @@ const handleUpdatePassword = async () => {
     showToast('成功', 'パスワードが正常に更新されました。')
     router.push('/login')
   } catch (error: any) {
-    showToast('エラー', error.message, 'error')
+    showToast('エラー', translateError(error.message), 'error')
   } finally {
     loading.value = false
   }

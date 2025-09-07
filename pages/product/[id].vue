@@ -70,9 +70,7 @@
           </div>
           <div v-if="product.terms_of_use">
             <h2 class="text-lg font-semibold text-foreground mb-2">利用規約</h2>
-            <div class="mt-2 p-4 bg-muted rounded-md">
-              <p class="text-sm text-muted-foreground whitespace-pre-wrap">{{ product.terms_of_use }}</p>
-            </div>
+            <p class="text-foreground whitespace-pre-wrap">{{ product.terms_of_use }}</p>
           </div>
         </div>
 
