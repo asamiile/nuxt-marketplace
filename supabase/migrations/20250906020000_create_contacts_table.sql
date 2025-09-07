@@ -17,4 +17,5 @@ CREATE POLICY "Allow admin to manage contacts"
 ON contacts
 FOR ALL
 TO authenticated
-USING (is_claims_admin());
+USING (public.is_claims_admin())
+WITH CHECK (public.is_claims_admin());
