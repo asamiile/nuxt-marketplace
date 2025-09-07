@@ -13,12 +13,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
-  const { data, error } = await client
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false })
+  // Fetch all users from the auth schema
+  const { data: usersData, error } = await client.auth.admin.listUsers()
 
   if (error) {
     console.error('Error fetching users:', error)
@@ -28,5 +27,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return data
+  // Map the user data to include the is_admin flag
+  const users = usersData.users.map(user => ({
+    ...user,
+    is_admin: user.app_metadata?.claims_admin === true,
+  }))
+
+  return users
 })
