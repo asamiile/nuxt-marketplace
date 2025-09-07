@@ -7,11 +7,18 @@ export const useSupabaseHelpers = () => {
     if (!url) return null
     try {
       const { pathname } = new URL(url)
-      // "assets" バケット名の次に来る部分をパスとして抽出するように修正
-      const path = pathname.substring(pathname.indexOf('/assets/') + '/assets/'.length)
-      return path
+      const assetsMarker = '/assets/'
+      const assetsIndex = pathname.indexOf(assetsMarker)
+
+      if (assetsIndex === -1) {
+        // This is not a Supabase asset URL we can process.
+        return null
+      }
+      // Extract the path after "/assets/"
+      return pathname.substring(assetsIndex + assetsMarker.length)
     } catch (error) {
-      console.error('Invalid URL for path extraction:', error)
+      // Invalid URL will throw an error
+      console.error('Invalid URL provided to getPathFromUrl:', url, error)
       return null
     }
   }
