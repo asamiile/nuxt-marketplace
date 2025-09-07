@@ -5,13 +5,13 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default: 'bg-primary text-primary-foreground hover:text-white hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
+        outline: 'border border-input hover:bg-secondary hover:text-white',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'underline-offset-4 hover:underline text-primary',
-        'gradient-pink': 'text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500',
+        ghost: 'hover:bg-secondary hover:text-white',
+        link: 'underline-offset-4 hover:underline text-primary hover:text-blue-500',
+        'gradient-pink': 'text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:text-white hover:from-pink-600 hover:to-orange-500',
         'gradient-blue': 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500',
       },
       size: {

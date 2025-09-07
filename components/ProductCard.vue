@@ -11,7 +11,7 @@
     </UiCardContent>
     <button
       @click.prevent.stop="toggleFavorite"
-      class="absolute top-2 right-2 z-10"
+      class="absolute top-2 right-2 z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
       aria-label="Toggle Favorite"
     >
       <span :class="{'text-red-500': isFavoritedState, 'text-gray-300': !isFavoritedState}">❤️</span>

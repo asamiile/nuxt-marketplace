@@ -72,7 +72,7 @@
               <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-sky-500">ダウンロード</a></p>
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
+              <Button type="submit" class="w-full hover:bg-gray-700 transition-colors duration-200" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? '更新中...' : '更新する' }}
               </Button>
             </div>

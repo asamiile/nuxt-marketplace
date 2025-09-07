@@ -19,7 +19,7 @@
               出品する
             </NuxtLink>
             <div ref="dropdownRef" class="relative">
-              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background">
+              <button @click="isMenuOpen = !isMenuOpen" class="flex items-center justify-center h-9 w-9 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 border-2 border-background hover:bg-secondary">
                 <template v-if="profile">
                   <template v-if="profile.avatar_url">
                     <img :src="profile.avatar_url" alt="User Avatar" class="h-full w-full rounded-full object-cover">
@@ -48,13 +48,13 @@
                     </p>
                   </div>
                   <div class="my-1 h-px bg-border" />
-                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink :to="`/creator/${profile.username}`" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     クリエイターページ
                   </NuxtLink>
-                  <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink to="/favorites" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     お気に入り商品
                   </NuxtLink>
-                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary">
+                  <NuxtLink to="/dashboard" @click="isMenuOpen = false" class="block px-4 py-2 text-sm text-card-foreground hover:bg-secondary hover:text-white">
                     ダッシュボード
                   </NuxtLink>
                   <div class="my-1 h-px bg-border" />
