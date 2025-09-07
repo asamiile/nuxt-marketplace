@@ -1,36 +1,37 @@
 <script setup lang="ts">
-import type { Database } from '~/types/database.types'
 import { format } from 'date-fns'
+import type { Contact } from '~/types/product'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const supabase = useSupabaseClient<Database>()
-const selectedContact = ref<any>(null)
+const { showToast } = useAlert()
+const selectedContact = ref<Contact | null>(null)
 const isModalOpen = ref(false)
 
 const { data: contacts, refresh } = await useAsyncData(
   'contacts',
-  async () => {
-    const { data } = await supabase
-      .from('contacts')
-      .select('*')
-      .order('created_at', { ascending: false })
-    return data
+  () => $fetch('/api/admin/contacts'),
+  {
+    default: () => [],
   },
 )
 
-const openModal = async (contact: any) => {
+const openModal = async (contact: Contact) => {
   selectedContact.value = contact
   isModalOpen.value = true
   if (!contact.is_read) {
-    await supabase
-      .from('contacts')
-      .update({ is_read: true })
-      .eq('id', contact.id)
-    await refresh()
+    try {
+      await $fetch(`/api/admin/contacts/${contact.id}`, {
+        method: 'PUT',
+      })
+      await refresh()
+    }
+    catch (error: any) {
+      showToast({ title: 'エラー', description: 'ステータスの更新に失敗しました。', variant: 'destructive' })
+    }
   }
 }
 

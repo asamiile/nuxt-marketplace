@@ -73,8 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Database } from '~/types/supabase';
-import type { Tag } from '~/types/product';
+import type { Tag } from '~/types/product'
 
 definePageMeta({
   layout: 'admin',
@@ -83,35 +82,28 @@ definePageMeta({
 
 const { showToast } = useAlert()
 
-// Define the function to fetch tags
-const fetchTags = async () => {
-  const supabase = useSupabaseClient<Database>()
-  const { data, error } = await supabase.from('tags').select('*').order('created_at', { ascending: false })
-  if (error) {
-    showToast({ title: 'エラー', description: `タグの取得に失敗しました: ${error.message}`, variant: 'destructive' })
-    return []
-  }
-  return data
-}
-
-// Fetch tags using the defined function
-const { data: tags, pending, error, refresh } = await useAsyncData('tags', fetchTags, {
-  default: () => [],
-})
+// Fetch tags
+const { data: tags, pending, error, refresh } = await useAsyncData(
+  'tags',
+  () => $fetch('/api/admin/tags'),
+  { default: () => [] },
+)
 
 // Create
 const newTagName = ref('')
 const handleCreateTag = async () => {
   if (!newTagName.value.trim()) return
-  const supabase = useSupabaseClient<Database>()
   try {
-    const { error } = await supabase.from('tags').insert({ name: newTagName.value.trim() })
-    if (error) throw error
+    await $fetch('/api/admin/tags', {
+      method: 'POST',
+      body: { name: newTagName.value.trim() },
+    })
     showToast({ title: '成功', description: 'タグが作成されました。' })
     newTagName.value = ''
     await refresh()
-  } catch (error: any) {
-    showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
+  }
+  catch (error: any) {
+    showToast({ title: 'エラー', description: error.data?.message || 'タグの作成に失敗しました。', variant: 'destructive' })
   }
 }
 
@@ -135,32 +127,32 @@ const closeEditModal = () => {
 // Update
 const handleUpdateTag = async () => {
   if (!editingTag.value || !editingTagName.value.trim()) return
-  const supabase = useSupabaseClient<Database>()
   try {
-    const { error } = await supabase
-      .from('tags')
-      .update({ name: editingTagName.value.trim() })
-      .eq('id', editingTag.value.id)
-    if (error) throw error
+    await $fetch(`/api/admin/tags/${editingTag.value.id}`, {
+      method: 'PUT',
+      body: { name: editingTagName.value.trim() },
+    })
     showToast({ title: '成功', description: 'タグが更新されました。' })
     closeEditModal()
     await refresh()
-  } catch (error: any) {
-    showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
+  }
+  catch (error: any) {
+    showToast({ title: 'エラー', description: error.data?.message || 'タグの更新に失敗しました。', variant: 'destructive' })
   }
 }
 
 // Delete
 const handleDeleteTag = async (id: number) => {
   if (!confirm('本当にこのタグを削除しますか？')) return
-  const supabase = useSupabaseClient<Database>()
   try {
-    const { error } = await supabase.from('tags').delete().eq('id', id)
-    if (error) throw error
+    await $fetch(`/api/admin/tags/${id}`, {
+      method: 'DELETE',
+    })
     showToast({ title: '成功', description: 'タグが削除されました。' })
     await refresh()
-  } catch (error: any) {
-    showToast({ title: 'エラー', description: error.message, variant: 'destructive' })
+  }
+  catch (error: any) {
+    showToast({ title: 'エラー', description: error.data?.message || 'タグの削除に失敗しました。', variant: 'destructive' })
   }
 }
 </script>
