@@ -31,7 +31,7 @@
     </div>
     <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       <div>
-        <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg shadow-lg">
+        <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg">
       </div>
       <div>
         <div class="mb-2">

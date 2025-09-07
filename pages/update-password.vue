@@ -7,7 +7,7 @@
         </h2>
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="handleUpdatePassword">
-        <div class="space-y-4 rounded-md shadow-sm">
+        <div class="space-y-4 rounded-md">
           <div>
             <Label for="new-password">新しいパスワード</Label>
             <Input id="new-password" v-model="password" name="password" type="password" required placeholder="新しいパスワード" />

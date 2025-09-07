@@ -6,7 +6,7 @@
     <p class="text-center mb-8 text-muted-foreground">
       以下のフォームに必要事項を入力して、新しい商品を販売してください。
     </p>
-    <div class="text-card-foreground shadow-md dark:border rounded-lg border-0 p-8 pt-8">
+    <div class="text-card-foreground bg-card rounded-lg p-8 pt-8">
       <form @submit.prevent="submit" class="space-y-6">
         <div>
           <Label for="name">商品名</Label>

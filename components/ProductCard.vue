@@ -1,5 +1,5 @@
 <template>
-  <UiCard @click="navigateToProduct" class="overflow-hidden hover:shadow-xl transition-all duration-400 relative cursor-pointer hover:scale-105">
+  <UiCard @click="navigateToProduct" class="overflow-hidden transition-all duration-400 relative cursor-pointer">
     <img :src="optimizedImageUrl" alt="Product image" class="w-full h-48 object-cover">
     <UiCardContent class="p-4">
       <UiCardTitle class="text-lg truncate">{{ product.name }}</UiCardTitle>

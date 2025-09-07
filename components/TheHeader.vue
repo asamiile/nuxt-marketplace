@@ -37,7 +37,7 @@
                   </span>
                 </template>
               </button>
-              <div v-if="isMenuOpen && profile" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+              <div v-if="isMenuOpen && profile" class="absolute right-0 w-56 mt-2 origin-top-right bg-card border rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                 <div class="px-1 py-1">
                   <div class="px-4 py-2">
                     <p class="text-sm font-medium text-foreground">
