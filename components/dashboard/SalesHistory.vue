@@ -1,8 +1,8 @@
 <template>
   <UiCard>
     <UiCardHeader>
-      <UiCardTitle>販売管理</UiCardTitle>
-      <UiCardDescription>商品の売上履歴とサマリーを確認します。</UiCardDescription>
+      <h2 class="text-2xl font-semibold text-foreground mb-3">販売管理</h2>
+      <p class="text-muted-foreground">商品の売上履歴とサマリーを確認します。</p>
     </UiCardHeader>
     <UiCardContent class="space-y-6">
       <div class="grid grid-cols-2 gap-4 text-center">
@@ -25,7 +25,7 @@
         </div>
         <div v-else class="border rounded-lg overflow-hidden">
           <table class="min-w-full divide-y divide-border">
-            <thead class="bg-muted/50">
+            <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th class="px-4 py-2 text-left text-sm font-medium text-muted-foreground">商品名</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-muted-foreground">購入者</th>
@@ -35,7 +35,11 @@
             </thead>
             <tbody class="divide-y divide-border">
               <tr v-for="sale in sales" :key="sale.product_id + sale.purchased_at">
-                <td class="px-4 py-2 font-medium">{{ sale.product_name }}</td>
+                <td class="px-4 py-2 font-medium">
+                  <NuxtLink :to="`/product/${sale.product_id}`" class="hover:underline">
+                    {{ sale.product_name }}
+                  </NuxtLink>
+                </td>
                 <td class="px-4 py-2 text-muted-foreground">{{ sale.purchaser_username }}</td>
                 <td class="px-4 py-2 text-muted-foreground">{{ new Date(sale.purchased_at).toLocaleString() }}</td>
                 <td class="px-4 py-2 text-right">{{ formatPrice(sale.price) }}</td>

@@ -1,8 +1,8 @@
 <template>
   <UiCard>
     <UiCardHeader>
-      <UiCardTitle>出品した商品</UiCardTitle>
-      <UiCardDescription>作成した商品を管理します。</UiCardDescription>
+      <h2 class="text-2xl font-semibold text-foreground mb-3">出品した商品</h2>
+      <p class="text-muted-foreground">作成した商品を管理します。</p>
     </UiCardHeader>
     <UiCardContent>
       <div v-if="pending" class="text-center">
@@ -14,7 +14,7 @@
       <div v-else-if="products.length === 0" class="text-center text-muted-foreground">
         <p>まだ出品した商品がありません。</p>
         <NuxtLink to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
-          最初のを出品する
+          最初の商品を出品する
         </NuxtLink>
       </div>
       <div v-else class="space-y-4">
