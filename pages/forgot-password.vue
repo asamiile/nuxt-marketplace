@@ -10,7 +10,7 @@
         </p>
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="handlePasswordReset">
-        <div class="space-y-4 rounded-md shadow-sm">
+        <div class="space-y-4 rounded-md">
           <div>
             <Label for="email-address">メールアドレス</Label>
             <Input id="email-address" v-model="email" name="email" type="email" autocomplete="email" required placeholder="メールアドレス" />

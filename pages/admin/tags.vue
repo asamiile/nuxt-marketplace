@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold mb-6">タグ管理</h1>
 
     <!-- New Tag Form -->
-    <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+    <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg">
       <h2 class="text-xl font-semibold mb-4">新規タグ作成</h2>
       <form @submit.prevent="handleCreateTag">
         <div class="flex items-center gap-4">
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Tags Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
@@ -50,7 +50,7 @@
 
     <!-- Edit Modal -->
     <div v-if="isEditModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
         <h2 class="text-xl font-semibold mb-4">タグを編集</h2>
         <form @submit.prevent="handleUpdateTag">
           <div class="space-y-4">

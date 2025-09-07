@@ -9,7 +9,7 @@
     <div v-if="loading" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
-    <UiCard v-else class="border-0 shadow-md">
+    <UiCard v-else>
       <UiCardContent class="p-8 pt-8">
         <form @submit.prevent="updateProfile" class="space-y-6">
           <div>

@@ -8,16 +8,7 @@
 
     <div v-if="pending">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <div v-for="n in 8" :key="n" class="shadow-md dark:border rounded-lg p-4">
-          <div class="space-y-3">
-            <Skeleton class="h-48 w-full" />
-            <div class="space-y-2">
-              <Skeleton class="h-4 w-3/4" />
-              <Skeleton class="h-4 w-1/2" />
-              <Skeleton class="h-4 w-1/4" />
-            </div>
-          </div>
-        </div>
+        <Skeleton v-for="n in 8" :key="n" />
       </div>
     </div>
     <div v-else-if="error">
