@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold mb-6">購入管理</h1>
 
     <!-- Purchases Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
