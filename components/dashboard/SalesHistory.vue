@@ -57,11 +57,8 @@
             </div>
             <div v-if="totalPages > 1" class="mt-4 flex justify-center">
               <UiPagination
-                v-model:page="currentPage"
-                :total="totalPages * itemsPerPage"
-                :items-per-page="itemsPerPage"
-                :sibling-count="1"
-                show-edges
+                v-model:currentPage="currentPage"
+                :total-pages="totalPages"
               />
             </div>
           </div>
