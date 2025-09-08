@@ -85,21 +85,6 @@ ALTER TABLE public.products
   ADD COLUMN IF NOT EXISTS category_id BIGINT REFERENCES public.categories(id);
 
 
--- =========== RLSヘルパー関数定義 (ポリシーより先に定義) ===========
-
-/**
-* RLS HELPER FUNCTIONS
-* - These functions are used by RLS policies to check user claims.
-*/
-create or replace function get_my_claim(claim TEXT) returns jsonb as $$
-  select nullif(current_setting('request.jwt.claims', true), '')::jsonb -> claim
-$$ language sql stable;
-
-create or replace function is_claims_admin() returns boolean as $$
-  select coalesce(get_my_claim('claims_admin')::boolean, false)
-$$ language sql stable;
-
-
 -- =========== RLS有効化 ===========
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -161,9 +146,6 @@ CREATE POLICY "Users can delete their own favorites." ON favorites FOR DELETE US
 
 
 -- Categories Policies
-DROP POLICY IF EXISTS "Admin full access on categories" ON public.categories;
-CREATE POLICY "Admin full access on categories" ON public.categories FOR ALL USING (public.is_claims_admin()) WITH CHECK (public.is_claims_admin());
-
 DROP POLICY IF EXISTS "Public can read categories" ON public.categories;
 CREATE POLICY "Public can read categories" ON public.categories FOR SELECT USING (true);
 
@@ -174,107 +156,6 @@ CREATE POLICY "Public can read tags" ON public.tags FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Authenticated users can insert tags" ON public.tags;
 CREATE POLICY "Authenticated users can insert tags" ON public.tags FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-
-DROP POLICY IF EXISTS "Admins can update tags" ON public.tags;
-CREATE POLICY "Admins can update tags" ON public.tags FOR UPDATE USING (public.is_claims_admin()) WITH CHECK (public.is_claims_admin());
-
-DROP POLICY IF EXISTS "Admins can delete tags" ON public.tags;
-CREATE POLICY "Admins can delete tags" ON public.tags FOR DELETE USING (public.is_claims_admin());
-
-
--- Contacts Policies
-DROP POLICY IF EXISTS "Allow admin full access to contacts" ON public.contacts;
-CREATE POLICY "Allow admin full access to contacts" ON public.contacts FOR ALL USING (public.is_claims_admin()) WITH CHECK (public.is_claims_admin());
-
-
--- =========== データベース関数定義 ===========
-
--- Trigger function for new user profiles
-CREATE OR REPLACE FUNCTION public.create_profile_for_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.profiles (id, username)
-  VALUES (new.id, new.raw_user_meta_data->>'username');
-  RETURN new;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-
--- Sales history function
-CREATE OR REPLACE FUNCTION public.get_sales_history()
-RETURNS TABLE (
-  product_id BIGINT,
-  product_name TEXT,
-  price NUMERIC,
-  purchased_at TIMESTAMPTZ,
-  purchaser_username TEXT
-)
-LANGUAGE plpgsql STABLE SECURITY DEFINER AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    p.id,
-    p.name,
-    p.price,
-    pu.created_at,
-    purchaser_profile.username
-  FROM
-    public.purchases pu
-  JOIN
-    public.products p ON pu.product_id = p.id
-  JOIN
-    public.profiles purchaser_profile ON pu.user_id = purchaser_profile.id
-  WHERE
-    p.creator_id = auth.uid()
-  ORDER BY
-    pu.created_at DESC;
-END;
-$$;
-
--- User management functions
-create or replace function get_all_users()
-returns table (
-  id uuid,
-  email text,
-  created_at timestamptz,
-  last_sign_in_at timestamptz,
-  is_admin boolean
-) as $$
-begin
-  if not is_claims_admin() then
-    raise exception 'Admin privileges required';
-  end if;
-  return query
-  select
-    u.id,
-    u.email,
-    u.created_at,
-    u.last_sign_in_at,
-    coalesce((u.raw_user_meta_data->>'claims_admin')::boolean, false) as is_admin
-  from auth.users u
-  order by u.created_at desc;
-end;
-$$ language plpgsql security definer;
-
-create or replace function set_admin_status(user_id uuid, p_is_admin boolean)
-returns void as $$
-begin
-  if not is_claims_admin() then
-    raise exception 'Admin privileges required';
-  end if;
-  update auth.users
-  set raw_app_meta_data = raw_app_meta_data || jsonb_build_object('claims_admin', p_is_admin)
-  where id = user_id;
-end;
-$$ language plpgsql security definer;
-
-
--- =========== トリガー設定 ===========
-
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW EXECUTE FUNCTION public.create_profile_for_new_user();
 
 
 -- =========== ストレージ設定 ===========
@@ -301,7 +182,6 @@ CREATE POLICY "Users can delete their own assets" ON storage.objects FOR DELETE 
 
 -- =========== コメント追加 ===========
 
-COMMENT ON FUNCTION public.create_profile_for_new_user() IS 'Automatically creates a user profile upon new user registration in auth.users.';
 COMMENT ON TABLE public.categories IS 'Stores product categories.';
 COMMENT ON TABLE public.tags IS 'Stores product tags.';
 COMMENT ON TABLE public.product_tags IS 'Associates products with tags.';
