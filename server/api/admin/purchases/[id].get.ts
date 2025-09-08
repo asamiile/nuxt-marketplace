@@ -28,8 +28,7 @@ export default defineEventHandler(async (event) => {
     .select(`
       *,
       profiles (
-        username,
-        email
+        username
       ),
       products (
         *
