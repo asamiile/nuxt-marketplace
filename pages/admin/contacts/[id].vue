@@ -89,9 +89,10 @@ const getStatusClass = (status: string | undefined) => {
             <UiSelect
               v-if="selectedStatus"
               v-model="selectedStatus"
-              :options="statusOptions.map(s => ({ value: s, label: s }))"
               @change="updateStatus"
-            />
+            >
+              <option v-for="s in statusOptions" :key="s" :value="s">{{ s }}</option>
+            </UiSelect>
           </div>
         </div>
       </div>
