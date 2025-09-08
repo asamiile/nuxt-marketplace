@@ -27,15 +27,16 @@
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">名前</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ステータス</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">作成日時</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="3" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedTags || paginatedTags.length === 0">
-            <td colspan="3" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
+            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
           </tr>
           <tr v-for="tag in paginatedTags" :key="tag.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -44,6 +45,11 @@
               </NuxtLink>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ tag.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', tag.is_public ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']">
+                {{ tag.is_public ? '公開' : '非公開' }}
+              </span>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(tag.created_at).toLocaleString() }}</td>
           </tr>
         </tbody>

@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
   const categoryId = event.context.params?.id
-  const { name } = await readBody(event)
+  const { name, is_public } = await readBody(event)
 
   if (!categoryId) {
     throw createError({
@@ -24,16 +24,24 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (!name || typeof name !== 'string') {
+  const updateData: { name?: string; is_public?: boolean } = {}
+  if (name && typeof name === 'string') {
+    updateData.name = name.trim()
+  }
+  if (typeof is_public === 'boolean') {
+    updateData.is_public = is_public
+  }
+
+  if (Object.keys(updateData).length === 0) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Category name is required',
+      statusMessage: 'No update data provided',
     })
   }
 
   const { data, error } = await client
     .from('categories')
-    .update({ name: name.trim() })
+    .update(updateData)
     .eq('id', categoryId)
     .select()
     .single()
