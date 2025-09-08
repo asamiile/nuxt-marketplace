@@ -52,6 +52,9 @@ const formatDate = (date: string | null) => {
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              UUID
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               メールアドレス
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -63,18 +66,26 @@ const formatDate = (date: string | null) => {
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               管理者
             </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              操作
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedUsers || paginatedUsers.length === 0">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               ユーザーが見つかりません。
             </td>
           </tr>
           <tr v-for="user in paginatedUsers" :key="user.id">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <NuxtLink :to="`/admin/users/${user.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+                {{ user.id.substring(0, 8) }}...
+              </NuxtLink>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               {{ user.email }}
             </td>
@@ -88,6 +99,11 @@ const formatDate = (date: string | null) => {
               <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', user.is_admin ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800']">
                 {{ user.is_admin ? 'はい' : 'いいえ' }}
               </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <NuxtLink :to="`/admin/users/${user.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                編集
+              </NuxtLink>
             </td>
           </tr>
         </tbody>

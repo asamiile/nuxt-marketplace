@@ -39,11 +39,17 @@
             <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
           </tr>
           <tr v-for="tag in paginatedTags" :key="tag.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ tag.id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+                {{ tag.id }}
+              </NuxtLink>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ tag.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(tag.created_at).toLocaleString() }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-              <UiButton variant="outline" size="sm" @click="openEditModal(tag)">編集</UiButton>
+              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                編集
+              </NuxtLink>
               <UiButton variant="destructive" size="sm" @click="handleDeleteTag(tag.id)">削除</UiButton>
             </td>
           </tr>
@@ -56,28 +62,6 @@
         v-model:currentPage="currentPage"
         :total-pages="totalPages"
       />
-    </div>
-
-    <!-- Edit Modal -->
-    <div v-if="isEditModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-        <h2 class="text-xl font-semibold mb-4">タグを編集</h2>
-        <form @submit.prevent="handleUpdateTag">
-          <div class="space-y-4">
-            <UiFormInput
-              v-model="editingTagName"
-              placeholder="タグ名"
-              required
-            />
-            <div class="flex justify-end gap-4">
-              <UiButton type="button" variant="ghost" @click="closeEditModal">キャンセル</UiButton>
-              <UiButton type="submit" :disabled="pending">
-                {{ pending ? '更新中...' : '更新' }}
-              </UiButton>
-            </div>
-          </div>
-        </form>
-      </div>
     </div>
   </div>
 </template>
@@ -133,40 +117,6 @@ const handleCreateTag = async () => {
   }
   catch (error: any) {
     showToast({ title: 'エラー', description: error.data?.message || 'タグの作成に失敗しました。', variant: 'destructive' })
-  }
-}
-
-// Edit Modal
-const isEditModalOpen = ref(false)
-const editingTag = ref<Tag | null>(null)
-const editingTagName = ref('')
-
-const openEditModal = (tag: Tag) => {
-  editingTag.value = tag
-  editingTagName.value = tag.name
-  isEditModalOpen.value = true
-}
-
-const closeEditModal = () => {
-  isEditModalOpen.value = false
-  editingTag.value = null
-  editingTagName.value = ''
-}
-
-// Update
-const handleUpdateTag = async () => {
-  if (!editingTag.value || !editingTagName.value.trim()) return
-  try {
-    await $fetch(`/api/admin/tags/${editingTag.value.id}`, {
-      method: 'PUT',
-      body: { name: editingTagName.value.trim() },
-    })
-    showToast({ title: '成功', description: 'タグが更新されました。' })
-    closeEditModal()
-    await refresh()
-  }
-  catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'タグの更新に失敗しました。', variant: 'destructive' })
   }
 }
 

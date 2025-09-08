@@ -42,9 +42,18 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ category.id }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(category.created_at).toLocaleString() }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <NuxtLink :to="`/admin/categories/${category.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+                {{ category.id }}
+              </NuxtLink>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(category.created_at).toLocaleString() }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-              <UiButton variant="outline" size="sm" @click="openEditModal(category)">編集</UiButton>
-              <UiButton variant="destructive" size="sm" @click="handleDeleteCategory(category.id)">削除</UiButton>
+              <NuxtLink :to="`/admin/categories/${category.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                編集
+              </NuxtLink>
+              <UiButton variant="destructive" size="sm" @click="handleDeleteCategory(category.id)" class="ml-2">削除</UiButton>
             </td>
           </tr>
         </tbody>
@@ -56,28 +65,6 @@
         v-model:currentPage="currentPage"
         :total-pages="totalPages"
       />
-    </div>
-
-    <!-- Edit Modal -->
-    <div v-if="isEditModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-        <h2 class="text-xl font-semibold mb-4">カテゴリを編集</h2>
-        <form @submit.prevent="handleUpdateCategory">
-          <div class="space-y-4">
-            <UiFormInput
-              v-model="editingCategoryName"
-              placeholder="カテゴリ名"
-              required
-            />
-            <div class="flex justify-end gap-4">
-              <UiButton type="button" variant="ghost" @click="closeEditModal">キャンセル</UiButton>
-              <UiButton type="submit" :disabled="pending">
-                {{ pending ? '更新中...' : '更新' }}
-              </UiButton>
-            </div>
-          </div>
-        </form>
-      </div>
     </div>
   </div>
 </template>
@@ -134,40 +121,6 @@ const handleCreateCategory = async () => {
   }
   catch (error: any) {
     showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの作成に失敗しました。', variant: 'destructive' })
-  }
-}
-
-// Edit Modal
-const isEditModalOpen = ref(false)
-const editingCategory = ref<Category | null>(null)
-const editingCategoryName = ref('')
-
-const openEditModal = (category: Category) => {
-  editingCategory.value = category
-  editingCategoryName.value = category.name
-  isEditModalOpen.value = true
-}
-
-const closeEditModal = () => {
-  isEditModalOpen.value = false
-  editingCategory.value = null
-  editingCategoryName.value = ''
-}
-
-// Update
-const handleUpdateCategory = async () => {
-  if (!editingCategory.value || !editingCategoryName.value.trim()) return
-  try {
-    await $fetch(`/api/admin/categories/${editingCategory.value.id}`, {
-      method: 'PUT',
-      body: { name: editingCategoryName.value.trim() },
-    })
-    showToast({ title: '成功', description: 'カテゴリが更新されました。' })
-    closeEditModal()
-    await refresh()
-  }
-  catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの更新に失敗しました。', variant: 'destructive' })
   }
 }
 

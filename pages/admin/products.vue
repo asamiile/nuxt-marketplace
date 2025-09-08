@@ -67,20 +67,25 @@ const formatDate = (date: string | null) => {
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               登録日時
             </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              操作
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedProducts || paginatedProducts.length === 0">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               商品が見つかりません。
             </td>
           </tr>
           <tr v-for="product in paginatedProducts" :key="product.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-              {{ product.id }}
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <NuxtLink :to="`/admin/products/${product.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+                {{ product.id }}
+              </NuxtLink>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
               {{ product.name }}
@@ -93,6 +98,11 @@ const formatDate = (date: string | null) => {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
               {{ formatDate(product.created_at) }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <NuxtLink :to="`/admin/products/${product.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                編集
+              </NuxtLink>
             </td>
           </tr>
         </tbody>
