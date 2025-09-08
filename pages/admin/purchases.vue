@@ -7,24 +7,36 @@
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">購入ID</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">購入日時</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">購入者名</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">商品名</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">価格</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedPurchases || paginatedPurchases.length === 0">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">購入履歴が見つかりません。</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">購入履歴が見つかりません。</td>
           </tr>
           <tr v-for="purchase in paginatedPurchases" :key="purchase.id">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <NuxtLink :to="`/admin/purchases/${purchase.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+                {{ purchase.id }}
+              </NuxtLink>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(purchase.created_at).toLocaleString() }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ purchase.user?.username || 'N/A' }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ purchase.product?.name || 'N/A' }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">¥{{ purchase.product?.price?.toLocaleString() || 'N/A' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <NuxtLink :to="`/admin/purchases/${purchase.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                詳細
+              </NuxtLink>
+            </td>
           </tr>
         </tbody>
       </table>
