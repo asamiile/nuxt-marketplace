@@ -30,11 +30,7 @@ const purchaseId = route.params.id as string
 
 const { data: purchase, pending, error } = await useFetch<PurchaseDetail>(`/api/admin/purchases/${purchaseId}`, {
   onResponseError: ({ response }) => {
-    showToast({
-      title: 'エラー',
-      description: '購入データの取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', '購入データの取得に失敗しました。', 'error')
   }
 })
 
@@ -120,6 +116,12 @@ const formatDate = (date: string | null) => {
             <p class="text-sm text-gray-500 dark:text-gray-400">購入者情報がありません。</p>
           </div>
         </div>
+      </div>
+
+      <div class="mt-6">
+        <NuxtLink to="/admin/purchases" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+          &larr; 購入一覧に戻る
+        </NuxtLink>
       </div>
     </div>
   </div>

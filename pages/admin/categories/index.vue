@@ -27,8 +27,8 @@
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">名前</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ステータス</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">作成日時</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -45,13 +45,12 @@
               </NuxtLink>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(category.created_at).toLocaleString() }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-              <NuxtLink :to="`/admin/categories/${category.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
-                編集
-              </NuxtLink>
-              <UiButton variant="destructive" size="sm" @click="handleDeleteCategory(category.id)" class="ml-2">削除</UiButton>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', category.is_public ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']">
+                {{ category.is_public ? '公開' : '非公開' }}
+              </span>
             </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(category.created_at).toLocaleString() }}</td>
           </tr>
         </tbody>
       </table>
@@ -112,27 +111,13 @@ const handleCreateCategory = async () => {
       method: 'POST',
       body: { name: newCategoryName.value.trim() },
     })
-    showToast({ title: '成功', description: 'カテゴリが作成されました。' })
+    showToast('成功', 'カテゴリが作成されました。')
     newCategoryName.value = ''
     await refresh()
   }
   catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの作成に失敗しました。', variant: 'destructive' })
+    showToast('エラー', error.data?.message || 'カテゴリの作成に失敗しました。', 'error')
   }
 }
 
-// Delete
-const handleDeleteCategory = async (id: number) => {
-  if (!confirm('本当にこのカテゴリを削除しますか？')) return
-  try {
-    await $fetch(`/api/admin/categories/${id}`, {
-      method: 'DELETE',
-    })
-    showToast({ title: '成功', description: 'カテゴリが削除されました。' })
-    await refresh()
-  }
-  catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの削除に失敗しました。', variant: 'destructive' })
-  }
-}
 </script>

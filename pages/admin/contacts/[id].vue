@@ -14,7 +14,7 @@ const contactId = route.params.id as string
 
 const { data: contact, pending, error, refresh } = await useFetch<Contact>(`/api/admin/contacts/${contactId}`, {
   async onResponse({ response }) {
-    if (response.ok && !response._data.is_read) {
+    if (response.ok && response._data && !response._data.is_read) {
       // Mark as read
       try {
         await $fetch(`/api/admin/contacts/${contactId}`, { method: 'PUT' })
@@ -24,16 +24,12 @@ const { data: contact, pending, error, refresh } = await useFetch<Contact>(`/api
         }
       } catch (e) {
         console.error('Failed to mark contact as read', e)
-        showToast({ title: 'エラー', description: 'ステータスの更新に失敗しました。', variant: 'destructive' })
+        showToast('エラー', 'ステータスの更新に失敗しました。', 'error')
       }
     }
   },
   onResponseError: ({ response }) => {
-    showToast({
-      title: 'エラー',
-      description: 'お問い合わせデータの取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', 'お問い合わせデータの取得に失敗しました。', 'error')
   }
 })
 
@@ -82,7 +78,7 @@ const formatDate = (dateString: string | null) => {
         <!-- Message -->
         <div>
           <h3 class="font-semibold mb-2">メッセージ本文</h3>
-          <div class="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-md whitespace-pre-wrap">
+          <div>
             {{ contact.message }}
           </div>
         </div>

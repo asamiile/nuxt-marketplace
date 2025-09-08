@@ -34,11 +34,7 @@ const { data: product, pending: productPending, error: productError } = await us
     }
   },
   onResponseError: ({ response }) => {
-    showToast({
-      title: 'エラー',
-      description: '商品データの取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', '商品データの取得に失敗しました。', 'error')
   }
 })
 
@@ -54,17 +50,11 @@ const handleSave = async () => {
       method: 'PUT',
       body: form.value,
     })
-    showToast({
-      title: '成功',
-      description: '商品情報が正常に更新されました。',
-    })
+    showToast('成功', '商品情報が正常に更新されました。')
+    await navigateTo('/admin/products')
   } catch (err) {
     console.error('Failed to update product:', err)
-    showToast({
-      title: 'エラー',
-      description: '商品情報の更新に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', '商品情報の更新に失敗しました。', 'error')
   } finally {
     isSaving.value = false
   }
@@ -113,6 +103,12 @@ const handleSave = async () => {
             </Button>
           </div>
         </form>
+      </div>
+
+      <div class="mt-6">
+        <NuxtLink to="/admin/products" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+          &larr; 商品一覧に戻る
+        </NuxtLink>
       </div>
     </div>
   </div>

@@ -51,7 +51,7 @@ const filters = ref({
 })
 
 const { data: categories } = await useAsyncData('categories', async () => {
-  const { data } = await supabase.from('categories').select('*').order('name')
+  const { data } = await supabase.from('categories').select('*').eq('is_public', true).order('name')
   return data as Category[]
 })
 
