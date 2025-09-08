@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/product'
+import UiPagination from '~/components/ui/Pagination.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -11,13 +13,28 @@ const { showToast } = useAlert()
 const selectedContact = ref<Contact | null>(null)
 const isModalOpen = ref(false)
 
-const { data: contacts, refresh } = await useAsyncData(
+const { data: contacts, pending, error, refresh } = await useAsyncData(
   'contacts',
   () => $fetch('/api/admin/contacts'),
   {
     default: () => [],
   },
 )
+
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const totalPages = computed(() => {
+  if (!contacts.value) return 1
+  return Math.ceil(contacts.value.length / itemsPerPage)
+})
+
+const paginatedContacts = computed(() => {
+  if (!contacts.value) return []
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  return contacts.value.slice(startIndex, startIndex + itemsPerPage)
+})
 
 const openModal = async (contact: Contact) => {
   selectedContact.value = contact
@@ -49,7 +66,7 @@ const formatDate = (dateString: string) => {
 <template>
   <div>
     <h1 class="text-3xl font-bold mb-6">お問い合わせ管理</h1>
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
@@ -68,10 +85,13 @@ const formatDate = (dateString: string) => {
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-          <tr v-if="!contacts || contacts.length === 0">
+          <tr v-if="pending">
+            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+          </tr>
+          <tr v-else-if="error || !paginatedContacts || paginatedContacts.length === 0">
             <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">お問い合わせが見つかりません。</td>
           </tr>
-          <tr v-for="contact in contacts" :key="contact.id" @click="openModal(contact)" class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+          <tr v-for="contact in paginatedContacts" :key="contact.id" @click="openModal(contact)" class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
               {{ formatDate(contact.created_at) }}
             </td>
@@ -89,6 +109,13 @@ const formatDate = (dateString: string) => {
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div v-if="totalPages > 1" class="mt-6 flex justify-center">
+      <UiPagination
+        v-model:currentPage="currentPage"
+        :total-pages="totalPages"
+      />
     </div>
 
     <!-- Modal -->

@@ -69,7 +69,7 @@ const openFileDialog = () => {
 <template>
   <div
     :class="cn(
-      'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
+      'border-2 border-dashed rounded-lg p-4 md:p-8 text-center cursor-pointer transition-colors',
       isDragging ? 'border-primary bg-muted' : 'border-border',
     )"
     @dragenter="handleDragEnter"

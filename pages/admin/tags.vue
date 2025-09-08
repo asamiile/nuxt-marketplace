@@ -21,7 +21,7 @@
     </div>
 
     <!-- Tags Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
@@ -32,10 +32,13 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-          <tr v-if="!tags || tags.length === 0">
+          <tr v-if="pending">
+            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+          </tr>
+          <tr v-else-if="error || !paginatedTags || paginatedTags.length === 0">
             <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
           </tr>
-          <tr v-for="tag in tags" :key="tag.id">
+          <tr v-for="tag in paginatedTags" :key="tag.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ tag.id }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ tag.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(tag.created_at).toLocaleString() }}</td>
@@ -46,6 +49,13 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div v-if="totalPages > 1" class="mt-6 flex justify-center">
+      <UiPagination
+        v-model:currentPage="currentPage"
+        :total-pages="totalPages"
+      />
     </div>
 
     <!-- Edit Modal -->
@@ -73,7 +83,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import type { Tag } from '~/types/product'
+import UiPagination from '~/components/ui/Pagination.vue'
+import UiButton from '~/components/ui/button/Button.vue'
+import UiFormInput from '~/components/ui/form/Input.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -88,6 +102,21 @@ const { data: tags, pending, error, refresh } = await useAsyncData(
   () => $fetch('/api/admin/tags'),
   { default: () => [] },
 )
+
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const totalPages = computed(() => {
+  if (!tags.value) return 1
+  return Math.ceil(tags.value.length / itemsPerPage)
+})
+
+const paginatedTags = computed(() => {
+  if (!tags.value) return []
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  return tags.value.slice(startIndex, startIndex + itemsPerPage)
+})
 
 // Create
 const newTagName = ref('')

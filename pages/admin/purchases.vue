@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold mb-6">購入管理</h1>
 
     <!-- Purchases Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
@@ -17,10 +17,10 @@
           <tr v-if="pending">
             <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
-          <tr v-else-if="error || !purchases || purchases.length === 0">
+          <tr v-else-if="error || !paginatedPurchases || paginatedPurchases.length === 0">
             <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">購入履歴が見つかりません。</td>
           </tr>
-          <tr v-for="purchase in purchases" :key="purchase.id">
+          <tr v-for="purchase in paginatedPurchases" :key="purchase.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(purchase.created_at).toLocaleString() }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ purchase.user?.username || 'N/A' }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ purchase.product?.name || 'N/A' }}</td>
@@ -29,11 +29,19 @@
         </tbody>
       </table>
     </div>
+     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
+      <UiPagination
+        v-model:currentPage="currentPage"
+        :total-pages="totalPages"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import type { Database } from '~/types/supabase'
+import UiPagination from '~/components/ui/Pagination.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -45,4 +53,19 @@ const { data: purchases, pending, error } = await useAsyncData(
   () => $fetch('/api/admin/purchases'),
   { default: () => [] },
 )
+
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const totalPages = computed(() => {
+  if (!purchases.value) return 1
+  return Math.ceil(purchases.value.length / itemsPerPage)
+})
+
+const paginatedPurchases = computed(() => {
+  if (!purchases.value) return []
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  return purchases.value.slice(startIndex, startIndex + itemsPerPage)
+})
 </script>

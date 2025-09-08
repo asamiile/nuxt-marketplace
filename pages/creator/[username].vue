@@ -1,7 +1,7 @@
 <template>
   <div v-if="pending">
     <!-- Skeleton for Creator Info Header -->
-    <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-8 rounded-2xl">
+    <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-4 md:p-8 rounded-2xl">
       <Skeleton class="w-28 h-28 rounded-full border-4 border-background" />
       <div class="flex-1 space-y-3 text-center sm:text-left">
         <Skeleton class="h-8 w-48 mx-auto sm:mx-0" />
@@ -18,12 +18,12 @@
     <!-- Skeleton for Creator's Products -->
     <div>
       <Skeleton class="h-7 w-64 mb-6" />
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         <Skeleton v-for="n in 8" :key="n" />
       </div>
     </div>
   </div>
-  <div v-else-if="error" class="flex flex-col items-center justify-center container py-12 text-center">
+  <div v-else-if="error" class="flex flex-col items-center justify-center container py-8 md:py-12 text-center">
     <h1 class="text-2xl font-bold text-red-500">エラーが発生しました</h1>
     <p class="mt-2 text-muted-foreground">クリエイターが見つかりませんでした。</p>
     <NuxtLink to="/" :class="buttonVariants({ variant: 'link', class: 'mt-4' })">
@@ -32,7 +32,7 @@
   </div>
   <div v-else-if="data && data.profile">
     <!-- Creator Info Header -->
-    <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-8 rounded-2xl">
+    <div class="flex flex-col sm:flex-row items-center gap-6 mb-10 bg-secondary p-4 md:p-8 rounded-2xl">
       <template v-if="data.profile.avatar_url">
         <img :src="data.profile.avatar_url" alt="Creator Avatar" class="w-28 h-28 rounded-full object-cover border-4 border-background">
       </template>
@@ -58,7 +58,7 @@
     <div>
       <h2 class="text-2xl font-semibold mb-6 text-foreground">{{ data.profile.username }}さんの商品</h2>
       <div v-if="data.products && data.products.length > 0">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
           <ProductCard v-for="product in data.products" :key="product.id" :product="product" />
         </div>
         <div class="mt-8">
@@ -69,7 +69,7 @@
           />
         </div>
       </div>
-      <div v-else class="text-center py-16 bg-secondary rounded-lg">
+      <div v-else class="text-center py-12 md:py-16 bg-secondary rounded-lg">
         <h3 class="text-xl font-semibold">商品はまだありません</h3>
         <p class="mt-2 text-muted-foreground">このクリエイターはまだ商品を出品していません。</p>
       </div>

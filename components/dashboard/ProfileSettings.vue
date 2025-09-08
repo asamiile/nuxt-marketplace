@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex flex-col items-start sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
       <h2 class="text-2xl font-semibold text-foreground">プロフィール設定</h2>
       <NuxtLink v-if="username" :to="`/creator/${username}`" :class="buttonVariants({ variant: 'outline', class: 'hover:text-white hover:bg-gray-500' })">
         プロフィールを見る
@@ -10,7 +10,7 @@
       <p>プロフィールを読み込み中...</p>
     </div>
     <UiCard v-else>
-      <UiCardContent class="p-8">
+      <UiCardContent class="p-4 md:p-8">
         <form @submit.prevent="updateProfile" class="space-y-6">
           <div>
             <Label for="username">ユーザー名</Label>

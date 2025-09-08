@@ -3,12 +3,12 @@
     <h1 class="text-3xl font-bold mb-8">お気に入り商品</h1>
 
     <div v-if="loading">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         <Skeleton v-for="n in 8" :key="n" />
       </div>
     </div>
     <div v-else-if="favorites && favorites.length > 0">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         <ProductCard v-for="product in favorites" :key="`fav-${product.id}`" :product="product" />
       </div>
       <div class="mt-8">

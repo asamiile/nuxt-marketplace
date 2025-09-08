@@ -14,7 +14,7 @@
         商品を編集する
       </h1>
       <p class="text-center mb-8">フォームの内容を更新して、商品情報を変更します。</p>
-      <div class="text-card-foreground bg-card rounded-lg p-8 pt-8">
+      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-8 pt-8">
           <form @submit.prevent="submit" class="space-y-6">
             <div>
               <Label for="name">商品名</Label>

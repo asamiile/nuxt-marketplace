@@ -5,7 +5,7 @@
       <p class="text-muted-foreground">商品の売上履歴とサマリーを確認します。</p>
     </div>
     <UiCard>
-      <UiCardContent class="p-8">
+      <UiCardContent class="p-4 md:p-8">
         <div class="grid grid-cols-2 gap-4 text-center mb-8">
           <div class="p-4 bg-secondary rounded-lg">
             <p class="text-sm text-muted-foreground">合計売上 (全期間)</p>
@@ -18,20 +18,20 @@
         </div>
 
         <div>
-          <div class="flex justify-between items-center mb-4">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <h3 class="text-lg font-semibold">販売履歴</h3>
-            <div class="w-72">
+            <div class="w-full sm:w-72">
               <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
             </div>
           </div>
-          <div v-if="pending" class="text-center py-8">
+          <div v-if="pending" class="text-center py-4 md:py-8">
             <p>履歴を読み込んでいます...</p>
           </div>
-          <div v-else-if="error" class="text-center text-destructive py-8">
+          <div v-else-if="error" class="text-center text-destructive py-4 md:py-8">
             <p>履歴の読み込み中にエラーが発生しました。</p>
           </div>
           <div v-else-if="filteredAndPagedSales.length > 0">
-            <div class="border rounded-lg overflow-hidden">
+            <div class="border rounded-lg overflow-x-auto">
               <table class="min-w-full divide-y divide-border">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                   <tr>
@@ -43,7 +43,7 @@
                 </thead>
                 <tbody class="divide-y divide-border">
                   <tr v-for="sale in filteredAndPagedSales" :key="sale.product_id + sale.purchased_at">
-                    <td class="px-4 py-2 font-medium">
+                    <td class="px-4 py-2 font-medium whitespace-nowrap">
                       <NuxtLink :to="`/product/${sale.product_id}`" class="hover:underline">
                         {{ sale.product_name }}
                       </NuxtLink>
@@ -62,7 +62,7 @@
               />
             </div>
           </div>
-          <div v-else class="text-center text-muted-foreground py-8">
+          <div v-else class="text-center text-muted-foreground py-4 md:py-8">
             <p>該当する販売履歴がありません。</p>
           </div>
         </div>

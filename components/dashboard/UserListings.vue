@@ -5,7 +5,7 @@
       <p class="text-muted-foreground">作成した商品を管理します。</p>
     </div>
     <UiCard>
-      <UiCardContent class="p-8">
+      <UiCardContent class="p-4 md:p-8">
         <div v-if="pending" class="text-center">
           <p>商品を読み込んでいます...</p>
         </div>
