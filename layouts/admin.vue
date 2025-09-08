@@ -59,12 +59,12 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const isSidebarOpen = ref(true)
 
 const menuItems = [
-  { to: '/admin', name: 'ダッシュボード' },
+  { to: '/admin/products', name: '商品一覧' },
   { to: '/admin/categories', name: 'カテゴリ管理' },
   { to: '/admin/tags', name: 'タグ管理' },
   { to: '/admin/purchases', name: '購入管理' },
+  { to: '/admin/users', name: 'ユーザ管理' },
   { to: '/admin/contacts', name: 'お問い合わせ管理' },
-  { to: '/admin/users', name: 'ユーザー管理' },
 ]
 
 const handleResize = () => {
