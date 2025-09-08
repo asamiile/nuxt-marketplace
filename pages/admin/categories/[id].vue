@@ -37,27 +37,6 @@ const supabase = useSupabaseClient()
 
 const handleSave = async () => {
   isSaving.value = true
-
-  // If unpublishing, check if category is in use
-  if (category.value?.is_public && !form.value.is_public) {
-    const { count, error } = await supabase
-      .from('products')
-      .select('id', { count: 'exact', head: true })
-      .eq('category_id', categoryId)
-
-    if (error) {
-      showToast('エラー', '商品の確認中にエラーが発生しました。', 'error')
-      isSaving.value = false
-      return
-    }
-    if (count && count > 0) {
-      showToast('更新不可', 'このカテゴリは商品に利用されているため、非公開にできません。', 'error')
-      form.value.is_public = true // Revert checkbox
-      isSaving.value = false
-      return
-    }
-  }
-
   try {
     await $fetch(`/api/admin/categories/${categoryId}`, {
       method: 'PUT',
