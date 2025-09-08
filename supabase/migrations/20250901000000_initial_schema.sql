@@ -214,7 +214,7 @@ RETURNS TABLE (
   purchaser_username TEXT,
   total_count BIGINT
 )
-LANGUAGE plpgsql STABLE SECURITY INVOKER AS $$
+LANGUAGE plpgsql STABLE SECURITY DEFINER AS $$
 DECLARE
   v_offset INT;
 BEGIN
