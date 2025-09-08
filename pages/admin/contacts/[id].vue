@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
-import type { Contact } from '~/types/product'
+import type { Contact } from '~/types/contact'
+import UiSelect from '~/components/ui/form/Select.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -13,29 +15,56 @@ const { showToast } = useAlert()
 const contactId = route.params.id as string
 
 const { data: contact, pending, error, refresh } = await useFetch<Contact>(`/api/admin/contacts/${contactId}`, {
-  async onResponse({ response }) {
-    if (response.ok && response._data && !response._data.is_read) {
-      // Mark as read
-      try {
-        await $fetch(`/api/admin/contacts/${contactId}`, { method: 'PUT' })
-        // We don't need to refresh the data, just update the local state for the badge
-        if (response._data) {
-          response._data.is_read = true
-        }
-      } catch (e) {
-        console.error('Failed to mark contact as read', e)
-        showToast('エラー', 'ステータスの更新に失敗しました。', 'error')
-      }
-    }
-  },
   onResponseError: ({ response }) => {
     showToast('エラー', 'お問い合わせデータの取得に失敗しました。', 'error')
-  }
+  },
 })
 
 const formatDate = (dateString: string | null) => {
   if (!dateString) return 'N/A'
   return format(new Date(dateString), 'yyyy/MM/dd HH:mm')
+}
+
+const statusOptions = ['未対応', '対応中', '対応済み']
+const selectedStatus = ref(contact.value?.status)
+
+// data.valueが変更されたときにselectedStatusを更新
+watch(contact, (newContact) => {
+  if (newContact) {
+    selectedStatus.value = newContact.status
+  }
+}, { immediate: true })
+
+const updateStatus = async () => {
+  if (!selectedStatus.value) return
+
+  try {
+    await $fetch(`/api/admin/contacts/${contactId}`, {
+      method: 'PUT',
+      body: { status: selectedStatus.value },
+    })
+    showToast('成功', 'ステータスを更新しました。')
+    await refresh() // データを再取得して表示を最新化
+  } catch (e) {
+    console.error('Failed to update status', e)
+    showToast('エラー', 'ステータスの更新に失敗しました。', 'error')
+    // エラーが発生した場合、UIを元の状態に戻す
+    await refresh()
+  }
+}
+
+const getStatusClass = (status: string | undefined) => {
+  if (!status) return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+  switch (status) {
+    case '未対応':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+    case '対応中':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+    case '対応済み':
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+  }
 }
 </script>
 
@@ -52,9 +81,19 @@ const formatDate = (dateString: string | null) => {
         <h1 class="text-3xl font-bold mb-2">
           お問い合わせ詳細: #{{ contact.id }}
         </h1>
-        <span :class="['px-3 py-1 text-sm leading-5 font-semibold rounded-full', contact.is_read ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800']">
-          {{ contact.is_read ? '既読' : '未読' }}
-        </span>
+        <div class="flex items-center gap-4">
+          <span :class="['px-3 py-1 text-sm leading-5 font-semibold rounded-full', getStatusClass(contact?.status)]">
+            {{ contact?.status }}
+          </span>
+           <div class="w-40">
+            <UiSelect
+              v-if="selectedStatus"
+              v-model="selectedStatus"
+              :options="statusOptions.map(s => ({ value: s, label: s }))"
+              @change="updateStatus"
+            />
+          </div>
+        </div>
       </div>
       <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">件名: {{ contact.subject }}</p>
 
