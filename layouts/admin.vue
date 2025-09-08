@@ -33,10 +33,10 @@
         <button @click="isSidebarOpen = true" class="text-gray-600 dark:text-gray-300 focus:outline-none md:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
-        <NuxtLink to="/" class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-sm">ストアフロントへ</NuxtLink>
+        <NuxtLink to="/" class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 hover:text-primary-foreground text-sm">ストアフロントへ</NuxtLink>
       </header>
       <main
-        class="flex-1 p-6 overflow-y-auto transition-all duration-300 ease-in-out"
+        class="flex-1 p-6 overflow-y-auto transition-all duration-300 ease-in-out min-w-0"
         :class="{ 'md:ml-64': isSidebarOpen }"
       >
         <slot />

@@ -105,7 +105,7 @@ const { data: categories, pending, error, refresh } = await useAsyncData(
 
 // Pagination
 const currentPage = ref(1)
-const itemsPerPage = 5
+const itemsPerPage = 10
 
 const totalPages = computed(() => {
   if (!categories.value) return 1
