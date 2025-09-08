@@ -49,7 +49,7 @@ const formatDate = (dateString: string) => {
 <template>
   <div>
     <h1 class="text-3xl font-bold mb-6">お問い合わせ管理</h1>
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
