@@ -43,7 +43,7 @@
                 </thead>
                 <tbody class="divide-y divide-border">
                   <tr v-for="sale in filteredAndPagedSales" :key="sale.product_id + sale.purchased_at">
-                    <td class="px-4 py-2 font-medium">
+                    <td class="px-4 py-2 font-medium whitespace-nowrap">
                       <NuxtLink :to="`/product/${sale.product_id}`" class="hover:underline">
                         {{ sale.product_name }}
                       </NuxtLink>
