@@ -39,7 +39,6 @@ const activeFilterCount = computed(() => {
       @click="isFiltersVisible = !isFiltersVisible"
       :class="buttonVariants({ variant: 'outline', class: 'w-full sm:w-auto mb-4' })"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-2"><path d="M22 3h-5l-5.15-2.06a1 1 0 0 0-.85 0L6 3H1a1 1 0 0 0-1 1v2c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V4a1 1 0 0 0-1-1Z"/><path d="M1.3 7.56c.9 1.14 2.45 1.94 4.45 1.94s3.55-.8 4.45-1.94c.9 1.14 2.45 1.94 4.45 1.94s3.55-.8 4.45-1.94"/></svg>
       <span>絞り込み</span>
       <span v-if="activeFilterCount > 0" class="ml-2 inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs">
         {{ activeFilterCount }}
