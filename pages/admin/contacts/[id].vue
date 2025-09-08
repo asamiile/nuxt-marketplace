@@ -24,16 +24,12 @@ const { data: contact, pending, error, refresh } = await useFetch<Contact>(`/api
         }
       } catch (e) {
         console.error('Failed to mark contact as read', e)
-        showToast({ title: 'エラー', description: 'ステータスの更新に失敗しました。', variant: 'destructive' })
+        showToast('エラー', 'ステータスの更新に失敗しました。', 'error')
       }
     }
   },
   onResponseError: ({ response }) => {
-    showToast({
-      title: 'エラー',
-      description: 'お問い合わせデータの取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', 'お問い合わせデータの取得に失敗しました。', 'error')
   }
 })
 

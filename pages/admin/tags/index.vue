@@ -110,12 +110,12 @@ const handleCreateTag = async () => {
       method: 'POST',
       body: { name: newTagName.value.trim() },
     })
-    showToast({ title: '成功', description: 'タグが作成されました。' })
+    showToast('成功', 'タグが作成されました。')
     newTagName.value = ''
     await refresh()
   }
   catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'タグの作成に失敗しました。', variant: 'destructive' })
+    showToast('エラー', error.data?.message || 'タグの作成に失敗しました。', 'error')
   }
 }
 

@@ -111,12 +111,12 @@ const handleCreateCategory = async () => {
       method: 'POST',
       body: { name: newCategoryName.value.trim() },
     })
-    showToast({ title: '成功', description: 'カテゴリが作成されました。' })
+    showToast('成功', 'カテゴリが作成されました。')
     newCategoryName.value = ''
     await refresh()
   }
   catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'カテゴリの作成に失敗しました。', variant: 'destructive' })
+    showToast('エラー', error.data?.message || 'カテゴリの作成に失敗しました。', 'error')
   }
 }
 

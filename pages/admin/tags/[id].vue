@@ -29,11 +29,7 @@ const { data: tag, pending, error, refresh } = await useFetch<Tag>(`/api/admin/t
     }
   },
   onResponseError: ({ response }) => {
-    showToast({
-      title: 'エラー',
-      description: 'タグデータの取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', 'タグデータの取得に失敗しました。', 'error')
   }
 })
 
@@ -47,18 +43,11 @@ const handleSave = async () => {
         is_public: form.value.is_public,
       },
     })
-    showToast({
-      title: '成功',
-      description: 'タグ情報が正常に更新されました。',
-    })
+    showToast('成功', 'タグ情報が正常に更新されました。')
     await refresh()
   } catch (err) {
     console.error('Failed to update tag:', err)
-    showToast({
-      title: 'エラー',
-      description: 'タグ情報の更新に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', 'タグ情報の更新に失敗しました。', 'error')
   } finally {
     isSaving.value = false
   }

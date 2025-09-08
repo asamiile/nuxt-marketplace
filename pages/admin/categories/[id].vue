@@ -29,11 +29,7 @@ const { data: category, pending, error, refresh } = await useFetch<Category>(`/a
     }
   },
   onResponseError: ({ response }) => {
-    showToast({
-      title: 'エラー',
-      description: 'カテゴリデータの取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', 'カテゴリデータの取得に失敗しました。', 'error')
   }
 })
 
@@ -50,12 +46,12 @@ const handleSave = async () => {
       .eq('category_id', categoryId)
 
     if (error) {
-      showToast({ title: 'エラー', description: '商品の確認中にエラーが発生しました。', variant: 'destructive' })
+      showToast('エラー', '商品の確認中にエラーが発生しました。', 'error')
       isSaving.value = false
       return
     }
     if (count && count > 0) {
-      showToast({ title: '更新不可', description: 'このカテゴリは商品に利用されているため、非公開にできません。', variant: 'destructive' })
+      showToast('更新不可', 'このカテゴリは商品に利用されているため、非公開にできません。', 'error')
       form.value.is_public = true // Revert checkbox
       isSaving.value = false
       return
@@ -70,18 +66,11 @@ const handleSave = async () => {
         is_public: form.value.is_public,
       },
     })
-    showToast({
-      title: '成功',
-      description: 'カテゴリ情報が正常に更新されました。',
-    })
+    showToast('成功', 'カテゴリ情報が正常に更新されました。')
     await refresh()
   } catch (err: any) {
     console.error('Failed to update category:', err)
-    showToast({
-      title: 'エラー',
-      description: err.data?.message || 'カテゴリ情報の更新に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', err.data?.message || 'カテゴリ情報の更新に失敗しました。', 'error')
   } finally {
     isSaving.value = false
   }

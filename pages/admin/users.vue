@@ -13,11 +13,7 @@ const { showToast } = useAlert()
 const { data: users, pending, error, refresh } = await useFetch('/api/admin/users', {
   onResponseError: ({ response }) => {
     console.error(response._data)
-    showToast({
-      title: 'エラー',
-      description: 'ユーザー情報の取得に失敗しました。',
-      variant: 'destructive',
-    })
+    showToast('エラー', 'ユーザー情報の取得に失敗しました。', 'error')
   },
   default: () => [],
 })
@@ -51,15 +47,11 @@ const handleDisableUser = async (user: any) => {
       method: 'POST',
       body: { disabled: user.aud === 'authenticated' },
     })
-    showToast({ title: '成功', description: `ユーザーが${action}されました。` })
+    showToast('成功', `ユーザーが${action}されました。`)
     await refresh()
   } catch (err: any) {
     console.error(`Failed to ${action} user:`, err)
-    showToast({
-      title: 'エラー',
-      description: err.data?.message || `ユーザーの${action}に失敗しました。`,
-      variant: 'destructive',
-    })
+    showToast('エラー', err.data?.message || `ユーザーの${action}に失敗しました。`, 'error')
   }
 }
 </script>
