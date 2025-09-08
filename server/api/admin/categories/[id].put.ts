@@ -29,6 +29,38 @@ export default defineEventHandler(async (event) => {
     updateData.name = name.trim()
   }
   if (typeof is_public === 'boolean') {
+    // Check if the category is being unpublished
+    if (is_public === false) {
+      // First, get the current state of the category
+      const { data: currentCategory, error: fetchError } = await client
+        .from('categories')
+        .select('is_public')
+        .eq('id', categoryId)
+        .single()
+
+      if (fetchError || !currentCategory) {
+        throw createError({ statusCode: 404, statusMessage: 'Category not found' })
+      }
+
+      // Proceed with the check only if the category is currently public
+      if (currentCategory.is_public) {
+        const { count, error: countError } = await client
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .eq('category_id', categoryId)
+
+        if (countError) {
+          throw createError({ statusCode: 500, statusMessage: 'Failed to check product usage' })
+        }
+
+        if (count && count > 0) {
+          throw createError({
+            statusCode: 400,
+            statusMessage: 'このカテゴリは商品に利用されているため、非公開にできません。',
+          })
+        }
+      }
+    }
     updateData.is_public = is_public
   }
 
