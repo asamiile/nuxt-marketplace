@@ -1,28 +1,37 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
-  // Use the user-scoped client to correctly pass the user's JWT to the database.
-  // The RPC function is `security definer`, so it runs with the function owner's privileges,
-  // but the `is_claims_admin()` check inside the function can now correctly
-  // inspect the claims of the user making the request.
-  const client = await serverSupabaseClient<Database>(event)
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
 
-  const query = getQuery(event)
-  const searchTerm = query.q as string | undefined
-
-  const { data, error } = await client.rpc('get_all_users', {
-    p_search_term: searchTerm || null
-  })
-
-  if (error) {
-    console.error('Error calling get_all_users function:', error)
-    // The error from the DB function will be more informative now
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('Supabase environment variables are not set.')
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to fetch users: ${error.message}`,
+      statusMessage: 'Internal Server Error: Supabase configuration missing.',
     })
   }
 
-  return data
+  // Create a new client with the service_role key to bypass RLS
+  const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+
+  // Fetch all users from the auth schema
+  const { data: usersData, error } = await client.auth.admin.listUsers()
+
+  if (error) {
+    console.error('Error fetching users:', error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to fetch users',
+    })
+  }
+
+  // Map the user data to include the is_admin flag
+  const users = usersData.users.map(user => ({
+    ...user,
+    is_admin: user.app_metadata?.claims_admin === true,
+  }))
+
+  return users
 })
