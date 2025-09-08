@@ -200,3 +200,9 @@ ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true;
 
 ALTER TABLE public.tags
 ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true;
+
+
+-- =========== contactsテーブルのスキーマ変更 (is_read -> status) ===========
+ALTER TABLE public.contacts DROP COLUMN IF EXISTS is_read;
+ALTER TABLE public.contacts ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT '未対応';
+COMMENT ON COLUMN public.contacts.status IS 'The status of the contact message (e.g., "未対応", "対応中", "対応済み").';

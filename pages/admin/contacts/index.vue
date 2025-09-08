@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { format } from 'date-fns'
-import type { Contact } from '~/types/product'
+import type { Contact } from '~/types/contact'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/Button.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -36,6 +35,19 @@ const paginatedContacts = computed(() => {
 const formatDate = (dateString: string) => {
   if (!dateString) return ''
   return format(new Date(dateString), 'yyyy/MM/dd HH:mm')
+}
+
+const getStatusClass = (status: string) => {
+  switch (status) {
+    case '未対応':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+    case '対応中':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+    case '対応済み':
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+  }
 }
 </script>
 
@@ -86,8 +98,8 @@ const formatDate = (dateString: string) => {
               {{ contact.subject }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
-              <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', contact.is_read ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800']">
-                {{ contact.is_read ? '既読' : '未読' }}
+              <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', getStatusClass(contact.status)]">
+                {{ contact.status }}
               </span>
             </td>
           </tr>

@@ -23,9 +23,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const { status } = await readBody(event)
+
+  if (!status) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Status is required',
+    })
+  }
+
+  // バリデーション: statusが許可された値のいずれかであることを確認
+  const allowedStatuses = ['未対応', '対応中', '対応済み']
+  if (!allowedStatuses.includes(status)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Invalid status value. Must be one of: ${allowedStatuses.join(', ')}`,
+    })
+  }
+
   const { data, error } = await client
     .from('contacts')
-    .update({ is_read: true })
+    .update({ status })
     .eq('id', contactId)
     .select()
     .single()
