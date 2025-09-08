@@ -1,5 +1,6 @@
 <template>
   <div class="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+    <Toaster />
     <!-- Sidebar -->
     <aside
       class="fixed inset-y-0 left-0 z-30 w-64 flex-shrink-0 bg-white dark:bg-gray-800 border-r dark:border-gray-700 transform transition-transform duration-300 ease-in-out"
@@ -55,6 +56,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import Toaster from '~/components/ui/toast/Toaster.vue'
 
 const isSidebarOpen = ref(true)
 
