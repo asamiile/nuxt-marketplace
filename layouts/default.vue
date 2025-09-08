@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex min-h-screen flex-col">
     <TheHeader />
-    <main class="flex-grow container px-4 py-4 md:py-8 relative">
+    <main class="flex-grow container p-4 md:p-8 relative">
       <slot />
     </main>
     <Toaster />

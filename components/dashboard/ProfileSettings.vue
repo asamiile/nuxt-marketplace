@@ -10,7 +10,7 @@
       <p>プロフィールを読み込み中...</p>
     </div>
     <UiCard v-else>
-      <UiCardContent class="p-8">
+      <UiCardContent class="p-4 md:p-8">
         <form @submit.prevent="updateProfile" class="space-y-6">
           <div>
             <Label for="username">ユーザー名</Label>

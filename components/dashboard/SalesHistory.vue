@@ -5,7 +5,7 @@
       <p class="text-muted-foreground">商品の売上履歴とサマリーを確認します。</p>
     </div>
     <UiCard>
-      <UiCardContent class="p-8">
+      <UiCardContent class="p-4 md:p-8">
         <div class="grid grid-cols-2 gap-4 text-center mb-8">
           <div class="p-4 bg-secondary rounded-lg">
             <p class="text-sm text-muted-foreground">合計売上 (全期間)</p>
@@ -24,10 +24,10 @@
               <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
             </div>
           </div>
-          <div v-if="pending" class="text-center py-8">
+          <div v-if="pending" class="text-center py-4 md:py-8">
             <p>履歴を読み込んでいます...</p>
           </div>
-          <div v-else-if="error" class="text-center text-destructive py-8">
+          <div v-else-if="error" class="text-center text-destructive py-4 md:py-8">
             <p>履歴の読み込み中にエラーが発生しました。</p>
           </div>
           <div v-else-if="filteredAndPagedSales.length > 0">
@@ -62,7 +62,7 @@
               />
             </div>
           </div>
-          <div v-else class="text-center text-muted-foreground py-8">
+          <div v-else class="text-center text-muted-foreground py-4 md:py-8">
             <p>該当する販売履歴がありません。</p>
           </div>
         </div>
