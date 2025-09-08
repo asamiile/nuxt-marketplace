@@ -18,9 +18,9 @@
         </div>
 
         <div>
-          <div class="flex justify-between items-center mb-4">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <h3 class="text-lg font-semibold">販売履歴</h3>
-            <div class="w-72">
+            <div class="w-full sm:w-72">
               <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
             </div>
           </div>
@@ -31,7 +31,7 @@
             <p>履歴の読み込み中にエラーが発生しました。</p>
           </div>
           <div v-else-if="filteredAndPagedSales.length > 0">
-            <div class="border rounded-lg overflow-hidden">
+            <div class="border rounded-lg overflow-x-auto">
               <table class="min-w-full divide-y divide-border">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                   <tr>

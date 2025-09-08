@@ -18,7 +18,7 @@
     <!-- Skeleton for Creator's Products -->
     <div>
       <Skeleton class="h-7 w-64 mb-6" />
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         <Skeleton v-for="n in 8" :key="n" />
       </div>
     </div>
@@ -58,7 +58,7 @@
     <div>
       <h2 class="text-2xl font-semibold mb-6 text-foreground">{{ data.profile.username }}さんの商品</h2>
       <div v-if="data.products && data.products.length > 0">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
           <ProductCard v-for="product in data.products" :key="product.id" :product="product" />
         </div>
         <div class="mt-8">

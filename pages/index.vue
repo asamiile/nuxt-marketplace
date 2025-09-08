@@ -7,7 +7,7 @@
     />
 
     <div v-if="pending">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         <Skeleton v-for="n in 8" :key="n" />
       </div>
     </div>
@@ -15,7 +15,7 @@
       <p>エラーが発生しました: {{ error.message }}</p>
     </div>
     <div v-else-if="data && data.products && data.products.length > 0">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         <ProductCard v-for="product in data.products" :key="product.id" :product="product" />
       </div>
       <div class="mt-8">
