@@ -316,7 +316,7 @@ COMMENT ON COLUMN public.contacts.is_read IS 'Indicates if the contact message h
 
 -- =========== カラム追加 (is_public) ===========
 ALTER TABLE public.categories
-ADD COLUMN is_public BOOLEAN DEFAULT true;
+ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true;
 
 ALTER TABLE public.tags
-ADD COLUMN is_public BOOLEAN DEFAULT true;
+ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true;
