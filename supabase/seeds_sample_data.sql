@@ -25,11 +25,6 @@ SET
   bio = '作品を見るのが好きです。'
 WHERE id = '【userのUUIDを貼り付け】';
 
--- =========== 管理者権限の付与 ===========
-UPDATE auth.users
-SET raw_app_meta_data = '{"provider":"email","providers":["email"],"claims_admin":true}'
-WHERE id = '【adminのUUIDを貼り付け】';
-
 
 -- =========== 3. マスターデータの作成 ===========
 -- `categories` テーブルへのサンプルデータ
@@ -78,14 +73,15 @@ INSERT INTO public.product_tags (product_id, tag_id) VALUES
 -- 【重要】 user_id を user のUUIDに書き換えてください
 INSERT INTO public.purchases (user_id, product_id) VALUES
 ('【userのUUIDを貼り付け】', 1),
-('【userのUUIDを貼り付け】', 3),
-('【userのUUIDを貼り付け】', 8),
-('【userのUUIDを貼り付け】', 1),
-('【userのUUIDを貼り付け】', 3),
-('【userのUUIDを貼り付け】', 8),
 ('【userのUUIDを貼り付け】', 2),
+('【userのUUIDを貼り付け】', 3),
+('【userのUUIDを貼り付け】', 4),
 ('【userのUUIDを貼り付け】', 5),
+('【userのUUIDを貼り付け】', 6),
 ('【userのUUIDを貼り付け】', 7),
+('【userのUUIDを貼り付け】', 8),
+('【userのUUIDを貼り付け】', 9),
+('【userのUUIDを貼り付け】', 10),
 ('【userのUUIDを貼り付け】', 11),
 ('【userのUUIDを貼り付け】', 14),
 ('【userのUUIDを貼り付け】', 20);
