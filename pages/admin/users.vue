@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import UiPagination from '~/components/ui/Pagination.vue'
+
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
@@ -6,7 +9,7 @@ definePageMeta({
 
 const { showToast } = useAlert()
 
-const { data: users, refresh } = await useFetch('/api/admin/users', {
+const { data: users, pending, error, refresh } = await useFetch('/api/admin/users', {
   onResponseError: ({ response }) => {
     console.error(response._data)
     showToast({
@@ -16,6 +19,21 @@ const { data: users, refresh } = await useFetch('/api/admin/users', {
     })
   },
   default: () => [],
+})
+
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const totalPages = computed(() => {
+  if (!users.value) return 1
+  return Math.ceil(users.value.length / itemsPerPage)
+})
+
+const paginatedUsers = computed(() => {
+  if (!users.value) return []
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  return users.value.slice(startIndex, startIndex + itemsPerPage)
 })
 
 const formatDate = (date: string | null) => {
@@ -79,12 +97,15 @@ const handleAdminStatusChange = async (user: any) => {
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-          <tr v-if="!users || users.length === 0">
+          <tr v-if="pending">
+            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+          </tr>
+          <tr v-else-if="error || !paginatedUsers || paginatedUsers.length === 0">
             <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               ユーザーが見つかりません。
             </td>
           </tr>
-          <tr v-for="user in users" :key="user.id">
+          <tr v-for="user in paginatedUsers" :key="user.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               {{ user.email }}
             </td>
@@ -109,6 +130,13 @@ const handleAdminStatusChange = async (user: any) => {
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div v-if="totalPages > 1" class="mt-6 flex justify-center">
+      <UiPagination
+        v-model:currentPage="currentPage"
+        :total-pages="totalPages"
+      />
     </div>
   </div>
 </template>
