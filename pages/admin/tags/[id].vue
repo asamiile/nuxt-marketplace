@@ -96,6 +96,12 @@ const handleSave = async () => {
           </div>
         </form>
       </div>
+
+      <div class="mt-6">
+        <NuxtLink to="/admin/tags" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+          &larr; タグ一覧に戻る
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

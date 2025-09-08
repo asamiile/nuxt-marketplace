@@ -121,6 +121,12 @@ const formatDate = (date: string | null) => {
           </div>
         </div>
       </div>
+
+      <div class="mt-6">
+        <NuxtLink to="/admin/purchases" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+          &larr; 購入一覧に戻る
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

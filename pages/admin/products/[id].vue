@@ -58,6 +58,7 @@ const handleSave = async () => {
       title: '成功',
       description: '商品情報が正常に更新されました。',
     })
+    await navigateTo('/admin/products')
   } catch (err) {
     console.error('Failed to update product:', err)
     showToast({
@@ -113,6 +114,12 @@ const handleSave = async () => {
             </Button>
           </div>
         </form>
+      </div>
+
+      <div class="mt-6">
+        <NuxtLink to="/admin/products" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+          &larr; 商品一覧に戻る
+        </NuxtLink>
       </div>
     </div>
   </div>

@@ -82,7 +82,7 @@ const formatDate = (dateString: string | null) => {
         <!-- Message -->
         <div>
           <h3 class="font-semibold mb-2">メッセージ本文</h3>
-          <div class="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-md whitespace-pre-wrap">
+          <div>
             {{ contact.message }}
           </div>
         </div>
