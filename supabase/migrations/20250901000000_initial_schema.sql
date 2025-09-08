@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS public.contacts (
   email TEXT,
   subject TEXT,
   message TEXT,
-  is_read BOOLEAN DEFAULT false
+  status TEXT NOT NULL DEFAULT '未対応'
 );
 
 -- =========== カラム追加 ===========
@@ -192,7 +192,7 @@ COMMENT ON COLUMN profiles.youtube_url IS 'Link to the creator''s YouTube channe
 COMMENT ON COLUMN public.products.license_type IS 'The type of license for the product (e.g., "Standard License", "Extended License").';
 COMMENT ON COLUMN public.products.terms_of_use IS 'The detailed terms of use for the product.';
 COMMENT ON TABLE public.contacts IS 'Stores contact form submissions.';
-COMMENT ON COLUMN public.contacts.is_read IS 'Indicates if the contact message has been read by an admin.';
+COMMENT ON COLUMN public.contacts.status IS 'The status of the contact message (e.g., "未対応", "対応中", "対応済み").';
 
 -- =========== カラム追加 (is_public) ===========
 ALTER TABLE public.categories
