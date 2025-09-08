@@ -61,17 +61,14 @@ const formatDate = (dateString: string) => {
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               ステータス
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              操作
-            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedContacts || paginatedContacts.length === 0">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">お問い合わせが見つかりません。</td>
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">お問い合わせが見つかりません。</td>
           </tr>
           <tr v-for="contact in paginatedContacts" :key="contact.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -92,11 +89,6 @@ const formatDate = (dateString: string) => {
               <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', contact.is_read ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800']">
                 {{ contact.is_read ? '既読' : '未読' }}
               </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <NuxtLink :to="`/admin/contacts/${contact.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
-                詳細
-              </NuxtLink>
             </td>
           </tr>
         </tbody>

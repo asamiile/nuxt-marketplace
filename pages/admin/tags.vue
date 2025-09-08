@@ -28,15 +28,14 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">名前</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">作成日時</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="3" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedTags || paginatedTags.length === 0">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
+            <td colspan="3" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
           </tr>
           <tr v-for="tag in paginatedTags" :key="tag.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -46,12 +45,6 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ tag.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(tag.created_at).toLocaleString() }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
-                編集
-              </NuxtLink>
-              <UiButton variant="destructive" size="sm" @click="handleDeleteTag(tag.id)">削除</UiButton>
-            </td>
           </tr>
         </tbody>
       </table>
@@ -120,18 +113,4 @@ const handleCreateTag = async () => {
   }
 }
 
-// Delete
-const handleDeleteTag = async (id: number) => {
-  if (!confirm('本当にこのタグを削除しますか？')) return
-  try {
-    await $fetch(`/api/admin/tags/${id}`, {
-      method: 'DELETE',
-    })
-    showToast({ title: '成功', description: 'タグが削除されました。' })
-    await refresh()
-  }
-  catch (error: any) {
-    showToast({ title: 'エラー', description: error.data?.message || 'タグの削除に失敗しました。', variant: 'destructive' })
-  }
-}
 </script>
