@@ -23,29 +23,56 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { is_admin } = await readBody(event)
+  const body = await readBody(event)
+  const { is_admin, username, bio } = body
 
-  if (typeof is_admin !== 'boolean') {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'is_admin flag is required and must be a boolean',
-    })
+  // Update profile if username or bio are provided
+  const profileUpdateData: { username?: string; bio?: string } = {}
+  if (username !== undefined) profileUpdateData.username = username
+  if (bio !== undefined) profileUpdateData.bio = bio
+
+  if (Object.keys(profileUpdateData).length > 0) {
+    const { error: profileError } = await client
+      .from('profiles')
+      .update(profileUpdateData)
+      .eq('id', userId)
+
+    if (profileError) {
+      console.error(`Error updating profile for user ${userId}:`, profileError)
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Failed to update user profile: ${profileError.message}`,
+      })
+    }
   }
 
-  const { data: { user }, error } = await client.auth.admin.updateUserById(
-    userId,
-    {
-      app_metadata: {
-        claims_admin: is_admin,
-      },
-    }
-  )
+  // Update admin status if is_admin is provided
+  if (typeof is_admin === 'boolean') {
+    const { error: authError } = await client.auth.admin.updateUserById(
+      userId,
+      {
+        app_metadata: {
+          claims_admin: is_admin,
+        },
+      }
+    )
 
-  if (error) {
-    console.error(`Error updating user ${userId}:`, error)
+    if (authError) {
+      console.error(`Error updating admin status for user ${userId}:`, authError)
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Failed to update user admin status: ${authError.message}`,
+      })
+    }
+  }
+
+  // Return the updated user data
+  const { data: { user }, error: fetchError } = await client.auth.admin.getUserById(userId)
+
+  if (fetchError) {
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to update user: ${error.message}`,
+      statusMessage: 'Failed to fetch updated user data.',
     })
   }
 

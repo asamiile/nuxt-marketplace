@@ -13,24 +13,26 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // We need the service_role key to have the permission to call RPC functions
-  // that are security definer and to query the auth.users table.
+  // We must use the service_role key to delete users.
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  const userId = event.context.params?.id as string
 
-  const query = getQuery(event)
-  const searchTerm = query.q as string | undefined
-
-  const { data, error } = await client.rpc('get_all_users', {
-    p_search_term: searchTerm || null
-  })
-
-  if (error) {
-    console.error('Error calling get_all_users function:', error)
+  if (!userId) {
     throw createError({
-      statusCode: 500,
-      statusMessage: `Failed to fetch users: ${error.message}`,
+      statusCode: 400,
+      statusMessage: 'User ID is required',
     })
   }
 
-  return data
+  const { data, error } = await client.auth.admin.deleteUser(userId)
+
+  if (error) {
+    console.error(`Error deleting user ${userId}:`, error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Failed to delete user: ${error.message}`,
+    })
+  }
+
+  return { success: true, message: `User ${userId} deleted successfully.` }
 })
