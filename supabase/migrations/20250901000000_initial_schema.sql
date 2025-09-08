@@ -201,56 +201,33 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 -- Sales history function
-CREATE OR REPLACE FUNCTION public.get_sales_history(
-  p_search_term TEXT,
-  p_page INT,
-  p_page_size INT
-)
+CREATE OR REPLACE FUNCTION public.get_sales_history()
 RETURNS TABLE (
   product_id BIGINT,
   product_name TEXT,
   price NUMERIC,
   purchased_at TIMESTAMPTZ,
-  purchaser_username TEXT,
-  total_count BIGINT
+  purchaser_username TEXT
 )
-LANGUAGE plpgsql STABLE SECURITY DEFINER AS $$
-DECLARE
-  v_offset INT;
+LANGUAGE plpgsql STABLE SECURITY INVOKER AS $$
 BEGIN
-  v_offset := (p_page - 1) * p_page_size;
-
   RETURN QUERY
-  WITH filtered_sales AS (
-    SELECT
-      p.id,
-      p.name,
-      p.price,
-      pu.created_at,
-      purchaser_profile.username
-    FROM
-      public.purchases pu
-    JOIN
-      public.products p ON pu.product_id = p.id
-    JOIN
-      public.profiles purchaser_profile ON pu.user_id = purchaser_profile.id
-    WHERE
-      p.creator_id = auth.uid()
-      AND (p_search_term IS NULL OR p.name ILIKE '%' || p_search_term || '%')
-  )
   SELECT
-    s.id,
-    s.name,
-    s.price,
-    s.created_at,
-    s.username,
-    (SELECT COUNT(*) FROM filtered_sales) AS total_count
+    p.id,
+    p.name,
+    p.price,
+    pu.created_at,
+    purchaser_profile.username
   FROM
-    filtered_sales s
+    public.purchases pu
+  JOIN
+    public.products p ON pu.product_id = p.id
+  JOIN
+    public.profiles purchaser_profile ON pu.user_id = purchaser_profile.id
+  WHERE
+    p.creator_id = auth.uid()
   ORDER BY
-    s.created_at DESC
-  LIMIT p_page_size
-  OFFSET v_offset;
+    pu.created_at DESC;
 END;
 $$;
 
