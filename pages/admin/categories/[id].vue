@@ -22,7 +22,7 @@ const isSaving = ref(false)
 
 const { data: category, pending, error } = await useFetch<Category>(`/api/admin/categories/${categoryId}`, {
   onResponse({ response }) {
-    if (response.ok) {
+    if (response.ok && response._data) {
       form.value.name = response._data.name
     }
   },

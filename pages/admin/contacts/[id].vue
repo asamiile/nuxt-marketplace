@@ -14,7 +14,7 @@ const contactId = route.params.id as string
 
 const { data: contact, pending, error, refresh } = await useFetch<Contact>(`/api/admin/contacts/${contactId}`, {
   async onResponse({ response }) {
-    if (response.ok && !response._data.is_read) {
+    if (response.ok && response._data && !response._data.is_read) {
       // Mark as read
       try {
         await $fetch(`/api/admin/contacts/${contactId}`, { method: 'PUT' })

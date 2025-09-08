@@ -22,7 +22,7 @@ const isSaving = ref(false)
 
 const { data: tag, pending, error } = await useFetch<Tag>(`/api/admin/tags/${tagId}`, {
   onResponse({ response }) {
-    if (response.ok) {
+    if (response.ok && response._data) {
       form.value.name = response._data.name
     }
   },
