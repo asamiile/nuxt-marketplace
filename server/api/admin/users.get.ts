@@ -1,21 +1,12 @@
-import { createClient } from '@supabase/supabase-js'
+import { serverSupabaseClient } from '#supabase/server'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
-  const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Supabase environment variables are not set.')
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error: Supabase configuration missing.',
-    })
-  }
-
-  // We need the service_role key to have the permission to call RPC functions
-  // that are security definer and to query the auth.users table.
-  const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  // Use the user-scoped client to correctly pass the user's JWT to the database.
+  // The RPC function is `security definer`, so it runs with the function owner's privileges,
+  // but the `is_claims_admin()` check inside the function can now correctly
+  // inspect the claims of the user making the request.
+  const client = await serverSupabaseClient<Database>(event)
 
   const query = getQuery(event)
   const searchTerm = query.q as string | undefined
@@ -26,6 +17,7 @@ export default defineEventHandler(async (event) => {
 
   if (error) {
     console.error('Error calling get_all_users function:', error)
+    // The error from the DB function will be more informative now
     throw createError({
       statusCode: 500,
       statusMessage: `Failed to fetch users: ${error.message}`,
