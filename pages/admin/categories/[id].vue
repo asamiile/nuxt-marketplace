@@ -37,8 +37,31 @@ const { data: category, pending, error, refresh } = await useFetch<Category>(`/a
   }
 })
 
+const supabase = useSupabaseClient()
+
 const handleSave = async () => {
   isSaving.value = true
+
+  // If unpublishing, check if category is in use
+  if (category.value?.is_public && !form.value.is_public) {
+    const { count, error } = await supabase
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('category_id', categoryId)
+
+    if (error) {
+      showToast({ title: 'エラー', description: '商品の確認中にエラーが発生しました。', variant: 'destructive' })
+      isSaving.value = false
+      return
+    }
+    if (count && count > 0) {
+      showToast({ title: '更新不可', description: 'このカテゴリは商品に利用されているため、非公開にできません。', variant: 'destructive' })
+      form.value.is_public = true // Revert checkbox
+      isSaving.value = false
+      return
+    }
+  }
+
   try {
     await $fetch(`/api/admin/categories/${categoryId}`, {
       method: 'PUT',
@@ -52,11 +75,11 @@ const handleSave = async () => {
       description: 'カテゴリ情報が正常に更新されました。',
     })
     await refresh()
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to update category:', err)
     showToast({
       title: 'エラー',
-      description: 'カテゴリ情報の更新に失敗しました。',
+      description: err.data?.message || 'カテゴリ情報の更新に失敗しました。',
       variant: 'destructive',
     })
   } finally {

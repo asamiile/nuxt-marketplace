@@ -52,10 +52,10 @@
         <p class="text-foreground mb-6 whitespace-pre-wrap">{{ product.description }}</p>
 
         <!-- Tags Section -->
-        <div v-if="product.tags && product.tags.length > 0" class="mb-8">
+        <div v-if="publicTags.length > 0" class="mb-8">
           <h2 class="text-lg font-semibold text-foreground mb-3">タグ</h2>
           <div class="flex flex-wrap gap-2">
-            <span v-for="tag in product.tags" :key="tag.name" class="bg-secondary text-secondary-foreground px-3 py-1 text-sm rounded-full">
+            <span v-for="tag in publicTags" :key="tag.name" class="bg-secondary text-secondary-foreground px-3 py-1 text-sm rounded-full">
               #{{ tag.name }}
             </span>
           </div>
@@ -109,7 +109,7 @@ const { data: product, pending, error } = await useAsyncData<ProductWithRelation
       *,
       profiles (username),
       categories (name),
-      tags (name)
+      tags (name, is_public)
     `)
     .eq('id', id)
     .single()
@@ -129,6 +129,10 @@ if (!pending.value && !product.value) {
 // Use the new composable
 // We pass a getter function so the composable can react to changes in product.value
 const { isFavoritedState, toggleFavorite } = useProductFavorite(() => product.value?.id)
+
+const publicTags = computed(() => {
+  return product.value?.tags?.filter(tag => tag.is_public) || []
+})
 
 const formatPrice = (price: number | null) => {
   if (price === null) return ''
