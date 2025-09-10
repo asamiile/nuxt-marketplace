@@ -105,8 +105,21 @@ interface Sale {
 const searchQuery = ref('')
 const currentPage = ref(1)
 const itemsPerPage = 10
-const startDate = ref<string | null>(null)
-const endDate = ref<string | null>(null)
+
+// --- Default to this month ---
+const getThisMonthRange = () => {
+  const today = new Date()
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+  return {
+    start: firstDay.toISOString().split('T')[0],
+    end: lastDay.toISOString().split('T')[0],
+  }
+}
+const { start, end } = getThisMonthRange()
+const startDate = ref<string | null>(start)
+const endDate = ref<string | null>(end)
+// -------------------------
 
 const { data: sales, pending, error } = await useAsyncData('sales-history', async () => {
   const params: { start_date?: string; end_date?: string } = {}
