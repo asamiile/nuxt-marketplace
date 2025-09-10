@@ -102,8 +102,8 @@ INSERT INTO public.favorites (user_id, product_id) VALUES
 ('【userのUUIDを貼り付け】', 6),
 ('【userのUUIDを貼り付け】', 9);
 
--- `contacts` テーブルへのサンプルデータ
-INSERT INTO public.contacts (name, email, subject, message, is_read) VALUES
-('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', false),
-('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', false),
-('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', true);
+-- =========== contactsテーブルへのサンプルデータ ===========
+INSERT INTO public.contacts (name, email, subject, message, status) VALUES
+('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', '未対応'),
+('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', '未対応'),
+('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', '対応済み');
