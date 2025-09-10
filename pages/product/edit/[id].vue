@@ -42,11 +42,16 @@
               <p v-if="errors.categoryId" class="text-sm text-red-500 mt-1">{{ errors.categoryId }}</p>
             </div>
             <div>
-              <Label for="tags">タグ (カンマ区切りまたはEnterで追加)</Label>
-              <Input v-model="tagInput" @keydown.enter.prevent="addTag" @keydown.,.prevent="addTag" type="text" id="tags" class="mt-1" placeholder="例: イラスト, 3Dモデル" />
+              <Label for="tags">タグ (検索して選択)</Label>
+                <Combobox
+                  :items="publicTags"
+                  @select="addTag"
+                  placeholder="タグを検索..."
+                  id="tags"
+                />
               <div class="mt-2 flex flex-wrap gap-2">
-                <span v-for="tag in tags" :key="tag" class="inline-flex items-center px-2 py-1 bg-gray-200 dark:bg-gray-700 text-sm font-medium rounded-full">
-                  {{ tag }}
+                <span v-for="tag in tags" :key="tag.id" class="inline-flex items-center px-2 py-1 bg-gray-200 dark:bg-gray-700 text-sm font-medium rounded-full">
+                  {{ tag.name }}
                   <button @click="removeTag(tag)" type="button" class="ml-1.5 flex-shrink-0 h-4 w-4 rounded-full inline-flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-600 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     <span class="sr-only">Remove tag</span>
                     <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8"><path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" /></svg>
@@ -92,6 +97,7 @@ import Textarea from '~/components/ui/form/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
 import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 import Select from '~/components/ui/form/Select.vue'
+import Combobox from '~/components/ui/form/Combobox.vue'
 
 definePageMeta({
   middleware: 'auth'
@@ -113,7 +119,6 @@ const {
   price,
   categoryId,
   tags,
-  tagInput,
   license_type,
   terms_of_use,
   imageFile,
@@ -121,6 +126,7 @@ const {
   isSubmitting,
   hasAttemptedSubmit,
   categories,
+  publicTags,
   errors,
   isFormInvalid,
   addTag,
@@ -132,7 +138,7 @@ const {
 onMounted(async () => {
   const { data, error } = await supabase
     .from('products')
-    .select('*, tags(name)')
+    .select('*, tags(id, name)')
     .eq('id', id)
     .single()
 

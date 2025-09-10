@@ -1,6 +1,7 @@
 import { ref, computed, watch, onMounted, type Ref } from 'vue'
 import { z } from 'zod'
 import type { ProductWithRelations } from '~/types/product'
+import type { Tag } from '~/types/product'
 
 type Mode = 'create' | 'edit'
 
@@ -16,8 +17,7 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
   const description = ref('')
   const price = ref<number | null>(null)
   const categoryId = ref<number | null>(null)
-  const tags = ref<string[]>([])
-  const tagInput = ref('')
+  const tags = ref<Tag[]>([])
   const license_type = ref('')
   const terms_of_use = ref('')
   const imageFile = ref<File | null>(null)
@@ -27,6 +27,7 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
 
   // --- Data ---
   const categories = ref<{id: number; name: string}[]>([])
+  const publicTags = ref<Tag[]>([])
 
   // --- Validation ---
   const errors = ref<Record<string, string>>({})
@@ -93,7 +94,7 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
   watch(imageFile, () => { if (hasAttemptedSubmit.value) validate() })
   watch(assetFile, () => { if (hasAttemptedSubmit.value) validate() })
 
-  // --- Category & Tag Logic ---
+  // --- Data Fetching and Tag Logic ---
   const fetchCategories = async () => {
     const { data, error } = await supabase.from('categories').select('id, name').order('name')
     if (error) {
@@ -103,21 +104,29 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
     }
   }
 
-  const addTag = () => {
-    const newTag = tagInput.value.trim()
-    if (newTag && !tags.value.includes(newTag)) {
-      tags.value.push(newTag)
+  const fetchPublicTags = async () => {
+    const { data, error } = await supabase.from('tags').select('id, name').eq('is_public', true).order('name')
+    if (error) {
+      showToast('エラー', 'タグの読み込みに失敗しました。', 'error')
+    } else {
+      publicTags.value = data
     }
-    tagInput.value = ''
   }
 
-  const removeTag = (tagToRemove: string) => {
-    tags.value = tags.value.filter(tag => tag !== tagToRemove)
+  const addTag = (tag: Tag) => {
+    if (!tags.value.some(t => t.id === tag.id)) {
+      tags.value.push(tag)
+    }
+  }
+
+  const removeTag = (tagToRemove: Tag) => {
+    tags.value = tags.value.filter(tag => tag.id !== tagToRemove.id)
   }
 
   // --- Initialization ---
   onMounted(() => {
     fetchCategories()
+    fetchPublicTags()
   })
 
   // Watch for the product to be loaded in edit mode
@@ -128,7 +137,9 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
         description.value = newProduct.description
         price.value = newProduct.price
         categoryId.value = newProduct.category_id
-        tags.value = newProduct.tags.map((t: any) => t.name)
+        // The fetched product includes tags with {id, name}.
+        // Ensure the tags are correctly cast to the `Tag` type.
+        tags.value = newProduct.tags as Tag[]
         license_type.value = newProduct.license_type || ''
         terms_of_use.value = newProduct.terms_of_use || ''
       }
@@ -149,19 +160,8 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
     isSubmitting.value = true
 
     try {
-      // 1. Upsert tags and get their IDs
-      let tagIds: number[] = []
-      if (tags.value.length > 0) {
-        const tagsToUpsert = tags.value.map(name => ({ name }))
-        const { data: upsertedTags, error: tagError } = await supabase
-          .from('tags')
-          .upsert(tagsToUpsert, { onConflict: 'name', ignoreDuplicates: false })
-          .select('id')
-        if (tagError) throw new Error(`タグの保存エラー: ${tagError.message}`)
-        if (upsertedTags) {
-          tagIds = upsertedTags.map(tag => tag.id)
-        }
-      }
+      // 1. Get IDs from selected tags
+      const tagIds = tags.value.map(tag => tag.id)
 
       // 2. Handle file uploads
       const productBeingEdited = productToEdit?.value
@@ -232,13 +232,13 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
       }
 
       // 5. Link tags to the product
-      if (mode === 'edit') {
+      if (mode === 'edit' && productId) {
         const { error: deleteError } = await supabase.from('product_tags').delete().eq('product_id', productId)
         if (deleteError) throw new Error(`既存タグの削除エラー: ${deleteError.message}`)
       }
-      if (tagIds.length > 0) {
+      if (tagIds.length > 0 && productId) {
         const productTags = tagIds.map(tag_id => ({
-          product_id: productId!,
+          product_id: productId,
           tag_id: tag_id,
         }))
         const { error: productTagError } = await supabase.from('product_tags').insert(productTags)
@@ -268,7 +268,6 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
     price,
     categoryId,
     tags,
-    tagInput,
     license_type,
     terms_of_use,
     imageFile,
@@ -276,6 +275,7 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
     isSubmitting,
     hasAttemptedSubmit,
     categories,
+    publicTags,
     errors,
     isFormInvalid,
     addTag,
