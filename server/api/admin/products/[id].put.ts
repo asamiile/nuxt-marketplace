@@ -45,5 +45,19 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // ステータスが変更された場合のみ通知Functionを呼び出す
+  if (updatedProduct && updateData.status) {
+    const { error: invokeError } = await client.functions.invoke('product-status-notifier', {
+      body: {
+        productId: productId,
+        status: updatedProduct.status
+      }
+    })
+    if (invokeError) {
+      // Function呼び出しエラーはコンソールに出力する（ユーザーへのレスポンスには影響させない）
+      console.error(`Failed to invoke notification function for product ${productId}:`, invokeError.message)
+    }
+  }
+
   return updatedProduct
 })
