@@ -41,6 +41,32 @@ const formatDate = (date: string | null) => {
   if (!date) return 'N/A'
   return new Date(date).toLocaleString('ja-JP')
 }
+
+const translateStatus = (status: string | null) => {
+  switch (status) {
+    case 'pending':
+      return '承認待ち'
+    case 'approved':
+      return '承認済み'
+    case 'rejected':
+      return '却下'
+    default:
+      return '不明'
+  }
+}
+
+const statusBadgeClass = (status: string | null) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+    case 'approved':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+    case 'rejected':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+  }
+}
 </script>
 
 <template>
@@ -59,6 +85,9 @@ const formatDate = (date: string | null) => {
               商品名
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              ステータス
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               価格
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -71,10 +100,10 @@ const formatDate = (date: string | null) => {
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedProducts || paginatedProducts.length === 0">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               商品が見つかりません。
             </td>
           </tr>
@@ -86,6 +115,14 @@ const formatDate = (date: string | null) => {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               {{ product.name }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                :class="statusBadgeClass(product.status)"
+              >
+                {{ translateStatus(product.status) }}
+              </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
               ¥{{ product.price.toLocaleString() }}

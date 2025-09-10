@@ -26,8 +26,8 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   // We only allow updating certain fields
-  const { name, description, price, category_id } = body;
-  const updateData = { name, description, price, category_id };
+  const { name, description, price, category_id, status, admin_notes } = body;
+  const updateData = { name, description, price, category_id, status, admin_notes };
 
 
   const { data: updatedProduct, error } = await client
@@ -43,6 +43,23 @@ export default defineEventHandler(async (event) => {
       statusCode: 500,
       statusMessage: `Failed to update product: ${error.message}`,
     })
+  }
+
+  // ステータスが変更された場合のみ通知Functionを呼び出す
+  if (updatedProduct && updateData.status) {
+    console.log(`[API] Status changed for product ${productId}. Attempting to invoke 'product-status-notifier' function...`);
+    const { error: invokeError } = await client.functions.invoke('product-status-notifier', {
+      body: {
+        productId: productId,
+        status: updatedProduct.status
+      }
+    })
+    if (invokeError) {
+      // Function呼び出しエラーはコンソールに出力する（ユーザーへのレスポンスには影響させない）
+      console.error(`[API] Failed to invoke notification function for product ${productId}:`, invokeError.message)
+    } else {
+      console.log(`[API] Successfully invoked 'product-status-notifier' for product ${productId}.`);
+    }
   }
 
   return updatedProduct

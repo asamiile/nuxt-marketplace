@@ -97,6 +97,21 @@ const handleSave = async () => {
               </option>
             </Select>
           </div>
+
+          <div>
+            <Label for="status">承認ステータス</Label>
+            <Select v-model="form.status" id="status">
+              <option value="pending">承認待ち</option>
+              <option value="approved">承認済み</option>
+              <option value="rejected">却下</option>
+            </Select>
+          </div>
+
+          <div>
+            <Label for="admin_notes">管理者メモ</Label>
+            <Textarea v-model="form.admin_notes" id="admin_notes" :rows="4" class="mt-1" placeholder="非承認の理由などを入力" />
+          </div>
+
           <div class="pt-2">
             <Button type="submit" class="w-full" size="lg" :disabled="isSaving">
               {{ isSaving ? '保存中...' : '保存する' }}

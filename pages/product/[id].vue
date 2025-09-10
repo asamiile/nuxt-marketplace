@@ -112,6 +112,7 @@ const { data: product, pending, error } = await useAsyncData<ProductWithRelation
       tags (name, is_public)
     `)
     .eq('id', id)
+    .eq('status', 'approved')
     .single()
 
   if (error) {

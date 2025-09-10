@@ -117,6 +117,7 @@ const { data, pending, error, refresh } = await useAsyncData(
       .from('products')
       .select('*', { count: 'exact', head: true })
       .eq('creator_id', profileData.id)
+      .eq('status', 'approved')
 
     if (countError) {
       console.error(`Error fetching product count for ${profileData.username}:`, countError)
@@ -141,6 +142,7 @@ const { data, pending, error, refresh } = await useAsyncData(
         )
       `)
       .eq('creator_id', profileData.id)
+      .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .range(from, to)
 
