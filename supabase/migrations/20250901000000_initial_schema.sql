@@ -206,3 +206,19 @@ ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true;
 ALTER TABLE public.contacts DROP COLUMN IF EXISTS is_read;
 ALTER TABLE public.contacts ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT '未対応';
 COMMENT ON COLUMN public.contacts.status IS 'The status of the contact message (e.g., "未対応", "対応中", "対応済み").';
+
+-- =========== 商品承認フロー関連の追加 (2025-09-08) ===========
+
+-- productsテーブルにステータスカラムを追加
+ALTER TABLE public.products
+ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending',
+ADD COLUMN IF NOT EXISTS admin_notes TEXT;
+
+-- 公開されている商品のみを閲覧可能にするRLSポリシーを更新
+DROP POLICY IF EXISTS "Products are publicly viewable." ON public.products;
+CREATE POLICY "Products are publicly viewable." ON public.products
+FOR SELECT USING (status = 'approved');
+
+-- コメントを追加
+COMMENT ON COLUMN public.products.status IS '商品の承認ステータス (pending, approved, rejected)';
+COMMENT ON COLUMN public.products.admin_notes IS '管理者向けのメモ（非承認理由など）';

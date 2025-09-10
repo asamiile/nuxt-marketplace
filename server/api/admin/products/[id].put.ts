@@ -26,8 +26,8 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   // We only allow updating certain fields
-  const { name, description, price, category_id } = body;
-  const updateData = { name, description, price, category_id };
+  const { name, description, price, category_id, status, admin_notes } = body;
+  const updateData = { name, description, price, category_id, status, admin_notes };
 
 
   const { data: updatedProduct, error } = await client

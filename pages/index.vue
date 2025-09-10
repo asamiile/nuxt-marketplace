@@ -73,7 +73,7 @@ const { data, pending, error, refresh } = await useAsyncData(
         )
       `,
       { count: 'exact' },
-    )
+    ).eq('status', 'approved')
 
     if (filters.value.keyword) {
       query = query.ilike('name', `%${filters.value.keyword}%`)

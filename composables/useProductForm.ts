@@ -198,7 +198,7 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
       }
 
       // 3. Prepare product data
-      const productData = {
+      const productData: any = {
         name: name.value,
         description: description.value,
         price: price.value,
@@ -208,6 +208,10 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
         license_type: license_type.value,
         terms_of_use: terms_of_use.value,
         creator_id: user.value.id,
+      }
+
+      if (mode === 'create') {
+        productData.status = 'pending'
       }
 
       let productId = mode === 'edit' && productBeingEdited ? productBeingEdited.id : null
@@ -242,8 +246,13 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
       }
 
       // 6. Handle success
-      showToast('成功', `商品が正常に${mode === 'create' ? '作成' : '更新'}されました！`)
-      router.push(`/product/${productId}`)
+      if (mode === 'create') {
+        showToast('成功', '商品の出品申請が完了しました。管理者による承認をお待ちください。')
+        router.push('/dashboard')
+      } else {
+        showToast('成功', '商品が正常に更新されました！')
+        router.push(`/product/${productId}`)
+      }
       hasAttemptedSubmit.value = false
 
     } catch (error: any) {
