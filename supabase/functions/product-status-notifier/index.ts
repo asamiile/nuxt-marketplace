@@ -78,6 +78,15 @@ serve(async (req) => {
       })
     }
 
+    // ★デバッグログ: Resendに渡す直前のデータを確認
+    console.log('--- MOCK EMAIL SEND ---');
+    console.log(`To: ${creatorEmail}`);
+    console.log(`From: noreply@your-marketplace.com`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Body: ${htmlBody}`);
+    console.log('--- END MOCK ---');
+
+    /* ★★★ Resendの実際の呼び出しをコメントアウト ★★★
     const { data, error: sendError } = await resend.emails.send({
       from: 'noreply@your-marketplace.com',
       to: creatorEmail,
@@ -88,11 +97,15 @@ serve(async (req) => {
     if (sendError) {
       throw sendError
     }
+    */
 
-    return new Response(JSON.stringify(data), {
+    console.log('Mock email send successful. (Real email was not sent)');
+
+    // 実際の送信はしないが、成功したことにしてレスポンスを返す
+    return new Response(JSON.stringify({ success: true, mocked: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
-    })
+    });
 
   } catch (err) {
     return new Response(String(err?.message ?? err), {
