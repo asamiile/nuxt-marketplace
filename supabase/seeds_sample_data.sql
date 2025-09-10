@@ -71,20 +71,26 @@ INSERT INTO public.product_tags (product_id, tag_id) VALUES
 
 -- `purchases` テーブル: `normal_user` が商品を購入した履歴を作成します
 -- 【重要】 user_id を user のUUIDに書き換えてください
-INSERT INTO public.purchases (user_id, product_id) VALUES
-('【userのUUIDを貼り付け】', 1),
-('【userのUUIDを貼り付け】', 2),
-('【userのUUIDを貼り付け】', 3),
-('【userのUUIDを貼り付け】', 4),
-('【userのUUIDを貼り付け】', 5),
-('【userのUUIDを貼り付け】', 6),
-('【userのUUIDを貼り付け】', 7),
-('【userのUUIDを貼り付け】', 8),
-('【userのUUIDを貼り付け】', 9),
-('【userのUUIDを貼り付け】', 10),
-('【userのUUIDを貼り付け】', 11),
-('【userのUUIDを貼り付け】', 14),
-('【userのUUIDを貼り付け】', 20);
+INSERT INTO public.purchases (user_id, product_id, created_at) VALUES
+-- 1年以上前のデータ (5件)
+('【userのUUIDを貼り付け】', 1, '2024-08-10 10:00:00+09'),
+('【userのUUIDを貼り付け】', 2, '2024-07-25 11:30:00+09'),
+('【userのUUIDを貼り付け】', 3, '2024-05-01 14:00:00+09'),
+('【userのUUIDを貼り付け】', 4, '2023-12-11 09:00:00+09'),
+('【userのUUIDを貼り付け】', 5, '2023-11-30 18:45:00+09'),
+-- 今年のデータ (5件)
+('【userのUUIDを貼り付け】', 6, '2025-01-15 20:00:00+09'),
+('【userのUUIDを貼り付け】', 7, '2025-03-22 13:10:00+09'),
+('【userのUUIDを貼り付け】', 8, '2025-05-18 15:00:00+09'),
+('【userのUUIDを貼り付け】', 9, '2025-07-04 11:00:00+09'),
+('【userのUUIDを貼り付け】', 10, '2025-08-01 16:20:00+09'),
+-- 今月のデータ (5件)
+('【userのUUIDを貼り付け】', 11, '2025-09-01 08:00:00+09'),
+('【userのUUIDを貼り付け】', 12, '2025-09-03 12:30:00+09'),
+('【userのUUIDを貼り付け】', 13, '2025-09-05 17:00:00+09'),
+('【userのUUIDを貼り付け】', 14, '2025-09-08 21:00:00+09'),
+('【userのUUIDを貼り付け】', 15, '2025-09-10 09:15:00+09');
+
 
 -- `favorites` テーブル: `normal_user` がいくつかの商品をお気に入り登録した履歴を作成します
 -- 【重要】 user_id を user のUUIDに書き換えてください
@@ -96,8 +102,8 @@ INSERT INTO public.favorites (user_id, product_id) VALUES
 ('【userのUUIDを貼り付け】', 6),
 ('【userのUUIDを貼り付け】', 9);
 
--- `contacts` テーブルへのサンプルデータ
-INSERT INTO public.contacts (name, email, subject, message, is_read) VALUES
-('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', false),
-('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', false),
-('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', true);
+-- =========== contactsテーブルへのサンプルデータ ===========
+INSERT INTO public.contacts (name, email, subject, message, status) VALUES
+('山田太郎', 'taro.yamada@email.com', '作品の購入について', '「夜明けの海」の購入を検討しています。配送について質問があります。', '未対応'),
+('鈴木花子', 'hanako.suzuki@email.com', 'ライセンスに関する質問', '「サイバーシティ」を企業のウェブサイトで使用する場合、追加料金は発生しますか？', '未対応'),
+('田中一郎', 'ichiro.tanaka@email.com', '不具合報告', 'サイトにログインできません。', '対応済み');

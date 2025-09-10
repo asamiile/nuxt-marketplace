@@ -6,24 +6,38 @@
     </div>
     <UiCard>
       <UiCardContent class="p-4 md:p-8">
-        <div class="grid grid-cols-2 gap-4 text-center mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center mb-8">
           <div class="p-4 bg-secondary rounded-lg">
-            <p class="text-sm text-muted-foreground">合計売上 (全期間)</p>
+            <p class="text-sm text-muted-foreground">合計売上 ({{ periodLabel }})</p>
             <p class="text-2xl font-bold">{{ formatPrice(totalSales) }}</p>
           </div>
           <div class="p-4 bg-secondary rounded-lg">
-            <p class="text-sm text-muted-foreground">販売数 (全期間)</p>
+            <p class="text-sm text-muted-foreground">販売数 ({{ periodLabel }})</p>
             <p class="text-2xl font-bold">{{ sales ? sales.length : 0 }} 件</p>
           </div>
         </div>
 
         <div>
-          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+          <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
             <h3 class="text-lg font-semibold">販売履歴</h3>
-            <div class="w-full sm:w-72">
-              <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
+            <div class="flex flex-col sm:flex-row gap-2">
+               <div class="flex items-center gap-2">
+                <UiInput v-model="startDate" type="date" class="w-full sm:w-40" />
+                <span>〜</span>
+                <UiInput v-model="endDate" type="date" class="w-full sm:w-40" />
+              </div>
+              <div class="flex gap-2">
+                <UiButton variant="outline" size="sm" @click="setPeriod('this_month')">今月</UiButton>
+                <UiButton variant="outline" size="sm" @click="setPeriod('this_year')">今年</UiButton>
+                <UiButton variant="ghost" size="sm" @click="setPeriod(null)">リセット</UiButton>
+              </div>
             </div>
           </div>
+           <div class="flex flex-col xl:flex-row xl:justify-end xl:items-center gap-4 mb-4">
+             <div class="w-full sm:w-72">
+              <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
+            </div>
+           </div>
           <div v-if="pending" class="text-center py-4 md:py-8">
             <p>履歴を読み込んでいます...</p>
           </div>
@@ -72,9 +86,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import UiInput from '~/components/ui/form/Input.vue'
 import UiPagination from '~/components/ui/Pagination.vue'
+import UiButton from '~/components/ui/button/Button.vue'
 
 const supabase = useSupabaseClient()
 const { showToast } = useAlert()
@@ -91,52 +106,95 @@ const searchQuery = ref('')
 const currentPage = ref(1)
 const itemsPerPage = 10
 
+// --- Default to this month ---
+const getThisMonthRange = () => {
+  const today = new Date()
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+  return {
+    start: firstDay.toISOString().split('T')[0],
+    end: lastDay.toISOString().split('T')[0],
+  }
+}
+const { start, end } = getThisMonthRange()
+const startDate = ref<string | null>(start)
+const endDate = ref<string | null>(end)
+// -------------------------
+
 const { data: sales, pending, error } = await useAsyncData('sales-history', async () => {
-  const { data, error } = await supabase.rpc('get_sales_history')
+  const params: { start_date?: string; end_date?: string } = {}
+  if (startDate.value) params.start_date = startDate.value
+  if (endDate.value) {
+    const endOfDay = new Date(endDate.value)
+    endOfDay.setHours(23, 59, 59, 999)
+    params.end_date = endOfDay.toISOString()
+  }
+
+  const { data, error } = await supabase.rpc('get_sales_history', params)
   if (error) {
     showToast('エラー', '販売履歴の読み込みに失敗しました。', 'error')
     return []
   }
   return data
 }, {
-  default: () => []
+  default: () => [],
+  watch: [startDate, endDate],
+})
+
+const filteredSales = computed(() => {
+  if (!sales.value) return []
+  if (!searchQuery.value) return sales.value
+
+  const lowerCaseQuery = searchQuery.value.toLowerCase()
+  return sales.value.filter(sale =>
+    (sale.product_name && sale.product_name.toLowerCase().includes(lowerCaseQuery)) ||
+    (sale.purchaser_username && sale.purchaser_username.toLowerCase().includes(lowerCaseQuery))
+  )
 })
 
 const filteredAndPagedSales = computed(() => {
-  if (!sales.value) return []
-
-  // 1. 絞り込み
-  let filtered = sales.value
-  if (searchQuery.value) {
-    const lowerCaseQuery = searchQuery.value.toLowerCase()
-    filtered = sales.value.filter(sale =>
-      (sale.product_name && sale.product_name.toLowerCase().includes(lowerCaseQuery)) ||
-      (sale.purchaser_username && sale.purchaser_username.toLowerCase().includes(lowerCaseQuery))
-    )
-  }
-
-  // 2. ページネーション
   const startIndex = (currentPage.value - 1) * itemsPerPage
-  return filtered.slice(startIndex, startIndex + itemsPerPage)
+  return filteredSales.value.slice(startIndex, startIndex + itemsPerPage)
 })
 
 const totalPages = computed(() => {
-  if (!sales.value) return 1
-
-  const totalItems = searchQuery.value
-    ? sales.value.filter(sale =>
-        (sale.product_name && sale.product_name.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
-        (sale.purchaser_username && sale.purchaser_username.toLowerCase().includes(searchQuery.value.toLowerCase()))
-      ).length
-    : sales.value.length
-
-  return Math.ceil(totalItems / itemsPerPage)
+  if (!filteredSales.value) return 1
+  return Math.ceil(filteredSales.value.length / itemsPerPage)
 })
 
 const totalSales = computed(() => {
   if (!sales.value) return 0
+  // Note: This calculates total sales for the *fetched* data, which is already filtered by date on the backend.
   return sales.value.reduce((sum, sale) => sum + sale.price, 0)
 })
+
+const periodLabel = computed(() => {
+  if (startDate.value && endDate.value) return '指定期間'
+  if (startDate.value) return '指定日以降'
+  if (endDate.value) return '指定日以前'
+  return '全期間'
+})
+
+const setPeriod = (period: 'this_month' | 'this_year' | null) => {
+  if (period === null) {
+    startDate.value = null
+    endDate.value = null
+    return
+  }
+
+  const today = new Date()
+  if (period === 'this_month') {
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+    startDate.value = firstDay.toISOString().split('T')[0]
+    endDate.value = lastDay.toISOString().split('T')[0]
+  } else if (period === 'this_year') {
+    const firstDay = new Date(today.getFullYear(), 0, 1)
+    const lastDay = new Date(today.getFullYear(), 11, 31)
+    startDate.value = firstDay.toISOString().split('T')[0]
+    endDate.value = lastDay.toISOString().split('T')[0]
+  }
+}
 
 const formatPrice = (price: number | null) => {
   if (price === null) return 'N/A'

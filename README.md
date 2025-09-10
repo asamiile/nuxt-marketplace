@@ -28,6 +28,8 @@ pnpm preview
 
 ## Supabase
 
+### Migration
+
 - Applying the migration file
 
 ```bash
@@ -45,4 +47,12 @@ supabase migration list
 
 ```bash
 supabase migration repair [TIMESTAMP] --status applied
+```
+
+### Edge Functions
+
+- Deploy Edge Functions
+
+```
+supabase functions deploy product-status-notifier --no-verify-jwt
 ```

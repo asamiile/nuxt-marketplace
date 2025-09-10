@@ -27,7 +27,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 -- Sales history function
-CREATE OR REPLACE FUNCTION public.get_sales_history()
+CREATE OR REPLACE FUNCTION public.get_sales_history(
+  start_date TIMESTAMPTZ DEFAULT NULL,
+  end_date TIMESTAMPTZ DEFAULT NULL
+)
 RETURNS TABLE (
   product_id BIGINT,
   product_name TEXT,
@@ -52,6 +55,8 @@ BEGIN
     public.profiles purchaser_profile ON pu.user_id = purchaser_profile.id
   WHERE
     p.creator_id = auth.uid()
+    AND (start_date IS NULL OR pu.created_at >= start_date)
+    AND (end_date IS NULL OR pu.created_at <= end_date)
   ORDER BY
     pu.created_at DESC;
 END;

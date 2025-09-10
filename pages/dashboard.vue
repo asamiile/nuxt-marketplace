@@ -4,8 +4,8 @@
       <h1 class="text-3xl font-bold text-foreground">マイダッシュボード</h1>
     </div>
 
-    <Tabs v-model="activeTab" class="flex flex-col md:flex-row gap-8">
-      <TabsList class="flex md:flex-col md:w-1/4 shrink-0">
+    <Tabs v-model="activeTab" class="flex flex-col lg:flex-row gap-8">
+      <TabsList class="flex lg:flex-col lg:justify-start lg:w-1/4 shrink-0">
         <TabsTrigger value="sales" class="w-full justify-start">
           販売管理
         </TabsTrigger>
