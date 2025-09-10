@@ -6,7 +6,7 @@
     </div>
     <UiCard>
       <UiCardContent class="p-4 md:p-8">
-        <div class="grid grid-cols-2 gap-4 text-center mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center mb-8">
           <div class="p-4 bg-secondary rounded-lg">
             <p class="text-sm text-muted-foreground">合計売上 ({{ periodLabel }})</p>
             <p class="text-2xl font-bold">{{ formatPrice(totalSales) }}</p>
@@ -18,7 +18,7 @@
         </div>
 
         <div>
-          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+          <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
             <h3 class="text-lg font-semibold">販売履歴</h3>
             <div class="flex flex-col sm:flex-row gap-2">
                <div class="flex items-center gap-2">
@@ -33,7 +33,7 @@
               </div>
             </div>
           </div>
-           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+           <div class="flex flex-col xl:flex-row xl:justify-end xl:items-center gap-4 mb-4">
              <div class="w-full sm:w-72">
               <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
             </div>
