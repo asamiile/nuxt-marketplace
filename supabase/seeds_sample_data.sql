@@ -86,6 +86,21 @@ INSERT INTO public.purchases (user_id, product_id) VALUES
 ('【userのUUIDを貼り付け】', 14),
 ('【userのUUIDを貼り付け】', 20);
 
+-- =========== 5. 開発テスト用の期間指定データ ===========
+-- `purchases` テーブル: `normal_user` が指定期間に商品を購入した履歴
+INSERT INTO public.purchases (user_id, product_id, created_at) VALUES
+('【userのUUIDを貼り付け】', 1, '2025-09-01 10:00:00+09'),
+('【userのUUIDを貼り付け】', 5, '2025-09-02 11:30:00+09'),
+('【userのUUIDを貼り付け】', 12, '2025-09-03 14:00:00+09'),
+('【userのUUIDを貼り付け】', 15, '2025-09-04 09:00:00+09'),
+('【userのUUIDを貼り付け】', 22, '2025-09-05 18:45:00+09'),
+('【userのUUIDを貼り付け】', 8, '2025-09-06 20:00:00+09'),
+('【userのUUIDを貼り付け】', 2, '2025-09-07 13:10:00+09'),
+('【userのUUIDを貼り付け】', 18, '2025-09-08 15:00:00+09'),
+('【userのUUIDを貼り付け】', 24, '2025-09-09 11:00:00+09'),
+('【userのUUIDを貼り付け】', 3, '2025-09-10 16:20:00+09');
+
+
 -- `favorites` テーブル: `normal_user` がいくつかの商品をお気に入り登録した履歴を作成します
 -- 【重要】 user_id を user のUUIDに書き換えてください
 INSERT INTO public.favorites (user_id, product_id) VALUES
