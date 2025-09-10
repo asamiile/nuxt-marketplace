@@ -47,6 +47,7 @@ export default defineEventHandler(async (event) => {
 
   // ステータスが変更された場合のみ通知Functionを呼び出す
   if (updatedProduct && updateData.status) {
+    console.log(`[API] Status changed for product ${productId}. Attempting to invoke 'product-status-notifier' function...`);
     const { error: invokeError } = await client.functions.invoke('product-status-notifier', {
       body: {
         productId: productId,
@@ -55,7 +56,9 @@ export default defineEventHandler(async (event) => {
     })
     if (invokeError) {
       // Function呼び出しエラーはコンソールに出力する（ユーザーへのレスポンスには影響させない）
-      console.error(`Failed to invoke notification function for product ${productId}:`, invokeError.message)
+      console.error(`[API] Failed to invoke notification function for product ${productId}:`, invokeError.message)
+    } else {
+      console.log(`[API] Successfully invoked 'product-status-notifier' for product ${productId}.`);
     }
   }
 
