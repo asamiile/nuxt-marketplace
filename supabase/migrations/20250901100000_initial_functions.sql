@@ -100,20 +100,21 @@ end;
 $$ language plpgsql security definer;
 
 DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, double precision, double precision);
+DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
 DROP FUNCTION IF EXISTS count_search_products(bigint, bigint[], text, double precision, double precision);
 
 create or replace function search_products(
   p_category_id bigint,
   p_tag_ids bigint[],
   p_keyword text,
-  p_min_price double precision,
-  p_max_price double precision
+  p_min_price numeric,
+  p_max_price numeric
 )
 returns table (
   id bigint,
   name text,
   description text,
-  price double precision,
+  price numeric,
   image_url text,
   category_id bigint,
   creator_id uuid,
