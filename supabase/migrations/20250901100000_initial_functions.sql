@@ -100,10 +100,55 @@ end;
 $$ language plpgsql security definer;
 
 -- 修正版：search_products 関数
--- search_products 関数を一度削除
+-- search_products functions
+-- Drop existing functions to avoid conflicts
 DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
+DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, text, text);
 
--- 修正版：search_products 関数
+
+-- Overloaded function to handle TEXT input for price, converting empty strings to NULL.
+CREATE OR REPLACE FUNCTION search_products(
+    p_category_id BIGINT DEFAULT NULL,
+    p_tag_ids BIGINT[] DEFAULT NULL,
+    p_keyword TEXT DEFAULT NULL,
+    p_min_price TEXT DEFAULT NULL,
+    p_max_price TEXT DEFAULT NULL
+)
+RETURNS TABLE (
+    id BIGINT,
+    created_at TIMESTAMPTZ,
+    name TEXT,
+    description TEXT,
+    price NUMERIC,
+    image_url TEXT,
+    file_url TEXT,
+    creator_id UUID,
+    license_type TEXT,
+    terms_of_use TEXT,
+    category_id BIGINT,
+    status TEXT,
+    admin_notes TEXT,
+    category_name TEXT,
+    username TEXT,
+    avatar_url TEXT,
+    total_count BIGINT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM public.search_products(
+        p_category_id,
+        p_tag_ids,
+        p_keyword,
+        NULLIF(p_min_price, '')::NUMERIC,
+        NULLIF(p_max_price, '')::NUMERIC
+    );
+END;
+$$;
+
+
+-- Main search_products function (accepts NUMERIC for price)
 CREATE OR REPLACE FUNCTION search_products(
     p_category_id BIGINT DEFAULT NULL,
     p_tag_ids BIGINT[] DEFAULT NULL,
@@ -171,12 +216,12 @@ BEGIN
         p.status,
         p.admin_notes,
         c.name AS category_name,
-        pr.username,
+        COALESCE(pr.username, p.creator_id::TEXT) AS username,
         pr.avatar_url,
         (SELECT COUNT(*) FROM filtered_products) AS total_count
     FROM
         products p
-    JOIN
+    LEFT JOIN
         profiles pr ON p.creator_id = pr.id
     LEFT JOIN
         categories c ON p.category_id = c.id
