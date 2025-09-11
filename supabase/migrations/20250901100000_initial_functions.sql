@@ -118,7 +118,6 @@ returns table (
   category_id bigint,
   creator_id uuid,
   created_at timestamp with time zone,
-  updated_at timestamp with time zone,
   status character varying,
   category_name character varying,
   username character varying,
@@ -136,7 +135,6 @@ begin
       p.category_id,
       p.creator_id,
       p.created_at,
-      p.updated_at,
       p.status,
       c.name as category_name,
       pr.username
