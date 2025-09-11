@@ -99,71 +99,72 @@ begin
 end;
 $$ language plpgsql security definer;
 
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, double precision, double precision);
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
-DROP FUNCTION IF EXISTS count_search_products(bigint, bigint[], text, double precision, double precision);
-
-create or replace function search_products(
-  p_category_id bigint,
-  p_tag_ids bigint[],
-  p_keyword text,
-  p_min_price numeric,
-  p_max_price numeric
+-- 修正版：search_products 関数
+CREATE OR REPLACE FUNCTION search_products(
+    p_category_id BIGINT DEFAULT NULL,
+    p_tag_ids BIGINT[] DEFAULT NULL,
+    p_keyword TEXT DEFAULT NULL,
+    p_min_price NUMERIC DEFAULT NULL,
+    p_max_price NUMERIC DEFAULT NULL
 )
-returns table (
-  id bigint,
-  name text,
-  description text,
-  price numeric,
-  image_url text,
-  category_id bigint,
-  creator_id uuid,
-  created_at timestamp with time zone,
-  status text,
-  category_name text,
-  username text,
-  total_count bigint
-) as $$
-begin
-  return query
-  select
-    p.id,
-    p.name,
-    p.description,
-    p.price,
-    p.image_url,
-    p.category_id,
-    p.creator_id,
-    p.created_at,
-    p.status,
-    c.name as category_name,
-    pr.username,
-    count(*) over() as total_count
-  from
-    products p
-    left join categories c on p.category_id = c.id
-    join profiles pr on p.creator_id = pr.id
-  where
-    p.status = 'approved'
-    and (p_category_id is null or p.category_id = p_category_id)
-    and (p_keyword is null or p.name ilike '%' || p_keyword || '%')
-    and (p_min_price is null or p.price >= p_min_price)
-    and (p_max_price is null or p.price <= p_max_price)
-    and (
-      p_tag_ids is null or array_length(p_tag_ids, 1) = 0 or p.id in (
-        select
-          pt.product_id
-        from
-          product_tags pt
-        where
-          pt.tag_id = any(p_tag_ids)
-        group by
-          pt.product_id
-        having
-          count(distinct pt.tag_id) = array_length(p_tag_ids, 1)
-      )
+RETURNS TABLE (
+    id BIGINT,
+    created_at TIMESTAMPTZ,
+    name TEXT,
+    description TEXT,
+    price NUMERIC,
+    image_url TEXT,
+    file_url TEXT,
+    creator_id UUID,
+    license_type TEXT,
+    terms_of_use TEXT,
+    category_id BIGINT,
+    status TEXT,
+    admin_notes TEXT,
+    -- 結合したテーブルのカラム
+    category_name TEXT,
+    profiles JSON,
+    -- ページネーション用の総数
+    total_count BIGINT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    tag_count INT := array_length(p_tag_ids, 1);
+BEGIN
+    RETURN QUERY
+    WITH filtered_products AS (
+        SELECT
+            p.id
+        FROM
+            products p
+        LEFT JOIN
+            product_tags pt ON p.id = pt.product_id
+        WHERE
+            p.status = 'approved'
+            AND (p_category_id IS NULL OR p.category_id = p_category_id)
+            AND (p_keyword IS NULL OR p.name ILIKE '%' || p_keyword || '%')
+            AND (p_min_price IS NULL OR p.price >= p_min_price)
+            AND (p_max_price IS NULL OR p.price <= p_max_price)
+        GROUP BY
+            p.id
+        HAVING
+            (tag_count IS NULL OR array_length(p_tag_ids, 1) = 0 OR COUNT(DISTINCT pt.tag_id) = tag_count)
     )
-  order by
-    p.created_at desc;
-end;
-$$ language plpgsql;
+    SELECT
+        p.*,
+        c.name AS category_name,
+        json_build_object('username', pr.username, 'avatar_url', pr.avatar_url) as profiles,
+        (SELECT COUNT(*) FROM filtered_products) AS total_count
+    FROM
+        products p
+    JOIN
+        profiles pr ON p.creator_id = pr.id
+    LEFT JOIN
+        categories c ON p.category_id = c.id
+    WHERE
+        p.id IN (SELECT id FROM filtered_products)
+    ORDER BY
+        p.created_at DESC;
+END;
+$$;

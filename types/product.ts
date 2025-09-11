@@ -12,6 +12,7 @@ export interface Product {
   terms_of_use: string | null;
   profiles: {
     username: string | null;
+    avatar_url: string | null;
   } | null;
 }
 
