@@ -98,3 +98,106 @@ begin
   where id = user_id;
 end;
 $$ language plpgsql security definer;
+
+create or replace function search_products(
+  p_category_id bigint,
+  p_tag_ids bigint[],
+  p_keyword text,
+  p_min_price double precision,
+  p_max_price double precision
+)
+returns table (
+  id bigint,
+  name character varying,
+  description text,
+  price double precision,
+  image_url character varying,
+  category_id bigint,
+  user_id uuid,
+  created_at timestamp with time zone,
+  updated_at timestamp with time zone,
+  status character varying,
+  category_name character varying,
+  user_name character varying
+) as $$
+begin
+  return query
+  select
+    p.id,
+    p.name,
+    p.description,
+    p.price,
+    p.image_url,
+    p.category_id,
+    p.user_id,
+    p.created_at,
+    p.updated_at,
+    p.status,
+    c.name as category_name,
+    pr.user_name
+  from
+    products p
+    join categories c on p.category_id = c.id
+    join profiles pr on p.user_id = pr.id
+  where
+    p.status = 'approved'
+    and (p_category_id is null or p.category_id = p_category_id)
+    and (p_keyword is null or p.name ilike '%' || p_keyword || '%')
+    and (p_min_price is null or p.price >= p_min_price)
+    and (p_max_price is null or p.price <= p_max_price)
+    and (
+      p_tag_ids is null or array_length(p_tag_ids, 1) = 0 or p.id in (
+        select
+          pt.product_id
+        from
+          product_tags pt
+        where
+          pt.tag_id = any(p_tag_ids)
+        group by
+          pt.product_id
+        having
+          count(distinct pt.tag_id) = array_length(p_tag_ids, 1)
+      )
+    )
+  order by
+    p.created_at desc;
+end;
+$$ language plpgsql;
+
+create or replace function count_search_products(
+  p_category_id bigint,
+  p_tag_ids bigint[],
+  p_keyword text,
+  p_min_price double precision,
+  p_max_price double precision
+)
+returns bigint as $$
+begin
+  return (
+    select
+      count(p.id)
+    from
+      products p
+    where
+      p.status = 'approved'
+      and (p_category_id is null or p.category_id = p_category_id)
+      and (p_keyword is null or p.name ilike '%' || p_keyword || '%')
+      and (p_min_price is null or p.price >= p_min_price)
+      and (p_max_price is null or p.price <= p_max_price)
+      and (
+        p_tag_ids is null or array_length(p_tag_ids, 1) = 0 or p.id in (
+          select
+            pt.product_id
+          from
+            product_tags pt
+          where
+            pt.tag_id = any(p_tag_ids)
+          group by
+            pt.product_id
+          having
+            count(distinct pt.tag_id) = array_length(p_tag_ids, 1)
+        )
+      )
+  );
+end;
+$$ language plpgsql;

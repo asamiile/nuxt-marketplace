@@ -1,8 +1,9 @@
 <template>
   <div>
     <ProductFilters
-      v-if="categories"
+      v-if="categories && tags"
       :categories="categories"
+      :tags="tags"
       @update:filters="updateFilters"
     />
 
@@ -34,7 +35,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { Product, Category } from '~/types/product'
+import type { Product, Category, Tag } from '~/types/product'
 import Pagination from '~/components/ui/Pagination.vue'
 import Skeleton from '~/components/ui/Skeleton.vue'
 import ProductFilters from '~/components/ProductFilters.vue'
@@ -46,6 +47,7 @@ const currentPage = ref(1)
 const filters = ref({
   keyword: '',
   categoryId: null,
+  tagIds: [],
   minPrice: null,
   maxPrice: null,
 })
@@ -55,64 +57,50 @@ const { data: categories } = await useAsyncData('categories', async () => {
   return data as Category[]
 })
 
+const { data: tags } = await useAsyncData('tags', async () => {
+  const { data } = await supabase.from('tags').select('*').eq('is_public', true).order('name')
+  return data as Tag[]
+})
+
 function updateFilters(newFilters: typeof filters.value) {
   filters.value = newFilters
+  currentPage.value = 1 // Reset to first page when filters change
 }
 
 const { data, pending, error, refresh } = await useAsyncData(
   'products-filtered',
   async () => {
-    let query = supabase.from('products').select(
-      `
-        id,
-        name,
-        price,
-        image_url,
-        profiles (
-          username
-        )
-      `,
-      { count: 'exact' },
-    ).eq('status', 'approved')
+    const from = (currentPage.value - 1) * itemsPerPage
+    const to = from + itemsPerPage - 1
 
-    if (filters.value.keyword) {
-      query = query.ilike('name', `%${filters.value.keyword}%`)
-    }
-    if (filters.value.categoryId) {
-      query = query.eq('category_id', filters.value.categoryId)
-    }
-    if (filters.value.minPrice) {
-      query = query.gte('price', filters.value.minPrice)
-    }
-    if (filters.value.maxPrice) {
-      query = query.lte('price', filters.value.maxPrice)
+    const rpcParams = {
+      p_keyword: filters.value.keyword,
+      p_category_id: filters.value.categoryId,
+      p_tag_ids: filters.value.tagIds,
+      p_min_price: filters.value.minPrice,
+      p_max_price: filters.value.maxPrice,
     }
 
-    // First, get the total count of filtered products
-    const { count, error: countError } = await query
-
+    // Fetch total count
+    const { data: countData, error: countError } = await supabase.rpc('count_search_products', rpcParams)
     if (countError) {
       console.error('Error fetching product count:', countError)
       throw countError
     }
+    const totalCount = countData as number
 
-    const totalPages = count ? Math.ceil(count / itemsPerPage) : 1
-    // Reset to page 1 if current page is out of bounds
-    if (currentPage.value > totalPages) {
-      currentPage.value = 1
-    }
-
-    // Then, fetch the products for the current page
-    const from = (currentPage.value - 1) * itemsPerPage
-    const to = from + itemsPerPage - 1
-
-    const { data: productsData, error: productsError } = await query
-      .order('created_at', { ascending: false })
+    // Fetch products for the current page
+    const { data: productsData, error: productsError } = await supabase.rpc('search_products', rpcParams)
       .range(from, to)
 
     if (productsError) {
       console.error('Error fetching products:', productsError)
       throw productsError
+    }
+
+    const totalPages = totalCount > 0 ? Math.ceil(totalCount / itemsPerPage) : 1
+    if (currentPage.value > totalPages) {
+      currentPage.value = 1
     }
 
     return {
@@ -121,7 +109,7 @@ const { data, pending, error, refresh } = await useAsyncData(
     }
   },
   {
-    watch: [filters, currentPage],
+    watch: [() => ({ ...filters.value }), currentPage],
   },
 )
 </script>

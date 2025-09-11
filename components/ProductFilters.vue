@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import type { Category } from '~/types/product'
+import type { Category, Tag } from '~/types/product'
 import Input from '~/components/ui/form/Input.vue'
 import { buttonVariants } from '~/components/ui/button/buttonVariants'
 
 const props = defineProps<{
   categories: Category[]
+  tags: Tag[]
 }>()
 
 const emit = defineEmits(['update:filters'])
@@ -15,6 +16,7 @@ const isFiltersVisible = ref(false)
 const filters = ref({
   keyword: '',
   categoryId: null,
+  tagIds: [],
   minPrice: null,
   maxPrice: null,
 })
@@ -27,6 +29,7 @@ const activeFilterCount = computed(() => {
   let count = 0
   if (filters.value.keyword) count++
   if (filters.value.categoryId !== null) count++
+  if (filters.value.tagIds.length > 0) count++
   if (filters.value.minPrice !== null) count++
   if (filters.value.maxPrice !== null) count++
   return count
@@ -47,8 +50,8 @@ const activeFilterCount = computed(() => {
     </button>
 
     <div v-if="isFiltersVisible" class="p-4 border rounded-lg bg-secondary">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:flex items-end gap-4">
-        <div class="filter-group flex-grow">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="filter-group">
           <label for="keyword-search" class="text-sm font-medium">キーワード</label>
           <Input
             id="keyword-search"
@@ -71,26 +74,41 @@ const activeFilterCount = computed(() => {
             </option>
           </select>
         </div>
-        <div class="flex gap-4">
-          <div class="filter-group md:w-32">
-            <label for="min-price" class="text-sm font-medium">最低価格</label>
-            <Input
-              id="min-price"
-              v-model.number="filters.minPrice"
-              type="number"
-              placeholder="¥"
-              class="w-full mt-1"
+        <div class="filter-group">
+          <label for="min-price" class="text-sm font-medium">最低価格</label>
+          <Input
+            id="min-price"
+            v-model.number="filters.minPrice"
+            type="number"
+            placeholder="¥"
+            class="w-full mt-1"
+          />
+        </div>
+        <div class="filter-group">
+          <label for="max-price" class="text-sm font-medium">最高価格</label>
+          <Input
+            id="max-price"
+            v-model.number="filters.maxPrice"
+            type="number"
+            placeholder="¥"
+            class="w-full mt-1"
+          />
+        </div>
+      </div>
+      <div class="filter-group mt-4">
+        <label class="text-sm font-medium">タグ</label>
+        <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+          <div v-for="tag in tags" :key="tag.id" class="flex items-center">
+            <input
+              :id="'tag-' + tag.id"
+              type="checkbox"
+              :value="tag.id"
+              v-model="filters.tagIds"
+              class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
-          </div>
-          <div class="filter-group md:w-32">
-            <label for="max-price" class="text-sm font-medium">最高価格</label>
-            <Input
-              id="max-price"
-              v-model.number="filters.maxPrice"
-              type="number"
-              placeholder="¥"
-              class="w-full mt-1"
-            />
+            <label :for="'tag-' + tag.id" class="ml-2 text-sm text-foreground">
+              {{ tag.name }}
+            </label>
           </div>
         </div>
       </div>
