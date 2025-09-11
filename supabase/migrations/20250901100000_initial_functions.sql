@@ -100,10 +100,10 @@ end;
 $$ language plpgsql security definer;
 
 -- 修正版：search_products 関数
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, double precision, double precision);
+-- search_products 関数を一度削除
 DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
-DROP FUNCTION IF EXISTS search_products(BIGINT, BIGINT[], TEXT, NUMERIC, NUMERIC); -- Add drop for the latest signature just in case
 
+-- 修正版：search_products 関数
 CREATE OR REPLACE FUNCTION search_products(
     p_category_id BIGINT DEFAULT NULL,
     p_tag_ids BIGINT[] DEFAULT NULL,
@@ -112,6 +112,7 @@ CREATE OR REPLACE FUNCTION search_products(
     p_max_price NUMERIC DEFAULT NULL
 )
 RETURNS TABLE (
+    -- productsテーブルの全カラムを正確に定義
     id BIGINT,
     created_at TIMESTAMPTZ,
     name TEXT,
@@ -127,7 +128,8 @@ RETURNS TABLE (
     admin_notes TEXT,
     -- 結合したテーブルのカラム
     category_name TEXT,
-    profiles JSON,
+    username TEXT,
+    avatar_url TEXT,
     -- ページネーション用の総数
     total_count BIGINT
 )
@@ -138,27 +140,39 @@ DECLARE
 BEGIN
     RETURN QUERY
     WITH filtered_products AS (
-        SELECT
-            p.id
-        FROM
-            products p
-        LEFT JOIN
-            product_tags pt ON p.id = pt.product_id
+        SELECT p.id
+        FROM products p
+        LEFT JOIN product_tags pt ON p.id = pt.product_id
         WHERE
             p.status = 'approved'
             AND (p_category_id IS NULL OR p.category_id = p_category_id)
             AND (p_keyword IS NULL OR p.name ILIKE '%' || p_keyword || '%')
             AND (p_min_price IS NULL OR p.price >= p_min_price)
             AND (p_max_price IS NULL OR p.price <= p_max_price)
-        GROUP BY
-            p.id
+        GROUP BY p.id
         HAVING
-            (tag_count IS NULL OR array_length(p_tag_ids, 1) = 0 OR COUNT(DISTINCT pt.tag_id) = tag_count)
+            -- タグが指定されていない場合 (NULL or 空配列) は、このHAVING句をパスする
+            (tag_count IS NULL OR tag_count = 0) OR
+            -- 指定されたタグをすべて持つ商品のみをフィルタリング (AND検索)
+            (COUNT(DISTINCT pt.tag_id) FILTER (WHERE pt.tag_id = ANY(p_tag_ids))) = tag_count
     )
     SELECT
-        p.*,
+        p.id,
+        p.created_at,
+        p.name,
+        p.description,
+        p.price,
+        p.image_url,
+        p.file_url,
+        p.creator_id,
+        p.license_type,
+        p.terms_of_use,
+        p.category_id,
+        p.status,
+        p.admin_notes,
         c.name AS category_name,
-        json_build_object('username', pr.username, 'avatar_url', pr.avatar_url) as profiles,
+        pr.username,
+        pr.avatar_url,
         (SELECT COUNT(*) FROM filtered_products) AS total_count
     FROM
         products p
