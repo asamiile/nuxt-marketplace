@@ -141,7 +141,7 @@ begin
       pr.username
     from
       products p
-      join categories c on p.category_id = c.id
+      left join categories c on p.category_id = c.id
       join profiles pr on p.creator_id = pr.id
     where
       p.status = 'approved'
