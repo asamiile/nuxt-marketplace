@@ -111,16 +111,16 @@ create or replace function search_products(
 )
 returns table (
   id bigint,
-  name character varying,
+  name text,
   description text,
   price double precision,
-  image_url character varying,
+  image_url text,
   category_id bigint,
   creator_id uuid,
   created_at timestamp with time zone,
-  status character varying,
-  category_name character varying,
-  username character varying,
+  status text,
+  category_name text,
+  username text,
   total_count bigint
 ) as $$
 begin
