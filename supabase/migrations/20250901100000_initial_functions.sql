@@ -100,6 +100,10 @@ end;
 $$ language plpgsql security definer;
 
 -- 修正版：search_products 関数
+DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, double precision, double precision);
+DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
+DROP FUNCTION IF EXISTS search_products(BIGINT, BIGINT[], TEXT, NUMERIC, NUMERIC); -- Add drop for the latest signature just in case
+
 CREATE OR REPLACE FUNCTION search_products(
     p_category_id BIGINT DEFAULT NULL,
     p_tag_ids BIGINT[] DEFAULT NULL,
