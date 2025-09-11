@@ -140,7 +140,7 @@ DECLARE
 BEGIN
     RETURN QUERY
     WITH filtered_products AS (
-        SELECT p.id
+        SELECT p.id as product_id
         FROM products p
         LEFT JOIN product_tags pt ON p.id = pt.product_id
         WHERE
@@ -181,7 +181,7 @@ BEGIN
     LEFT JOIN
         categories c ON p.category_id = c.id
     WHERE
-        p.id IN (SELECT id FROM filtered_products)
+        p.id IN (SELECT product_id FROM filtered_products)
     ORDER BY
         p.created_at DESC;
 END;
