@@ -81,15 +81,6 @@ const { data, pending, error, refresh } = await useAsyncData(
       p_max_price: filters.value.maxPrice,
     }
 
-    // Fetch total count
-    const { data: countData, error: countError } = await supabase.rpc('count_search_products', rpcParams)
-    if (countError) {
-      console.error('Error fetching product count:', countError)
-      throw countError
-    }
-    const totalCount = countData as number
-
-    // Fetch products for the current page
     const { data: productsData, error: productsError } = await supabase.rpc('search_products', rpcParams)
       .range(from, to)
 
@@ -98,7 +89,9 @@ const { data, pending, error, refresh } = await useAsyncData(
       throw productsError
     }
 
+    const totalCount = productsData.length > 0 ? productsData[0].total_count : 0
     const totalPages = totalCount > 0 ? Math.ceil(totalCount / itemsPerPage) : 1
+
     if (currentPage.value > totalPages) {
       currentPage.value = 1
     }

@@ -99,6 +99,9 @@ begin
 end;
 $$ language plpgsql security definer;
 
+DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, double precision, double precision);
+DROP FUNCTION IF EXISTS count_search_products(bigint, bigint[], text, double precision, double precision);
+
 create or replace function search_products(
   p_category_id bigint,
   p_tag_ids bigint[],
@@ -118,66 +121,29 @@ returns table (
   updated_at timestamp with time zone,
   status character varying,
   category_name character varying,
-  username character varying
+  username character varying,
+  total_count bigint
 ) as $$
 begin
   return query
-  select
-    p.id,
-    p.name,
-    p.description,
-    p.price,
-    p.image_url,
-    p.category_id,
-    p.creator_id,
-    p.created_at,
-    p.updated_at,
-    p.status,
-    c.name as category_name,
-    pr.username
-  from
-    products p
-    join categories c on p.category_id = c.id
-    join profiles pr on p.creator_id = pr.id
-  where
-    p.status = 'approved'
-    and (p_category_id is null or p.category_id = p_category_id)
-    and (p_keyword is null or p.name ilike '%' || p_keyword || '%')
-    and (p_min_price is null or p.price >= p_min_price)
-    and (p_max_price is null or p.price <= p_max_price)
-    and (
-      p_tag_ids is null or array_length(p_tag_ids, 1) = 0 or p.id in (
-        select
-          pt.product_id
-        from
-          product_tags pt
-        where
-          pt.tag_id = any(p_tag_ids)
-        group by
-          pt.product_id
-        having
-          count(distinct pt.tag_id) = array_length(p_tag_ids, 1)
-      )
-    )
-  order by
-    p.created_at desc;
-end;
-$$ language plpgsql;
-
-create or replace function count_search_products(
-  p_category_id bigint,
-  p_tag_ids bigint[],
-  p_keyword text,
-  p_min_price double precision,
-  p_max_price double precision
-)
-returns bigint as $$
-begin
-  return (
+  with filtered_products as (
     select
-      count(p.id)
+      p.id,
+      p.name,
+      p.description,
+      p.price,
+      p.image_url,
+      p.category_id,
+      p.creator_id,
+      p.created_at,
+      p.updated_at,
+      p.status,
+      c.name as category_name,
+      pr.username
     from
       products p
+      join categories c on p.category_id = c.id
+      join profiles pr on p.creator_id = pr.id
     where
       p.status = 'approved'
       and (p_category_id is null or p.category_id = p_category_id)
@@ -198,6 +164,13 @@ begin
             count(distinct pt.tag_id) = array_length(p_tag_ids, 1)
         )
       )
-  );
+  )
+  select
+    *,
+    (select count(*) from filtered_products) as total_count
+  from
+    filtered_products
+  order by
+    created_at desc;
 end;
 $$ language plpgsql;
