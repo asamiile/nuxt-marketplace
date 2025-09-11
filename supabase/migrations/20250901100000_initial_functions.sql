@@ -99,15 +99,17 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- 修正版：search_products 関数
 -- search_products functions
--- Drop existing functions to avoid conflicts
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, text, text);
+-- Drop existing functions to avoid conflicts before creating new ones.
+DROP FUNCTION IF EXISTS public.search_products(bigint, bigint[], text, text, text);
+DROP FUNCTION IF EXISTS public._search_products_internal(bigint, bigint[], text, numeric, numeric);
+-- Drop old versions just in case
+DROP FUNCTION IF EXISTS public.search_products(bigint, bigint[], text, numeric, numeric);
 
 
--- Overloaded function to handle TEXT input for price, converting empty strings to NULL.
-CREATE OR REPLACE FUNCTION search_products(
+-- Public-facing function exposed to PostgREST.
+-- Handles TEXT input for price, converting empty strings to NULL, then calls the internal function.
+CREATE OR REPLACE FUNCTION public.search_products(
     p_category_id BIGINT DEFAULT NULL,
     p_tag_ids BIGINT[] DEFAULT NULL,
     p_keyword TEXT DEFAULT NULL,
@@ -137,7 +139,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM public.search_products(
+    SELECT * FROM public._search_products_internal(
         p_category_id,
         p_tag_ids,
         p_keyword,
@@ -148,8 +150,9 @@ END;
 $$;
 
 
--- Main search_products function (accepts NUMERIC for price)
-CREATE OR REPLACE FUNCTION search_products(
+-- Internal function that performs the actual search logic.
+-- Accepts NUMERIC for price and is not directly exposed to the API.
+CREATE OR REPLACE FUNCTION public._search_products_internal(
     p_category_id BIGINT DEFAULT NULL,
     p_tag_ids BIGINT[] DEFAULT NULL,
     p_keyword TEXT DEFAULT NULL,
@@ -157,7 +160,6 @@ CREATE OR REPLACE FUNCTION search_products(
     p_max_price NUMERIC DEFAULT NULL
 )
 RETURNS TABLE (
-    -- productsテーブルの全カラムを正確に定義
     id BIGINT,
     created_at TIMESTAMPTZ,
     name TEXT,
@@ -171,11 +173,9 @@ RETURNS TABLE (
     category_id BIGINT,
     status TEXT,
     admin_notes TEXT,
-    -- 結合したテーブルのカラム
     category_name TEXT,
     username TEXT,
     avatar_url TEXT,
-    -- ページネーション用の総数
     total_count BIGINT
 )
 LANGUAGE plpgsql
@@ -196,9 +196,7 @@ BEGIN
             AND (p_max_price IS NULL OR p.price <= p_max_price)
         GROUP BY p.id
         HAVING
-            -- タグが指定されていない場合 (NULL or 空配列) は、このHAVING句をパスする
             (tag_count IS NULL OR tag_count = 0) OR
-            -- 指定されたタグをすべて持つ商品のみをフィルタリング (AND検索)
             (COUNT(DISTINCT pt.tag_id) FILTER (WHERE pt.tag_id = ANY(p_tag_ids))) = tag_count
     )
     SELECT
