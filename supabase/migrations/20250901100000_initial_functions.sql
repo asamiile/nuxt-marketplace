@@ -113,12 +113,12 @@ returns table (
   price double precision,
   image_url character varying,
   category_id bigint,
-  user_id uuid,
+  creator_id uuid,
   created_at timestamp with time zone,
   updated_at timestamp with time zone,
   status character varying,
   category_name character varying,
-  user_name character varying
+  username character varying
 ) as $$
 begin
   return query
@@ -129,16 +129,16 @@ begin
     p.price,
     p.image_url,
     p.category_id,
-    p.user_id,
+    p.creator_id,
     p.created_at,
     p.updated_at,
     p.status,
     c.name as category_name,
-    pr.user_name
+    pr.username
   from
     products p
     join categories c on p.category_id = c.id
-    join profiles pr on p.user_id = pr.id
+    join profiles pr on p.creator_id = pr.id
   where
     p.status = 'approved'
     and (p_category_id is null or p.category_id = p_category_id)
