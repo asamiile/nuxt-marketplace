@@ -81,7 +81,7 @@
 import { ref, watch } from 'vue'
 import type { Product } from '~/types/product'
 import type { Profile } from '~/types/profile'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import { buttonVariants } from '~/components/ui/button'
 import ProductCard from '~/components/ProductCard.vue'
 import Pagination from '~/components/ui/Pagination.vue'
 import Skeleton from '~/components/ui/Skeleton.vue'

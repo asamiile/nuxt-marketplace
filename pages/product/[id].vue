@@ -78,13 +78,13 @@
           <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', class: 'w-full' })">
             編集
           </NuxtLink>
-          <UiButton @click="handleDelete" variant="destructive" class="w-full">
+          <Button @click="handleDelete" variant="destructive" class="w-full">
             削除
-          </UiButton>
+          </Button>
         </div>
-        <UiButton v-else class="w-full mt-8" size="lg">
+        <Button v-else class="w-full mt-8" size="lg">
           購入する
-        </UiButton>
+        </Button>
       </div>
     </div>
   </div>
@@ -92,7 +92,8 @@
 
 <script setup lang="ts">
 import type { ProductWithRelations } from '~/types/product'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import { buttonVariants } from '~/components/ui/button'
+import Button from '~/components/ui/button/Button.vue'
 import Skeleton from '~/components/ui/Skeleton.vue'
 
 const route = useRoute()

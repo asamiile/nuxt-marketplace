@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import Input from './Input.vue'
+import Input from '~/components/ui/input/Input.vue'
 import type { Tag } from '~/types/product';
 
 // Props

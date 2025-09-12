@@ -1,14 +1,14 @@
 <template>
-  <UiCard @click="navigateToProduct" class="overflow-hidden transition-all duration-400 relative cursor-pointer">
+  <Card @click="navigateToProduct" class="overflow-hidden transition-all duration-400 relative cursor-pointer">
     <img :src="optimizedImageUrl" alt="Product image" class="w-full h-48 object-cover">
-    <UiCardContent class="p-4">
-      <UiCardTitle class="text-lg truncate">{{ product.name }}</UiCardTitle>
+    <CardContent class="p-4">
+      <CardTitle class="text-lg truncate">{{ product.name }}</CardTitle>
       <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" @click.stop class="text-sm text-muted-foreground hover:text-sky-500 transition-colors">
         {{ product.profiles.username }}
       </NuxtLink>
       <p v-else class="text-sm text-muted-foreground">Unknown Creator</p>
       <p class="font-semibold mt-2">{{ formatPrice(product.price) }}</p>
-    </UiCardContent>
+    </CardContent>
     <button
       @click.prevent.stop="toggleFavorite"
       class="absolute top-2 right-2 z-10 p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors duration-200"
@@ -17,10 +17,11 @@
       <HeartIconSolid v-if="isFavoritedState" class="w-6 h-6 text-red-500" />
       <HeartIcon v-else class="w-6 h-6 text-gray-400 dark:text-gray-300" />
     </button>
-  </UiCard>
+  </Card>
 </template>
 
 <script setup lang="ts">
+import { Card, CardContent, CardTitle } from '~/components/ui/card'
 import type { Product } from '~/types/product'
 import HeartIcon from '~/components/icons/HeartIcon.vue'
 import HeartIconSolid from '~/components/icons/HeartIconSolid.vue'

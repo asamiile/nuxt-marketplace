@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import type { Category, Tag } from '~/types/product'
-import Input from '~/components/ui/form/Input.vue'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import Input from '~/components/ui/input/Input.vue'
+import { buttonVariants } from '~/components/ui/button'
 
 const props = defineProps<{
   categories: Category[]

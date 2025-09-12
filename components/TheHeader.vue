@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watchEffect, computed } from 'vue'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import { buttonVariants } from '~/components/ui/button'
 import type { Profile } from '~/types/profile'
 import { useSupabaseHelpers } from '~/composables/useSupabaseHelpers'
 
