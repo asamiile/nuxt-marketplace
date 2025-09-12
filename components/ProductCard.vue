@@ -1,7 +1,9 @@
 <template>
   <Card @click="navigateToProduct" class="overflow-hidden transition-all duration-400 relative cursor-pointer">
-    <img :src="optimizedImageUrl" alt="Product image" class="w-full h-48 object-cover">
-    <CardContent class="p-4">
+    <CardHeader>
+      <img :src="optimizedImageUrl" alt="Product image" class="w-full h-48 object-cover">
+    </CardHeader>
+    <CardContent>
       <CardTitle class="text-lg truncate">{{ product.name }}</CardTitle>
       <NuxtLink v-if="product.profiles?.username" :to="`/creator/${product.profiles.username}`" @click.stop class="text-sm text-muted-foreground hover:text-sky-500 transition-colors">
         {{ product.profiles.username }}
@@ -21,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { Card, CardContent, CardTitle } from '~/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import type { Product } from '~/types/product'
 import HeartIcon from '~/components/icons/HeartIcon.vue'
 import HeartIconSolid from '~/components/icons/HeartIconSolid.vue'
