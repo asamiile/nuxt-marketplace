@@ -113,8 +113,8 @@ const {
   isFormInvalid,
   addTag,
   removeTag,
-  submit
-} = useProductForm('create')
+  submit,
+} = useProductForm('create', undefined, {})
 
 </script>
 

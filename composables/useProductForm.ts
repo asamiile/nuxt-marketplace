@@ -219,7 +219,7 @@ export function useProductForm(
       }
 
       if (mode === 'create') {
-        productData.status = isAdmin ? 'approved' : 'pending'
+        productData.status = 'pending'
       }
 
       let productId = mode === 'edit' && productBeingEdited ? productBeingEdited.id : null
