@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import UiPagination from '~/components/ui/Pagination.vue'
+import Button from '~/components/ui/button/Button.vue'
 import type { Product } from '~/types/product'
 
 definePageMeta({
@@ -71,9 +72,14 @@ const statusBadgeClass = (status: string | null) => {
 
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-6">
-      商品一覧
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">
+        商品一覧
+      </h1>
+      <NuxtLink to="/admin/products/new">
+        <Button>新規登録</Button>
+      </NuxtLink>
+    </div>
     <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">

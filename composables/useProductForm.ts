@@ -4,8 +4,16 @@ import type { ProductWithRelations } from '~/types/product'
 import type { Tag } from '~/types/product'
 
 type Mode = 'create' | 'edit'
+interface UseProductFormOptions {
+  isAdmin?: boolean
+}
 
-export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelations | null>) {
+export function useProductForm(
+  mode: Mode,
+  productToEdit?: Ref<ProductWithRelations | null>,
+  options: UseProductFormOptions = {},
+) {
+  const { isAdmin = false } = options
   const supabase = useSupabaseClient()
   const user = useCurrentUser()
   const router = useRouter()
@@ -211,7 +219,7 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
       }
 
       if (mode === 'create') {
-        productData.status = 'pending'
+        productData.status = isAdmin ? 'approved' : 'pending'
       }
 
       let productId = mode === 'edit' && productBeingEdited ? productBeingEdited.id : null
@@ -246,10 +254,15 @@ export function useProductForm(mode: Mode, productToEdit?: Ref<ProductWithRelati
       }
 
       // 6. Handle success
-      if (mode === 'create') {
+      if (isAdmin) {
+        showToast('成功', mode === 'create' ? '商品が正常に登録されました！' : '商品が正常に更新されました！')
+        router.push('/admin/products')
+      }
+      else if (mode === 'create') {
         showToast('成功', '商品の出品申請が完了しました。管理者による承認をお待ちください。')
         router.push('/dashboard')
-      } else {
+      }
+      else {
         showToast('成功', '商品が正常に更新されました！')
         router.push(`/product/${productId}`)
       }
