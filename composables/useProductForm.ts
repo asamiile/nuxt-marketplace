@@ -4,16 +4,11 @@ import type { ProductWithRelations } from '~/types/product'
 import type { Tag } from '~/types/product'
 
 type Mode = 'create' | 'edit'
-interface UseProductFormOptions {
-  isAdmin?: boolean
-}
 
 export function useProductForm(
   mode: Mode,
   productToEdit?: Ref<ProductWithRelations | null>,
-  options: UseProductFormOptions = {},
 ) {
-  const { isAdmin = false } = options
   const supabase = useSupabaseClient()
   const user = useCurrentUser()
   const router = useRouter()
@@ -222,20 +217,14 @@ export function useProductForm(
             p_file_url: newFileUrl,
             p_license_type: license_type.value,
             p_terms_of_use: terms_of_use.value,
-            p_tag_names: tags.value.map(t => t.name),
-            p_is_admin: isAdmin
+            p_tag_names: tags.value.map(t => t.name)
         })
 
         if (rpcError) throw rpcError;
 
         // Handle success for creation
-        if (isAdmin) {
-          showToast({ title: '成功', description: '商品が正常に登録されました！' });
-          router.push('/admin/products');
-        } else {
-          showToast({ title: '成功', description: '商品の出品申請が完了しました。管理者による承認をお待ちください。' });
-          router.push('/dashboard');
-        }
+        showToast({ title: '成功', description: '商品の出品申請が完了しました。管理者による承認をお待ちください。' });
+        router.push('/dashboard');
 
       } else {
         // Keep existing logic for 'edit' mode
@@ -267,7 +256,9 @@ export function useProductForm(
 
         // Handle success for edit
         showToast({ title: '成功', description: '商品が正常に更新されました！' });
-        router.push(isAdmin ? '/admin/products' : `/product/${productId}`);
+        // Since admin creation is removed, edit mode will only be used by creators.
+        // Redirect to the product page.
+        router.push(`/product/${productId}`);
       }
 
       hasAttemptedSubmit.value = false

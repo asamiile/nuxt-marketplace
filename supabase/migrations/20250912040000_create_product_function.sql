@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION create_product(
     p_file_url TEXT,
     p_license_type TEXT,
     p_terms_of_use TEXT,
-    p_tag_names TEXT[],
-    p_is_admin BOOLEAN
+    p_tag_names TEXT[]
 )
 RETURNS BIGINT -- Returns the ID of the created product
 LANGUAGE plpgsql
@@ -22,7 +21,7 @@ DECLARE
 BEGIN
     -- 1. Insert the product into the products table
     INSERT INTO public.products (name, description, price, category_id, image_url, file_url, license_type, terms_of_use, creator_id, status)
-    VALUES (p_name, p_description, p_price, p_category_id, p_image_url, p_file_url, p_license_type, p_terms_of_use, auth.uid(), CASE WHEN p_is_admin THEN 'approved' ELSE 'pending' END)
+    VALUES (p_name, p_description, p_price, p_category_id, p_image_url, p_file_url, p_license_type, p_terms_of_use, auth.uid(), 'pending')
     RETURNING id INTO new_product_id;
 
     -- 2. Upsert tags and link them in product_tags
