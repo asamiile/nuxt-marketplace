@@ -37,9 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import Input from '~/components/ui/form/Input.vue'
-import Label from '~/components/ui/form/Label.vue'
-import Textarea from '~/components/ui/form/Textarea.vue'
+import Input from '~/components/ui/input/Input.vue'
+import Label from '~/components/ui/label/Label.vue'
+import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
 
 const {

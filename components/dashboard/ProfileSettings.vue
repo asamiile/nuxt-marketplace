@@ -9,8 +9,8 @@
     <div v-if="loading" class="text-center py-12 bg-secondary rounded-lg">
       <p>プロフィールを読み込み中...</p>
     </div>
-    <UiCard v-else>
-      <UiCardContent class="p-4 md:p-8">
+    <Card v-else>
+      <CardContent class="p-4 md:p-8">
         <form @submit.prevent="updateProfile" class="space-y-6">
           <div>
             <Label for="username">ユーザー名</Label>
@@ -47,19 +47,20 @@
             </Button>
           </div>
         </form>
-      </UiCardContent>
-    </UiCard>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { z } from 'zod'
-import Input from '~/components/ui/form/Input.vue'
-import Label from '~/components/ui/form/Label.vue'
-import Textarea from '~/components/ui/form/Textarea.vue'
+import { Card, CardContent } from '~/components/ui/card'
+import { buttonVariants } from '~/components/ui/button'
+import Input from '~/components/ui/input/Input.vue'
+import Label from '~/components/ui/label/Label.vue'
+import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 const supabase = useSupabaseClient()

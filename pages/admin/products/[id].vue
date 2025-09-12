@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import Input from '~/components/ui/form/Input.vue'
-import Label from '~/components/ui/form/Label.vue'
-import Textarea from '~/components/ui/form/Textarea.vue'
+import Input from '~/components/ui/input/Input.vue'
+import Label from '~/components/ui/label/Label.vue'
+import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
-import Select from '~/components/ui/form/Select.vue'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 import type { Product, Category } from '~/types/product'
 
 definePageMeta({
@@ -102,20 +102,30 @@ const handleSave = async () => {
           <div>
             <Label for="category">カテゴリ</Label>
             <Select v-model="form.category_id" id="category">
-              <option :value="null">カテゴリなし</option>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
+              <SelectTrigger>
+                <SelectValue placeholder="カテゴリを選択" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem :value="null">カテゴリなし</SelectItem>
+                <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
+                  {{ category.name }}
+                </SelectItem>
+              </SelectContent>
             </Select>
           </div>
 
           <div>
             <Label for="status">承認ステータス</Label>
             <Select v-model="form.status" id="status">
-              <option value="pending">承認待ち</option>
-              <option value="approved">承認済み</option>
-              <option value="rejected">要修正</option>
-              <option value="banned">却下</option>
+              <SelectTrigger>
+                <SelectValue placeholder="ステータスを選択" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">承認待ち</SelectItem>
+                <SelectItem value="approved">承認済み</SelectItem>
+                <SelectItem value="rejected">要修正</SelectItem>
+                <SelectItem value="banned">却下</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 

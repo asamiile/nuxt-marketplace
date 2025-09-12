@@ -4,8 +4,8 @@
       <h2 class="text-2xl font-semibold text-foreground mb-3">出品した商品</h2>
       <p class="text-muted-foreground">作成した商品を管理します。</p>
     </div>
-    <UiCard>
-      <UiCardContent class="p-4 md:p-8">
+    <Card>
+      <CardContent class="p-4 md:p-8">
         <Tabs v-model="activeStatusTab" class="mb-4">
           <TabsList>
             <TabsTrigger value="all">すべて</TabsTrigger>
@@ -45,32 +45,33 @@
               <NuxtLink v-if="product.status === 'approved' || product.status === 'rejected'" :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', size: 'sm' })">
                 編集
               </NuxtLink>
-              <UiButton @click="confirmDelete(product)" variant="destructive" size="sm">
+              <Button @click="confirmDelete(product)" variant="destructive" size="sm">
                 削除
-              </UiButton>
+              </Button>
             </div>
           </div>
         </div>
 
         <div v-if="totalPages > 1" class="mt-6 flex justify-center">
-          <UiPagination
+          <Pagination
             v-model:currentPage="currentPage"
             :total-pages="totalPages"
           />
         </div>
-      </UiCardContent>
-    </UiCard>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import type { Product } from '~/types/product'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import { buttonVariants, Button } from '~/components/ui/button'
+import { Card, CardContent } from '~/components/ui/card'
 import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
-import UiPagination from '~/components/ui/Pagination.vue'
+import Pagination from '~/components/ui/Pagination.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()

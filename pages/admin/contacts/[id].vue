@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/contact'
-import UiSelect from '~/components/ui/form/Select.vue'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 
 definePageMeta({
   layout: 'admin',
@@ -86,13 +86,18 @@ const getStatusClass = (status: string | undefined) => {
             {{ contact?.status }}
           </span>
            <div class="w-40">
-            <UiSelect
+            <Select
               v-if="selectedStatus"
               v-model="selectedStatus"
-              @change="updateStatus"
+              @update:modelValue="updateStatus"
             >
-              <option v-for="s in statusOptions" :key="s" :value="s">{{ s }}</option>
-            </UiSelect>
+              <SelectTrigger>
+                <SelectValue placeholder="ステータスを選択" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="s in statusOptions" :key="s" :value="s">{{ s }}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

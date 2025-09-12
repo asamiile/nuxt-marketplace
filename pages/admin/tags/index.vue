@@ -3,25 +3,25 @@
     <h1 class="text-3xl font-bold mb-6">タグ管理</h1>
 
     <!-- New Tag Form -->
-    <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg">
+    <div class="mb-8 p-4 bg-white dark:bg-secondary rounded-lg">
       <h2 class="text-xl font-semibold mb-4">新規タグ作成</h2>
       <form @submit.prevent="handleCreateTag">
         <div class="flex items-center gap-4">
-          <UiFormInput
+          <Input
             v-model="newTagName"
             placeholder="タグ名"
             required
             class="flex-grow"
           />
-          <UiButton type="submit" :disabled="pending" class="whitespace-nowrap">
+          <Button type="submit" :disabled="pending" class="whitespace-nowrap">
             {{ pending ? '作成中...' : '作成' }}
-          </UiButton>
+          </Button>
         </div>
       </form>
     </div>
 
     <!-- Tags Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+    <div class="bg-white dark:bg-secondary rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
@@ -69,8 +69,8 @@
 import { ref, computed } from 'vue'
 import type { Tag } from '~/types/product'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/Button.vue'
-import UiFormInput from '~/components/ui/form/Input.vue'
+import Button from '~/components/ui/button/Button.vue'
+import Input from '~/components/ui/input/Input.vue'
 
 definePageMeta({
   layout: 'admin',
