@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import type { VariantProps } from 'class-variance-authority'
-import { cn } from '~/lib/utils'
-import { buttonVariants } from './buttonVariants'
-type ButtonProps = VariantProps<typeof buttonVariants>
-interface Props {
-  variant?: ButtonProps['variant']
-  size?: ButtonProps['size']
-  class?: string
+import type { PrimitiveProps } from "reka-ui"
+import type { HTMLAttributes } from "vue"
+import type { ButtonVariants } from "."
+import { Primitive } from "reka-ui"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "."
+
+interface Props extends PrimitiveProps {
+  variant?: ButtonVariants["variant"]
+  size?: ButtonVariants["size"]
+  class?: HTMLAttributes["class"]
 }
+
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'default',
-  size: 'default',
+  as: "button",
 })
 </script>
 
 <template>
-  <button :class="cn(buttonVariants({ variant, size }), props.class)">
+  <Primitive
+    data-slot="button"
+    :as="as"
+    :as-child="asChild"
+    :class="cn(buttonVariants({ variant, size }), props.class)"
+  >
     <slot />
-  </button>
+  </Primitive>
 </template>
-	
