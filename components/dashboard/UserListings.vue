@@ -30,7 +30,7 @@
           </NuxtLink>
         </div>
         <div v-else class="space-y-4">
-          <div v-for="product in filteredProducts" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
+          <div v-for="product in paginatedProducts" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
             <div class="flex items-center gap-4 flex-1 min-w-0">
               <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
               <div class="min-w-0">
@@ -51,18 +51,26 @@
             </div>
           </div>
         </div>
+
+        <div v-if="totalPages > 1" class="mt-6 flex justify-center">
+          <UiPagination
+            v-model:currentPage="currentPage"
+            :total-pages="totalPages"
+          />
+        </div>
       </UiCardContent>
     </UiCard>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import type { Product } from '~/types/product'
 import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
+import UiPagination from '~/components/ui/Pagination.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
@@ -73,11 +81,29 @@ const pending = ref(true)
 const error = ref<Error | null>(null)
 const activeStatusTab = ref('all')
 
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 5 // Show 5 products per page
+
 const filteredProducts = computed(() => {
   if (activeStatusTab.value === 'all') {
     return products.value
   }
   return products.value.filter(product => product.status === activeStatusTab.value)
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredProducts.value.length / itemsPerPage)
+})
+
+const paginatedProducts = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  return filteredProducts.value.slice(startIndex, startIndex + itemsPerPage)
+})
+
+// Reset to page 1 when tab changes
+watch(activeStatusTab, () => {
+  currentPage.value = 1
 })
 
 const statusInfo = (status: Product['status']) => {
