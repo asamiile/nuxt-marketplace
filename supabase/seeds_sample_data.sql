@@ -63,7 +63,9 @@ INSERT INTO public.products (name, description, price, image_url, file_url, crea
 ('ミニマルなSNSテンプレート', 'シンプルなデザインのSNS投稿用テンプレート集（Canva対応）。', 3500, 'https://placehold.jp/300x300.png', 'https://example.com/file.zip', '【creatorのUUIDを貼り付け】', 3, '商用利用ライセンス', 'SNSマーケティングにご活用ください。', 'pending'),
 ('コーポレートロゴアイコン', 'ビジネス向けのモダンでシンプルなロゴアイコンコレクション。', 4000, 'https://placehold.jp/300x300.png', 'https://example.com/file.ai', '【creatorのUUIDを貼り付け】', 4, '商用利用ライセンス', 'ロゴデザインのベースとして利用可能です。', 'pending'),
 ('ドローン空撮：海岸線', 'ドローンで撮影した美しい海岸線の4K動画素材。', 12000, 'https://placehold.jp/300x300.png', 'https://example.com/file.mp4', '【creatorのUUIDを貼り付け】', 6, '商用利用ライセンス', 'プロモーションビデオやウェブサイトの背景に。', 'pending'),
-('Lo-Fi Hip Hopトラック', 'リラックスした雰囲気のLo-Fi Hip Hop BGM。', 3000, 'https://placehold.jp/300x300.png', 'https://example.com/file.mp3', '【creatorのUUIDを貼り付け】', 7, '商用利用ライセンス', '作業用BGMや動画のBGMとして。', 'pending');
+('Lo-Fi Hip Hopトラック', 'リラックスした雰囲気のLo-Fi Hip Hop BGM。', 3000, 'https://placehold.jp/300x300.png', 'https://example.com/file.mp3', '【creatorのUUIDを貼り付け】', 7, '商用利用ライセンス', '作業用BGMや動画のBGMとして。', 'pending'),
+('要修正のUIキット', 'UIが古いため修正が必要です。', 5000, 'https://placehold.jp/300x300.png', 'https://example.com/file.fig', '【creatorのUUIDを貼り付け】', 3, '商用利用ライセンス', '要修正のサンプルデータです。', 'rejected'),
+('規約違反のイラスト', '規約違反のため非公開になりました。', 9999, 'https://placehold.jp/300x300.png', 'https://example.com/file.png', '【creatorのUUIDを貼り付け】', 1, '個人利用ライセンス', '禁止されているコンテンツです。', 'banned');
 
 -- `product_tags` テーブル: 上記の商品にタグを紐付けます
 INSERT INTO public.product_tags (product_id, tag_id) VALUES
