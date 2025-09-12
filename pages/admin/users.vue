@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/Button.vue'
+import UiButton from '~/components/ui/button/ButtonA.vue'
 
 definePageMeta({
   layout: 'admin',

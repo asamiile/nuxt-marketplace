@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import Input from '~/components/ui/form/Input.vue'
 import Label from '~/components/ui/form/Label.vue'
 import Textarea from '~/components/ui/form/Textarea.vue'
-import Button from '~/components/ui/button/Button.vue'
+import Button from '~/components/ui/button/ButtonA.vue'
 import Select from '~/components/ui/form/Select.vue'
 import type { Product, Category } from '~/types/product'
 

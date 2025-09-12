@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Input from '~/components/ui/form/Input.vue'
 import Label from '~/components/ui/form/Label.vue'
-import Button from '~/components/ui/button/Button.vue'
+import Button from '~/components/ui/button/ButtonA.vue'
 import type { Tag } from '~/types/product'
 
 definePageMeta({

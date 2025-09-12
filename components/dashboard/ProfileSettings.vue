@@ -58,7 +58,7 @@ import { z } from 'zod'
 import Input from '~/components/ui/form/Input.vue'
 import Label from '~/components/ui/form/Label.vue'
 import Textarea from '~/components/ui/form/Textarea.vue'
-import Button from '~/components/ui/button/Button.vue'
+import Button from '~/components/ui/button/ButtonA.vue'
 import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 

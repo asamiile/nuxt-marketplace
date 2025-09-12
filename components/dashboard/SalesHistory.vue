@@ -89,7 +89,7 @@
 import { ref, computed, watch } from 'vue'
 import UiInput from '~/components/ui/form/Input.vue'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/Button.vue'
+import UiButton from '~/components/ui/button/ButtonA.vue'
 
 const supabase = useSupabaseClient()
 const { showToast } = useAlert()

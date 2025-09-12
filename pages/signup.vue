@@ -39,7 +39,7 @@ import { z } from 'zod'
 import { buttonVariants } from '~/components/ui/button/buttonVariants'
 import Input from '~/components/ui/form/Input.vue'
 import Label from '~/components/ui/form/Label.vue'
-import Button from '~/components/ui/button/Button.vue'
+import Button from '~/components/ui/button/ButtonA.vue'
 
 const supabase = useSupabaseClient()
 const router = useRouter()

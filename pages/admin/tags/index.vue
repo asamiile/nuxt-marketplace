@@ -69,7 +69,7 @@
 import { ref, computed } from 'vue'
 import type { Tag } from '~/types/product'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/Button.vue'
+import UiButton from '~/components/ui/button/ButtonA.vue'
 import UiFormInput from '~/components/ui/form/Input.vue'
 
 definePageMeta({
