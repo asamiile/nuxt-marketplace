@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold mb-6">カテゴリ管理</h1>
 
     <!-- New Category Form -->
-    <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg">
+    <div class="mb-8 p-4 bg-white dark:bg-secondary rounded-lg">
       <h2 class="text-xl font-semibold mb-4">新規カテゴリ作成</h2>
       <form @submit.prevent="handleCreateCategory">
         <div class="flex items-center gap-4">
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Categories Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+    <div class="bg-white dark:bg-secondary rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
