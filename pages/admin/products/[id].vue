@@ -32,7 +32,16 @@ const { data: product, pending: productPending, error: productError } = await us
 // This ensures server and client state are consistent.
 watch(product, (newProduct) => {
   if (newProduct) {
-    form.value = structuredClone(newProduct)
+    // Manually copy properties to avoid structuredClone error with non-cloneable proxy objects
+    form.value = {
+      id: newProduct.id,
+      name: newProduct.name,
+      description: newProduct.description,
+      price: newProduct.price,
+      category_id: newProduct.category_id,
+      status: newProduct.status,
+      admin_notes: newProduct.admin_notes,
+    }
   }
 }, { immediate: true })
 
