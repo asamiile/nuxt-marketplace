@@ -160,7 +160,7 @@ export function useProductForm(
     // For 'edit' mode, we need to ensure the product to edit is loaded.
     const productBeingEdited = productToEdit?.value
     if (mode === 'edit' && !productBeingEdited) {
-      showToast({ title: 'エラー', description: '編集対象の商品が読み込まれていません。', variant: 'destructive' });
+      showToast('エラー', '編集対象の商品が読み込まれていません。', 'error');
       return;
     }
 
@@ -223,7 +223,7 @@ export function useProductForm(
         if (rpcError) throw rpcError;
 
         // Handle success for creation
-        showToast({ title: '成功', description: '商品の出品申請が完了しました。管理者による承認をお待ちください。' });
+        showToast('成功', '商品の出品申請が完了しました。管理者による承認をお待ちください。', 'success');
         router.push('/dashboard');
 
       } else {
@@ -255,7 +255,7 @@ export function useProductForm(
         }
 
         // Handle success for edit
-        showToast({ title: '成功', description: '商品が正常に更新されました！' });
+        showToast('成功', '商品が正常に更新されました！', 'success');
         // Since admin creation is removed, edit mode will only be used by creators.
         // Redirect to the product page.
         router.push(`/product/${productId}`);
@@ -264,7 +264,7 @@ export function useProductForm(
       hasAttemptedSubmit.value = false
 
     } catch (error: any) {
-      showToast({ title: 'エラー', description: error.message || '予期せぬエラーが発生しました。', variant: 'destructive' });
+      showToast('エラー', error.message || '予期せぬエラーが発生しました。', 'error');
     } finally {
       isSubmitting.value = false
     }
