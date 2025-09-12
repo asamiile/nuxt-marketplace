@@ -117,7 +117,11 @@ DROP POLICY IF EXISTS "Products are publicly viewable." ON public.products;
 CREATE POLICY "Products are publicly viewable." ON public.products FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Authenticated users can create products." ON public.products;
-CREATE POLICY "Authenticated users can create products." ON public.products FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Admin can create products directly" ON public.products;
+DROP POLICY IF EXISTS "Users can create their own products" ON public.products;
+
+CREATE POLICY "Users can create their own products" ON public.products
+    FOR INSERT WITH CHECK (auth.uid() = creator_id);
 
 DROP POLICY IF EXISTS "Creators can update their own products." ON public.products;
 CREATE POLICY "Creators can update their own products." ON public.products FOR UPDATE USING (auth.uid() = creator_id) WITH CHECK (auth.uid() = creator_id);
