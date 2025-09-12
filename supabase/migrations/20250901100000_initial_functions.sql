@@ -99,12 +99,59 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- 修正版：search_products 関数
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, double precision, double precision);
-DROP FUNCTION IF EXISTS search_products(bigint, bigint[], text, numeric, numeric);
-DROP FUNCTION IF EXISTS search_products(BIGINT, BIGINT[], TEXT, NUMERIC, NUMERIC); -- Add drop for the latest signature just in case
+-- search_products functions
+-- Drop existing functions to avoid conflicts before creating new ones.
+DROP FUNCTION IF EXISTS public.search_products(bigint, bigint[], text, text, text);
+DROP FUNCTION IF EXISTS public._search_products_internal(bigint, bigint[], text, numeric, numeric);
+-- Drop old versions just in case
+DROP FUNCTION IF EXISTS public.search_products(bigint, bigint[], text, numeric, numeric);
 
-CREATE OR REPLACE FUNCTION search_products(
+
+-- Public-facing function exposed to PostgREST.
+-- Handles TEXT input for price, converting empty strings to NULL, then calls the internal function.
+CREATE OR REPLACE FUNCTION public.search_products(
+    p_category_id BIGINT DEFAULT NULL,
+    p_tag_ids BIGINT[] DEFAULT NULL,
+    p_keyword TEXT DEFAULT NULL,
+    p_min_price TEXT DEFAULT NULL,
+    p_max_price TEXT DEFAULT NULL
+)
+RETURNS TABLE (
+    id BIGINT,
+    created_at TIMESTAMPTZ,
+    name TEXT,
+    description TEXT,
+    price NUMERIC,
+    image_url TEXT,
+    file_url TEXT,
+    creator_id UUID,
+    license_type TEXT,
+    terms_of_use TEXT,
+    category_id BIGINT,
+    status TEXT,
+    admin_notes TEXT,
+    category_name TEXT,
+    profiles JSON,
+    total_count BIGINT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM public._search_products_internal(
+        p_category_id,
+        p_tag_ids,
+        p_keyword,
+        NULLIF(p_min_price, '')::NUMERIC,
+        NULLIF(p_max_price, '')::NUMERIC
+    );
+END;
+$$;
+
+
+-- Internal function that performs the actual search logic.
+-- Accepts NUMERIC for price and is not directly exposed to the API.
+CREATE OR REPLACE FUNCTION public._search_products_internal(
     p_category_id BIGINT DEFAULT NULL,
     p_tag_ids BIGINT[] DEFAULT NULL,
     p_keyword TEXT DEFAULT NULL,
@@ -125,10 +172,8 @@ RETURNS TABLE (
     category_id BIGINT,
     status TEXT,
     admin_notes TEXT,
-    -- 結合したテーブルのカラム
     category_name TEXT,
     profiles JSON,
-    -- ページネーション用の総数
     total_count BIGINT
 )
 LANGUAGE plpgsql
@@ -138,36 +183,45 @@ DECLARE
 BEGIN
     RETURN QUERY
     WITH filtered_products AS (
-        SELECT
-            p.id
-        FROM
-            products p
-        LEFT JOIN
-            product_tags pt ON p.id = pt.product_id
+        SELECT p.id as product_id
+        FROM products p
+        LEFT JOIN product_tags pt ON p.id = pt.product_id
         WHERE
             p.status = 'approved'
             AND (p_category_id IS NULL OR p.category_id = p_category_id)
             AND (p_keyword IS NULL OR p.name ILIKE '%' || p_keyword || '%')
             AND (p_min_price IS NULL OR p.price >= p_min_price)
             AND (p_max_price IS NULL OR p.price <= p_max_price)
-        GROUP BY
-            p.id
+        GROUP BY p.id
         HAVING
-            (tag_count IS NULL OR array_length(p_tag_ids, 1) = 0 OR COUNT(DISTINCT pt.tag_id) = tag_count)
+            (tag_count IS NULL OR tag_count = 0) OR
+            (COUNT(DISTINCT pt.tag_id) FILTER (WHERE pt.tag_id = ANY(p_tag_ids))) = tag_count
     )
     SELECT
-        p.*,
+        p.id,
+        p.created_at,
+        p.name,
+        p.description,
+        p.price,
+        p.image_url,
+        p.file_url,
+        p.creator_id,
+        p.license_type,
+        p.terms_of_use,
+        p.category_id,
+        p.status,
+        p.admin_notes,
         c.name AS category_name,
-        json_build_object('username', pr.username, 'avatar_url', pr.avatar_url) as profiles,
+        json_build_object('username', COALESCE(pr.username, p.creator_id::TEXT), 'avatar_url', pr.avatar_url) as profiles,
         (SELECT COUNT(*) FROM filtered_products) AS total_count
     FROM
         products p
-    JOIN
+    LEFT JOIN
         profiles pr ON p.creator_id = pr.id
     LEFT JOIN
         categories c ON p.category_id = c.id
     WHERE
-        p.id IN (SELECT id FROM filtered_products)
+        p.id IN (SELECT product_id FROM filtered_products)
     ORDER BY
         p.created_at DESC;
 END;
