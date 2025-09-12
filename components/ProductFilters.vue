@@ -13,17 +13,23 @@ const emit = defineEmits(['update:filters'])
 
 const isFiltersVisible = ref(false)
 
-const filters = ref({
+const initialFilters = {
   keyword: '',
   categoryId: null,
   tagIds: [],
   minPrice: null,
   maxPrice: null,
-})
+}
+
+const filters = ref({ ...initialFilters })
 
 watch(filters, (newFilters) => {
   emit('update:filters', { ...newFilters })
 }, { deep: true })
+
+function resetFilters() {
+  filters.value = { ...initialFilters }
+}
 
 const activeFilterCount = computed(() => {
   let count = 0
@@ -111,6 +117,15 @@ const activeFilterCount = computed(() => {
             </label>
           </div>
         </div>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button
+          @click="resetFilters"
+          :class="buttonVariants({ variant: 'ghost' })"
+        >
+          リセット
+        </button>
       </div>
     </div>
   </div>
