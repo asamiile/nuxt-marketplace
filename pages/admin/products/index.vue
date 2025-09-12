@@ -49,6 +49,8 @@ const translateStatus = (status: string | null) => {
     case 'approved':
       return '承認済み'
     case 'rejected':
+      return '要修正'
+    case 'banned':
       return '却下'
     default:
       return '不明'
@@ -63,8 +65,10 @@ const statusBadgeClass = (status: string | null) => {
       return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
     case 'rejected':
       return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+    case 'banned':
+      return 'bg-gray-500 text-white dark:bg-gray-700 dark:text-gray-200'
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300'
   }
 }
 </script>
