@@ -83,7 +83,7 @@ const activeStatusTab = ref('all')
 
 // Pagination
 const currentPage = ref(1)
-const itemsPerPage = 5 // Show 5 products per page
+const itemsPerPage = 10 // Show 10 products per page
 
 const filteredProducts = computed(() => {
   if (activeStatusTab.value === 'all') {
