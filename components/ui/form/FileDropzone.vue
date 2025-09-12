@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
@@ -13,22 +13,50 @@ const emit = defineEmits(['update:modelValue']);
 const isDragging = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 const previewUrl = ref<string | null>(props.initialPreviewUrl || null);
+const isImage = ref(false);
+
+const checkIsImage = (file: File | null | undefined) => {
+  if (!file) return false;
+  return file.type.startsWith('image/');
+};
 
 watch(() => props.initialPreviewUrl, (newUrl) => {
   previewUrl.value = newUrl || null;
-});
+  if (newUrl) {
+    isImage.value = true; // Assume initial URL is an image
+  }
+}, { immediate: true });
 
 watch(() => props.modelValue, (newFile) => {
+  isImage.value = checkIsImage(newFile);
   if (newFile) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      previewUrl.value = e.target?.result as string;
-    };
-    reader.readAsDataURL(newFile);
+    if (isImage.value) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewUrl.value = e.target?.result as string;
+      };
+      reader.readAsDataURL(newFile);
+    } else {
+      previewUrl.value = null; // Clear preview for non-images
+    }
   } else if (!props.initialPreviewUrl) {
     previewUrl.value = null;
+    isImage.value = false;
+  } else {
+    // Revert to initial state if model is cleared but initial URL exists
+    previewUrl.value = props.initialPreviewUrl;
+    isImage.value = true;
   }
-});
+}, { immediate: true });
+
+const formatFileSize = (bytes?: number) => {
+  if (bytes === undefined) return '';
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
 
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -85,10 +113,16 @@ const openFileDialog = () => {
       :accept="accept"
       @change="handleFileChange"
     >
-    <div v-if="previewUrl" class="flex flex-col items-center">
-      <img :src="previewUrl" alt="File preview" class="max-h-48 max-w-full rounded-lg">
-      <p class="mt-2 text-sm text-muted-foreground break-all">
-        {{ modelValue?.name || '新しい画像を選択' }}
+    <div v-if="modelValue" class="flex flex-col items-center text-center">
+      <img v-if="isImage && previewUrl" :src="previewUrl" alt="File preview" class="max-h-48 max-w-full rounded-lg">
+      <div v-else class="flex flex-col items-center justify-center space-y-2">
+        <!-- Generic file icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-10 w-10 text-muted-foreground"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        <p class="text-sm font-semibold text-foreground break-all">{{ modelValue.name }}</p>
+        <p class="text-xs text-muted-foreground">{{ formatFileSize(modelValue.size) }}</p>
+      </div>
+      <p class="mt-2 text-sm text-muted-foreground">
+        クリックまたはドラッグ＆ドロップでファイルを変更
       </p>
     </div>
     <div v-else class="flex flex-col items-center justify-center space-y-2">
