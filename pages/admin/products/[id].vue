@@ -26,17 +26,28 @@ const form = ref<Partial<Product>>({
 const isSaving = ref(false)
 
 // Fetch product data
-const { data: product, pending: productPending, error: productError } = await useFetch<Product>(`/api/admin/products/${productId}`, {
-  onResponse({ response }) {
-    if (response.ok) {
-      // Use structuredClone to avoid reactivity issues with the original data
-      form.value = structuredClone(response._data)
+const { data: product, pending: productPending, error: productError } = await useFetch<Product>(`/api/admin/products/${productId}`)
+
+// Watch for the product data to populate the form.
+// This ensures server and client state are consistent.
+watch(product, (newProduct) => {
+  if (newProduct) {
+    // Manually copy properties to avoid structuredClone error with non-cloneable proxy objects
+    form.value = {
+      id: newProduct.id,
+      name: newProduct.name,
+      description: newProduct.description,
+      price: newProduct.price,
+      category_id: newProduct.category_id,
+      status: newProduct.status,
+      admin_notes: newProduct.admin_notes,
     }
-  },
-  onResponseError: ({ response }) => {
-    showToast('エラー', '商品データの取得に失敗しました。', 'error')
   }
-})
+}, { immediate: true })
+
+if (productError.value) {
+  showToast('エラー', '商品データの取得に失敗しました。', 'error')
+}
 
 // Fetch categories for the select dropdown
 const { data: categories, pending: categoriesPending, error: categoriesError } = await useFetch<Category[]>('/api/admin/categories', {
@@ -103,7 +114,8 @@ const handleSave = async () => {
             <Select v-model="form.status" id="status">
               <option value="pending">承認待ち</option>
               <option value="approved">承認済み</option>
-              <option value="rejected">却下</option>
+              <option value="rejected">要修正</option>
+              <option value="banned">却下</option>
             </Select>
           </div>
 

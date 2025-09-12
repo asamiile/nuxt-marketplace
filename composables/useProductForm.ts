@@ -227,7 +227,7 @@ export function useProductForm(
         router.push('/dashboard');
 
       } else {
-        // Keep existing logic for 'edit' mode
+        // Logic for 'edit' mode
         const productId = productBeingEdited!.id;
         const productData = {
           name: name.value,
@@ -238,6 +238,8 @@ export function useProductForm(
           file_url: newFileUrl,
           license_type: license_type.value,
           terms_of_use: terms_of_use.value,
+          // When a product is edited, its status is reset to 'pending' for re-approval.
+          status: 'pending'
         };
 
         const { error: dbError } = await supabase.from('products').update(productData).eq('id', productId);
@@ -255,10 +257,9 @@ export function useProductForm(
         }
 
         // Handle success for edit
-        showToast('成功', '商品が正常に更新されました！', 'success');
-        // Since admin creation is removed, edit mode will only be used by creators.
-        // Redirect to the product page.
-        router.push(`/product/${productId}`);
+        showToast('成功', '商品の変更を申請しました。管理者による承認をお待ちください。', 'success');
+        // Redirect to the dashboard's listings tab.
+        router.push('/dashboard?tab=listings');
       }
 
       hasAttemptedSubmit.value = false
