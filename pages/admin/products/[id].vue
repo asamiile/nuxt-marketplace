@@ -114,7 +114,8 @@ const handleSave = async () => {
             <Select v-model="form.status" id="status">
               <option value="pending">承認待ち</option>
               <option value="approved">承認済み</option>
-              <option value="rejected">却下</option>
+              <option value="rejected">要修正</option>
+              <option value="banned">却下</option>
             </Select>
           </div>
 

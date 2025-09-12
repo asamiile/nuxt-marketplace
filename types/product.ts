@@ -1,3 +1,5 @@
+export type ProductStatus = 'pending' | 'approved' | 'rejected' | 'banned';
+
 export interface Product {
   id: number;
   created_at: string;
@@ -10,6 +12,8 @@ export interface Product {
   category_id: number | null;
   license_type: string | null;
   terms_of_use: string | null;
+  status: ProductStatus;
+  admin_notes: string | null;
   profiles: {
     username: string | null;
     avatar_url: string | null;
