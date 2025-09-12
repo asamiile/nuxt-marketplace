@@ -26,17 +26,19 @@ const form = ref<Partial<Product>>({
 const isSaving = ref(false)
 
 // Fetch product data
-const { data: product, pending: productPending, error: productError } = await useFetch<Product>(`/api/admin/products/${productId}`, {
-  onResponse({ response }) {
-    if (response.ok) {
-      // Use structuredClone to avoid reactivity issues with the original data
-      form.value = structuredClone(response._data)
-    }
-  },
-  onResponseError: ({ response }) => {
-    showToast('エラー', '商品データの取得に失敗しました。', 'error')
+const { data: product, pending: productPending, error: productError } = await useFetch<Product>(`/api/admin/products/${productId}`)
+
+// Watch for the product data to populate the form.
+// This ensures server and client state are consistent.
+watch(product, (newProduct) => {
+  if (newProduct) {
+    form.value = structuredClone(newProduct)
   }
-})
+}, { immediate: true })
+
+if (productError.value) {
+  showToast('エラー', '商品データの取得に失敗しました。', 'error')
+}
 
 // Fetch categories for the select dropdown
 const { data: categories, pending: categoriesPending, error: categoriesError } = await useFetch<Category[]>('/api/admin/categories', {
