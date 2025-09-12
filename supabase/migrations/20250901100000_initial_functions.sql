@@ -131,8 +131,7 @@ RETURNS TABLE (
     status TEXT,
     admin_notes TEXT,
     category_name TEXT,
-    username TEXT,
-    avatar_url TEXT,
+    profiles JSON,
     total_count BIGINT
 )
 LANGUAGE plpgsql
@@ -174,8 +173,7 @@ RETURNS TABLE (
     status TEXT,
     admin_notes TEXT,
     category_name TEXT,
-    username TEXT,
-    avatar_url TEXT,
+    profiles JSON,
     total_count BIGINT
 )
 LANGUAGE plpgsql
@@ -214,8 +212,7 @@ BEGIN
         p.status,
         p.admin_notes,
         c.name AS category_name,
-        COALESCE(pr.username, p.creator_id::TEXT) AS username,
-        pr.avatar_url,
+        json_build_object('username', COALESCE(pr.username, p.creator_id::TEXT), 'avatar_url', pr.avatar_url) as profiles,
         (SELECT COUNT(*) FROM filtered_products) AS total_count
     FROM
         products p
