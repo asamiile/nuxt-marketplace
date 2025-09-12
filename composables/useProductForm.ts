@@ -161,6 +161,14 @@ export function useProductForm(
     if (!validate() || !user.value) {
       return
     }
+
+    // For 'edit' mode, we need to ensure the product to edit is loaded.
+    const productBeingEdited = productToEdit?.value
+    if (mode === 'edit' && !productBeingEdited) {
+      showToast({ title: 'エラー', description: '編集対象の商品が読み込まれていません。', variant: 'destructive' });
+      return;
+    }
+
     if (mode === 'create' && (!imageFile.value || !assetFile.value)) {
         return
     }
@@ -168,11 +176,7 @@ export function useProductForm(
     isSubmitting.value = true
 
     try {
-      // 1. Get IDs from selected tags
-      const tagIds = tags.value.map(tag => tag.id)
-
-      // 2. Handle file uploads
-      const productBeingEdited = productToEdit?.value
+      // --- File Uploads (Common for Create and Edit) ---
       let newImageUrl = mode === 'edit' && productBeingEdited ? productBeingEdited.image_url : ''
       if (imageFile.value) {
         if (mode === 'edit' && productBeingEdited?.image_url) {
@@ -205,71 +209,71 @@ export function useProductForm(
         throw new Error('ファイルURLの取得に失敗しました。');
       }
 
-      // 3. Prepare product data
-      const productData: any = {
-        name: name.value,
-        description: description.value,
-        price: price.value,
-        category_id: categoryId.value,
-        image_url: newImageUrl,
-        file_url: newFileUrl,
-        license_type: license_type.value,
-        terms_of_use: terms_of_use.value,
-        creator_id: user.value.id,
-      }
 
+      // --- Database Operations ---
       if (mode === 'create') {
-        productData.status = 'pending'
-      }
+        // Use RPC for creation
+        const { data: newProductId, error: rpcError } = await supabase.rpc('create_product', {
+            p_name: name.value,
+            p_description: description.value,
+            p_price: price.value,
+            p_category_id: categoryId.value,
+            p_image_url: newImageUrl,
+            p_file_url: newFileUrl,
+            p_license_type: license_type.value,
+            p_terms_of_use: terms_of_use.value,
+            p_tag_names: tags.value.map(t => t.name),
+            p_is_admin: isAdmin
+        })
 
-      let productId = mode === 'edit' && productBeingEdited ? productBeingEdited.id : null
+        if (rpcError) throw rpcError;
 
-      // 4. Insert or Update product record
-      if (mode === 'create') {
-        const { data: newProduct, error: dbError } = await supabase.from('products').insert(productData).select().single()
-        if (dbError) throw new Error(`データベースエラー: ${dbError.message}`)
-        if (!newProduct) throw new Error('商品IDの取得に失敗しました。')
-        productId = newProduct.id
+        // Handle success for creation
+        if (isAdmin) {
+          showToast({ title: '成功', description: '商品が正常に登録されました！' });
+          router.push('/admin/products');
+        } else {
+          showToast({ title: '成功', description: '商品の出品申請が完了しました。管理者による承認をお待ちください。' });
+          router.push('/dashboard');
+        }
+
       } else {
-        const { error: dbError } = await supabase.from('products').update(productData).eq('id', productId)
-        if (dbError) throw new Error(`データベース更新エラー: ${dbError.message}`)
+        // Keep existing logic for 'edit' mode
+        const productId = productBeingEdited!.id;
+        const productData = {
+          name: name.value,
+          description: description.value,
+          price: price.value,
+          category_id: categoryId.value,
+          image_url: newImageUrl,
+          file_url: newFileUrl,
+          license_type: license_type.value,
+          terms_of_use: terms_of_use.value,
+        };
+
+        const { error: dbError } = await supabase.from('products').update(productData).eq('id', productId);
+        if (dbError) throw new Error(`データベース更新エラー: ${dbError.message}`);
+
+        // Handle tags for 'edit'
+        const { error: deleteError } = await supabase.from('product_tags').delete().eq('product_id', productId);
+        if (deleteError) throw new Error(`既存タグの削除エラー: ${deleteError.message}`);
+
+        const tagIds = tags.value.map(tag => tag.id);
+        if (tagIds.length > 0) {
+          const productTags = tagIds.map(tag_id => ({ product_id: productId, tag_id: tag_id }));
+          const { error: productTagError } = await supabase.from('product_tags').insert(productTags);
+          if (productTagError) throw new Error(`商品とタグの関連付けエラー: ${productTagError.message}`);
+        }
+
+        // Handle success for edit
+        showToast({ title: '成功', description: '商品が正常に更新されました！' });
+        router.push(isAdmin ? '/admin/products' : `/product/${productId}`);
       }
 
-      if (!productId) {
-        throw new Error('商品IDが不明です。')
-      }
-
-      // 5. Link tags to the product
-      if (mode === 'edit' && productId) {
-        const { error: deleteError } = await supabase.from('product_tags').delete().eq('product_id', productId)
-        if (deleteError) throw new Error(`既存タグの削除エラー: ${deleteError.message}`)
-      }
-      if (tagIds.length > 0 && productId) {
-        const productTags = tagIds.map(tag_id => ({
-          product_id: productId,
-          tag_id: tag_id,
-        }))
-        const { error: productTagError } = await supabase.from('product_tags').insert(productTags)
-        if (productTagError) throw new Error(`商品とタグの関連付けエラー: ${productTagError.message}`)
-      }
-
-      // 6. Handle success
-      if (isAdmin) {
-        showToast('成功', mode === 'create' ? '商品が正常に登録されました！' : '商品が正常に更新されました！')
-        router.push('/admin/products')
-      }
-      else if (mode === 'create') {
-        showToast('成功', '商品の出品申請が完了しました。管理者による承認をお待ちください。')
-        router.push('/dashboard')
-      }
-      else {
-        showToast('成功', '商品が正常に更新されました！')
-        router.push(`/product/${productId}`)
-      }
       hasAttemptedSubmit.value = false
 
     } catch (error: any) {
-      showToast('エラー', error.message || '予期せぬエラーが発生しました。', 'error')
+      showToast({ title: 'エラー', description: error.message || '予期せぬエラーが発生しました。', variant: 'destructive' });
     } finally {
       isSubmitting.value = false
     }
