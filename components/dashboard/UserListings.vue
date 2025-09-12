@@ -6,29 +6,43 @@
     </div>
     <UiCard>
       <UiCardContent class="p-4 md:p-8">
-        <div v-if="pending" class="text-center">
+        <Tabs v-model="activeStatusTab" class="mb-4">
+          <TabsList>
+            <TabsTrigger value="all">すべて</TabsTrigger>
+            <TabsTrigger value="approved">公開中</TabsTrigger>
+            <TabsTrigger value="pending">審査中</TabsTrigger>
+            <TabsTrigger value="rejected">要修正</TabsTrigger>
+            <TabsTrigger value="banned">却下</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <div v-if="pending" class="text-center py-8">
           <p>商品を読み込んでいます...</p>
         </div>
-        <div v-else-if="error" class="text-center text-destructive">
+        <div v-else-if="error" class="text-center text-destructive py-8">
           <p>商品の読み込み中にエラーが発生しました。</p>
         </div>
-        <div v-else-if="products.length === 0" class="text-center text-muted-foreground">
-          <p>まだ出品した商品がありません。</p>
-          <NuxtLink to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
+        <div v-else-if="filteredProducts.length === 0" class="text-center text-muted-foreground py-8">
+          <p v-if="activeStatusTab === 'all'">まだ出品した商品がありません。</p>
+          <p v-else>このステータスの商品はありません。</p>
+          <NuxtLink v-if="activeStatusTab === 'all'" to="/sell" :class="buttonVariants({ variant: 'default', class: 'mt-4' })">
             最初の商品を出品する
           </NuxtLink>
         </div>
         <div v-else class="space-y-4">
-          <div v-for="product in products" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
-            <div class="flex items-center gap-4">
-              <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md">
-              <div>
-                <h3 class="font-semibold">{{ product.name }}</h3>
+          <div v-for="product in filteredProducts" :key="product.id" class="flex items-center justify-between p-4 border rounded-lg">
+            <div class="flex items-center gap-4 flex-1 min-w-0">
+              <img :src="product.image_url || 'https://placehold.jp/300x300.png'" :alt="product.name" class="w-16 h-16 object-cover rounded-md flex-shrink-0">
+              <div class="min-w-0">
+                <h3 class="font-semibold truncate">{{ product.name }}</h3>
                 <p class="text-muted-foreground">{{ formatPrice(product.price) }}</p>
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', size: 'sm' })">
+            <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              <span :class="statusInfo(product.status).class" class="px-2 py-1 text-xs font-medium rounded-full hidden md:inline-block">
+                {{ statusInfo(product.status).text }}
+              </span>
+              <NuxtLink v-if="product.status === 'approved' || product.status === 'rejected'" :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', size: 'sm' })">
                 編集
               </NuxtLink>
               <UiButton @click="confirmDelete(product)" variant="destructive" size="sm">
@@ -43,8 +57,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import type { Product } from '~/types/product'
 import { buttonVariants } from '~/components/ui/button/buttonVariants'
+import Tabs from '~/components/ui/tabs/Tabs.vue'
+import TabsList from '~/components/ui/tabs/TabsList.vue'
+import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
@@ -53,6 +71,29 @@ const { showToast } = useAlert()
 const products = ref<Product[]>([])
 const pending = ref(true)
 const error = ref<Error | null>(null)
+const activeStatusTab = ref('all')
+
+const filteredProducts = computed(() => {
+  if (activeStatusTab.value === 'all') {
+    return products.value
+  }
+  return products.value.filter(product => product.status === activeStatusTab.value)
+})
+
+const statusInfo = (status: Product['status']) => {
+  switch (status) {
+    case 'approved':
+      return { text: '公開中', class: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' }
+    case 'pending':
+      return { text: '審査中', class: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }
+    case 'rejected':
+      return { text: '要修正', class: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }
+    case 'banned':
+      return { text: '却下', class: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200' }
+    default:
+      return { text: '不明', class: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' }
+  }
+}
 
 const fetchProducts = async () => {
   if (!user.value) return;
@@ -85,9 +126,6 @@ const formatPrice = (price: number | null) => {
 const getPathFromUrl = (url: string) => {
   try {
     const urlObject = new URL(url)
-    // The path is usually after '/storage/v1/object/public/assets/'
-    // For example: https://<project>.supabase.co/storage/v1/object/public/assets/user-id/file.jpg
-    // The path to remove is 'user-id/file.jpg'
     return urlObject.pathname.split('/assets/')[1]
   } catch (error) {
     console.error('Invalid URL:', url, error)
@@ -103,7 +141,6 @@ const confirmDelete = (product: Product) => {
 
 const handleDelete = async (product: Product) => {
   try {
-    // 1. Delete files from storage
     const imagePath = getPathFromUrl(product.image_url)
     const filePath = getPathFromUrl(product.file_url)
 
@@ -116,12 +153,10 @@ const handleDelete = async (product: Product) => {
       if (fileError) console.warn(`アセットファイルの削除に失敗しました: ${fileError.message}`)
     }
 
-    // 2. Delete product from database
     const { error: dbError } = await supabase.from('products').delete().eq('id', product.id)
     if (dbError) throw new Error(`データベースからの商品削除に失敗しました: ${dbError.message}`)
 
     showToast('成功', '商品を削除しました。')
-    // Refresh the list
     await fetchProducts()
 
   } catch (error: any) {
