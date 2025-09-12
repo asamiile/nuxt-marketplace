@@ -7,15 +7,15 @@
       <h2 class="text-xl font-semibold mb-4">新規タグ作成</h2>
       <form @submit.prevent="handleCreateTag">
         <div class="flex items-center gap-4">
-          <UiFormInput
+          <Input
             v-model="newTagName"
             placeholder="タグ名"
             required
             class="flex-grow"
           />
-          <UiButton type="submit" :disabled="pending" class="whitespace-nowrap">
+          <Button type="submit" :disabled="pending" class="whitespace-nowrap">
             {{ pending ? '作成中...' : '作成' }}
-          </UiButton>
+          </Button>
         </div>
       </form>
     </div>
@@ -69,8 +69,8 @@
 import { ref, computed } from 'vue'
 import type { Tag } from '~/types/product'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/ButtonA.vue'
-import UiFormInput from '~/components/ui/form/Input.vue'
+import Button from '~/components/ui/button/Button.vue'
+import Input from '~/components/ui/input/Input.vue'
 
 definePageMeta({
   layout: 'admin',

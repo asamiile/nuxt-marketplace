@@ -4,8 +4,8 @@
       <h2 class="text-2xl font-semibold text-foreground mb-3">販売管理</h2>
       <p class="text-muted-foreground">商品の売上履歴とサマリーを確認します。</p>
     </div>
-    <UiCard>
-      <UiCardContent class="p-4 md:p-8">
+    <Card>
+      <CardContent class="p-4 md:p-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center mb-8">
           <div class="p-4 bg-secondary rounded-lg">
             <p class="text-sm text-muted-foreground">合計売上 ({{ periodLabel }})</p>
@@ -22,20 +22,20 @@
             <h3 class="text-lg font-semibold">販売履歴</h3>
             <div class="flex flex-col sm:flex-row gap-2">
                <div class="flex items-center gap-2">
-                <UiInput v-model="startDate" type="date" class="w-full sm:w-40" />
+                <Input v-model="startDate" type="date" class="w-full sm:w-40" />
                 <span>〜</span>
-                <UiInput v-model="endDate" type="date" class="w-full sm:w-40" />
+                <Input v-model="endDate" type="date" class="w-full sm:w-40" />
               </div>
               <div class="flex gap-2">
-                <UiButton variant="outline" size="sm" @click="setPeriod('this_month')">今月</UiButton>
-                <UiButton variant="outline" size="sm" @click="setPeriod('this_year')">今年</UiButton>
-                <UiButton variant="ghost" size="sm" @click="setPeriod(null)">リセット</UiButton>
+                <Button variant="outline" size="sm" @click="setPeriod('this_month')">今月</Button>
+                <Button variant="outline" size="sm" @click="setPeriod('this_year')">今年</Button>
+                <Button variant="ghost" size="sm" @click="setPeriod(null)">リセット</Button>
               </div>
             </div>
           </div>
            <div class="flex flex-col xl:flex-row xl:justify-end xl:items-center gap-4 mb-4">
              <div class="w-full sm:w-72">
-              <UiInput v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
+              <Input v-model="searchQuery" type="text" placeholder="商品名または購入者名で検索..." />
             </div>
            </div>
           <div v-if="pending" class="text-center py-4 md:py-8">
@@ -80,16 +80,17 @@
             <p>該当する販売履歴がありません。</p>
           </div>
         </div>
-      </UiCardContent>
-    </UiCard>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import UiInput from '~/components/ui/form/Input.vue'
+import { Card, CardContent } from '~/components/ui/card'
+import Input from '~/components/ui/input/Input.vue'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/ButtonA.vue'
+import Button from '~/components/ui/button/Button.vue'
 
 const supabase = useSupabaseClient()
 const { showToast } = useAlert()

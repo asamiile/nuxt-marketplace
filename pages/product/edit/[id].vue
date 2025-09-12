@@ -34,10 +34,15 @@
             <div>
               <Label for="category">カテゴリ</Label>
               <Select v-model="categoryId" id="category">
-                <option :value="null" disabled>カテゴリを選択してください</option>
-                <option v-for="category in categories" :key="category.id" :value="category.id">
-                  {{ category.name }}
-                </option>
+                <SelectTrigger>
+                  <SelectValue placeholder="カテゴリを選択してください" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem :value="null" disabled>カテゴリを選択してください</SelectItem>
+                  <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
+                    {{ category.name }}
+                  </SelectItem>
+                </SelectContent>
               </Select>
               <p v-if="errors.categoryId" class="text-sm text-red-500 mt-1">{{ errors.categoryId }}</p>
             </div>
@@ -90,13 +95,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { ProductWithRelations } from '~/types/product'
-import { buttonVariants } from '~/components/ui/button/buttonVariants'
-import Input from '~/components/ui/form/Input.vue'
-import Label from '~/components/ui/form/Label.vue'
-import Textarea from '~/components/ui/form/Textarea.vue'
+import { buttonVariants } from '~/components/ui/button'
+import Input from '~/components/ui/input/Input.vue'
+import Label from '~/components/ui/label/Label.vue'
+import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
 import FileDropzone from '~/components/ui/form/FileDropzone.vue'
-import Select from '~/components/ui/form/Select.vue'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 import Combobox from '~/components/ui/form/Combobox.vue'
 
 definePageMeta({

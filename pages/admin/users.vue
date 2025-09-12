@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import UiPagination from '~/components/ui/Pagination.vue'
-import UiButton from '~/components/ui/button/ButtonA.vue'
+import Button from '~/components/ui/button/Button.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -115,13 +115,13 @@ const handleDisableUser = async (user: any) => {
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <UiButton
+              <Button
                 size="sm"
                 :variant="user.aud === 'authenticated' ? 'destructive' : 'default'"
                 @click="handleDisableUser(user)"
               >
                 {{ user.aud === 'authenticated' ? '無効化' : '有効化' }}
-              </UiButton>
+              </Button>
             </td>
           </tr>
         </tbody>

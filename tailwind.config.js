@@ -27,6 +27,22 @@ module.exports = {
         'card-foreground': 'hsl(var(--card-foreground))',
         border: 'hsl(var(--border))',
         secondary: 'hsl(var(--secondary))',
+        pink: {
+          500: '#ec4899',
+          600: '#db2777',
+        },
+        orange: {
+          400: '#fb923c',
+          500: '#f97316',
+        },
+        cyan: {
+          500: '#06b6d4',
+          600: '#0891b2',
+        },
+        blue: {
+          500: '#3b82f6',
+          600: '#2563eb',
+        },
       },
     },
   },
