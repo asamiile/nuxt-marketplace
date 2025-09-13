@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Product } from '~/types/product'
 import Button from '~/components/ui/button/Button.vue'
 import Label from '~/components/ui/label/Label.vue'
+import UiPagination from '~/components/ui/Pagination.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -19,6 +20,17 @@ const pending = ref(true)
 const error = ref<Error | null>(null)
 const actionPending = ref(false)
 const actionError = ref<string | null>(null)
+
+// Product Pagination
+const productsCurrentPage = ref(1)
+const productsItemsPerPage = 10
+const productTotalPages = computed(() => {
+  return Math.ceil(products.value.length / productsItemsPerPage)
+})
+const paginatedProducts = computed(() => {
+  const startIndex = (productsCurrentPage.value - 1) * productsItemsPerPage
+  return products.value.slice(startIndex, startIndex + productsItemsPerPage)
+})
 
 const fetchUserData = async () => {
   pending.value = true
@@ -164,7 +176,7 @@ const performAction = async (action: 'admin' | 'disable') => {
                 </tr>
               </thead>
               <tbody class="divide-y">
-                <tr v-for="product in products" :key="product.id">
+                <tr v-for="product in paginatedProducts" :key="product.id">
                   <td class="px-4 py-2">{{ product.id }}</td>
                   <td class="px-4 py-2">
                     <NuxtLink :to="`/admin/products/${product.id}`" class="text-blue-600 hover:underline">{{ product.name }}</NuxtLink>
@@ -176,6 +188,13 @@ const performAction = async (action: 'admin' | 'disable') => {
             </table>
           </div>
           <p v-else class="text-gray-500">このユーザーはまだ商品を出品していません。</p>
+
+          <div v-if="productTotalPages > 1" class="mt-4 flex justify-center">
+            <UiPagination
+              v-model:currentPage="productsCurrentPage"
+              :total-pages="productTotalPages"
+            />
+          </div>
         </div>
       </div>
 
