@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container mx-auto">
     <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
       <!-- Skeleton for Image -->
       <div>
