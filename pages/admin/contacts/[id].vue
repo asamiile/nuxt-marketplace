@@ -77,8 +77,8 @@ const getStatusClass = (status: string | undefined) => {
       <p>お問い合わせデータが見つかりません。</p>
     </div>
     <div v-else-if="contact">
-      <div class="flex justify-between items-start">
-        <h1 class="text-3xl font-bold mb-2">
+      <div class="flex flex-col justify-between items-start md:flex-row gap-4 mb-6">
+        <h1 class="text-3xl font-bold">
           お問い合わせ詳細: #{{ contact.id }}
         </h1>
         <div class="flex items-center gap-4">
@@ -107,15 +107,15 @@ const getStatusClass = (status: string | undefined) => {
         <!-- Contact Info -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b">
           <div>
-            <h3 class="font-semibold">名前</h3>
+            <h3 class="font-semibold mb-2">名前</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ contact.name }}</p>
           </div>
           <div>
-            <h3 class="font-semibold">Email</h3>
+            <h3 class="font-semibold mb-2">Email</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ contact.email }}</p>
           </div>
           <div>
-            <h3 class="font-semibold">受信日時</h3>
+            <h3 class="font-semibold mb-2">受信日時</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(contact.created_at) }}</p>
           </div>
         </div>
@@ -129,7 +129,7 @@ const getStatusClass = (status: string | undefined) => {
         </div>
       </div>
        <div class="mt-6">
-        <NuxtLink to="/admin/contacts" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+        <NuxtLink to="/admin/contacts" class="text-sm text-blue-400 hover:underline">
           &larr; お問い合わせ一覧に戻る
         </NuxtLink>
       </div>

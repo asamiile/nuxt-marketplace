@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
   const query = getQuery(event)
   const searchQuery = query.q as string
+  const userId = query.userId as string
 
   let supabaseQuery = client
     .from('products')
@@ -29,6 +30,10 @@ export default defineEventHandler(async (event) => {
 
   if (searchQuery) {
     supabaseQuery = supabaseQuery.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+  }
+
+  if (userId) {
+    supabaseQuery = supabaseQuery.eq('creator_id', userId)
   }
 
   const { data: products, error } = await supabaseQuery.order('created_at', { ascending: false })

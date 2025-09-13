@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type User } from '@supabase/supabase-js'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
@@ -16,22 +16,32 @@ export default defineEventHandler(async (event) => {
   // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
-  // Fetch all users from the auth schema
-  const { data: usersData, error } = await client.auth.admin.listUsers()
-
-  if (error) {
-    console.error('Error fetching users:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch users',
-    })
+  // auth.usersから全ユーザー情報を取得
+  const { data: usersData, error: usersError } = await client.auth.admin.listUsers()
+  if (usersError) {
+    console.error('Error fetching users:', usersError)
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch users' })
   }
 
-  // Map the user data to include the is_admin flag
-  const users = usersData.users.map(user => ({
-    ...user,
-    is_admin: user.app_metadata?.claims_admin === true,
-  }))
+  // profilesテーブルから全プロフィール情報を取得
+  const { data: profiles, error: profilesError } = await client.from('profiles').select('*')
+  if (profilesError) {
+    console.error('Error fetching profiles:', profilesError)
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch profiles' })
+  }
 
-  return users
+  // プロフィール情報をidをキーにしたMapに変換
+  const profilesMap = new Map(profiles.map(p => [p.id, p]))
+
+  // ユーザー情報とプロフィール情報を結合
+  const combinedUsers = usersData.users.map((user: User) => {
+    const profile = profilesMap.get(user.id)
+    return {
+      ...user,
+      ...profile, // username, avatar_urlなどを追加
+      is_admin: user.app_metadata?.claims_admin === true,
+    }
+  })
+
+  return combinedUsers
 })

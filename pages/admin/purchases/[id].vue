@@ -59,11 +59,11 @@ const formatDate = (date: string | null) => {
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">購入情報</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 class="font-semibold">購入ID</h3>
+              <h3 class="font-semibold mb-2">購入ID</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.id }}</p>
             </div>
             <div>
-              <h3 class="font-semibold">購入日時</h3>
+              <h3 class="font-semibold mb-2">購入日時</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(purchase.created_at) }}</p>
             </div>
           </div>
@@ -74,19 +74,19 @@ const formatDate = (date: string | null) => {
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">商品情報</h2>
           <div v-if="purchase.products" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 class="font-semibold">商品ID</h3>
+              <h3 class="font-semibold mb-2">商品ID</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.products.id }}</p>
             </div>
             <div>
-              <h3 class="font-semibold">商品名</h3>
+              <h3 class="font-semibold mb-2">商品名</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.products.name }}</p>
             </div>
             <div>
-              <h3 class="font-semibold">価格</h3>
+              <h3 class="font-semibold mb-2">価格</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">¥{{ purchase.products.price.toLocaleString() }}</p>
             </div>
             <div class="col-span-full">
-              <h3 class="font-semibold">商品説明</h3>
+              <h3 class="font-semibold mb-2">商品説明</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.products.description || 'N/A' }}</p>
             </div>
           </div>
@@ -100,15 +100,15 @@ const formatDate = (date: string | null) => {
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">購入者情報</h2>
           <div v-if="purchase.profiles" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 class="font-semibold">ユーザーID</h3>
+              <h3 class="font-semibold mb-2">ユーザーID</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.user_id }}</p>
             </div>
             <div>
-              <h3 class="font-semibold">ユーザー名</h3>
+              <h3 class="font-semibold mb-2">ユーザー名</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.profiles.username || 'N/A' }}</p>
             </div>
              <div>
-              <h3 class="font-semibold">メールアドレス</h3>
+              <h3 class="font-semibold mb-2">メールアドレス</h3>
               <p class="text-sm text-gray-500 dark:text-gray-400">{{ purchase.profiles.email || 'N/A' }}</p>
             </div>
           </div>
@@ -119,7 +119,7 @@ const formatDate = (date: string | null) => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/purchases" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+        <NuxtLink to="/admin/purchases" class="text-sm text-blue-400 hover:underline">
           &larr; 購入一覧に戻る
         </NuxtLink>
       </div>

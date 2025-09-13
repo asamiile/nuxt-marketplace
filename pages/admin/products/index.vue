@@ -83,7 +83,7 @@ const statusBadgeClass = (status: string | null) => {
 
 <template>
   <div>
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col justify-between items-start md:flex-row gap-4 mb-6">
       <h1 class="text-3xl font-bold">
         商品一覧
       </h1>
@@ -99,22 +99,22 @@ const statusBadgeClass = (status: string | null) => {
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
               ID
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
               商品名
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
               ステータス
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
               価格
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
               クリエイター
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
               登録日時
             </th>
           </tr>
@@ -134,7 +134,7 @@ const statusBadgeClass = (status: string | null) => {
                 {{ product.id }}
               </NuxtLink>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-white">
               {{ product.name }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -149,7 +149,7 @@ const statusBadgeClass = (status: string | null) => {
               ¥{{ product.price.toLocaleString() }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-              {{ product.profiles?.username || 'N/A' }}
+              <span class="whitespace-nowrap">{{ product.profiles?.username || 'N/A' }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
               {{ formatDate(product.created_at) }}

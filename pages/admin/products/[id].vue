@@ -143,7 +143,7 @@ const handleSave = async () => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/products" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+        <NuxtLink to="/admin/products" class="text-sm text-blue-400 hover:underline">
           &larr; 商品一覧に戻る
         </NuxtLink>
       </div>
