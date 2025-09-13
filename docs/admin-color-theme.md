@@ -12,15 +12,23 @@
 | :--- | :--- | :--- | :--- |
 | `--background` | `oklch(1 0 0)` | `oklch(0.145 0 0)` | ページの基本背景色 |
 | `--foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` | ページの基本テキスト色 |
-| `--card` | `oklch(1 0 0)` | `oklch(0.35 0.02 255)` | カードコンポーネントの背景色 (ダークモードは `gray-700`相当) |
-| `--card-foreground` | `oklch(0.205 0.01 255)` | `oklch(1 0 0)` | カードコンポーネントのテキスト色 (ライト: `gray-900`相当, ダーク: `white`) |
-| `--border` | `oklch(0.922 0 0)` | `oklch(0.269 0 0)` | ボーダー色 |
-| `--input` | `oklch(0.922 0 0)` | `oklch(0.269 0 0)` | Inputフィールドのボーダー/背景色 |
+| `--card` | `oklch(1 0 0)` | `oklch(0.35 0.02 255)` | カードコンポーネントの背景色 |
+| `--card-foreground` | `oklch(0.205 0.01 255)` | `oklch(1 0 0)` | カードコンポーネントのテキスト色 |
+| `--popover` | `oklch(1 0 0)` | `oklch(0.145 0 0)` | ポップオーバーの背景色 |
+| `--popover-foreground`| `oklch(0.145 0 0)` | `oklch(0.985 0 0)` | ポップオーバーのテキスト色 |
 | `--primary` | `oklch(0.205 0 0)` | `oklch(0.985 0 0)` | プライマリアクションの色 (ボタンなど) |
 | `--primary-foreground`| `oklch(0.985 0 0)` | `oklch(0.205 0 0)` | プライマリアクションのテキスト色 |
 | `--secondary` | `oklch(0.97 0 0)` | `oklch(0.269 0 0)` | セカンダリアクションの色 (ボタンなど) |
 | `--secondary-foreground`|`oklch(0.205 0 0)` | `oklch(0.985 0 0)` | セカンダリアクションのテキスト色 |
+| `--muted` | `oklch(0.97 0 0)` | `oklch(0.269 0 0)` | ミュートされた要素の背景色 |
+| `--muted-foreground` | `oklch(0.556 0 0)` | `oklch(0.708 0 0)` | ミュートされた要素のテキスト色 |
+| `--accent` | `oklch(0.97 0 0)` | `oklch(0.269 0 0)` | アクセント要素の背景色 |
+| `--accent-foreground` | `oklch(0.205 0 0)` | `oklch(0.985 0 0)` | アクセント要素のテキスト色 |
 | `--destructive` | `oklch(0.577 0.245 27.325)` | `oklch(0.396 0.141 25.723)`| 破壊的アクションの色 (削除ボタンなど) |
+| `--destructive-foreground`|`oklch(0.985 0 0)` | `oklch(0.985 0 0)` | 破壊的アクションのテキスト色 |
+| `--border` | `oklch(0.922 0 0)` | `oklch(0.269 0 0)` | ボーダー色 |
+| `--input` | `oklch(0.922 0 0)` | `oklch(0.269 0 0)` | Inputフィールドのボーダー/背景色 |
+| `--ring` | `oklch(0.708 0 0)` | `oklch(0.439 0 0)` | フォーカスリングの色 |
 
 ## 2. コンポーネントのスタイル規約
 
@@ -57,11 +65,11 @@
 
 例:
 ```html
-<NuxtLink :to="`/admin/users/${user.id}`" class="text-gray-500 dark:text-gray-400">
+<NuxtLink :to="`/admin/users/${user.id}`" class="text-muted-foreground hover:text-primary">
   {{ user.username }}
 </NuxtLink>
 ```
 
 ### テーブル
 
-テーブルのコンテナには、`bg-white dark:bg-gray-800 rounded-lg overflow-x-auto` のクラスを適用し、背景色と角丸、レスポンシブ対応を統一します。
+テーブルのコンテナには、`bg-card rounded-lg overflow-x-auto` のクラスを適用し、背景色と角丸、レスポンシブ対応を統一します。
