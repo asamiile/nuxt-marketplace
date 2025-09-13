@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import UiPagination from '~/components/ui/Pagination.vue'
+import Input from '~/components/ui/input/Input.vue'
 import type { Product } from '~/types/product'
 
 definePageMeta({
@@ -9,8 +10,11 @@ definePageMeta({
 })
 
 const { showToast } = useAlert()
+const searchQuery = ref('')
 
 const { data: products, pending, error, refresh } = await useFetch<Product[]>('/api/admin/products', {
+  query: { q: searchQuery },
+  watch: [searchQuery],
   onResponseError: ({ response }) => {
     console.error(response._data)
     showToast({
@@ -35,6 +39,10 @@ const paginatedProducts = computed(() => {
   if (!products.value) return []
   const startIndex = (currentPage.value - 1) * itemsPerPage
   return products.value.slice(startIndex, startIndex + itemsPerPage)
+})
+
+watch(searchQuery, () => {
+  currentPage.value = 1
 })
 
 const formatDate = (date: string | null) => {
@@ -75,9 +83,18 @@ const statusBadgeClass = (status: string | null) => {
 
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-6">
-      商品一覧
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">
+        商品一覧
+      </h1>
+    </div>
+    <div class="mb-4">
+      <Input
+        v-model="searchQuery"
+        placeholder="商品名または説明で検索..."
+        class="max-w-sm"
+      />
+    </div>
     <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">

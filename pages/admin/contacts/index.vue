@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/contact'
 import UiPagination from '~/components/ui/Pagination.vue'
+import Input from '~/components/ui/input/Input.vue'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const { data: contacts, pending, error } = await useAsyncData(
-  'contacts',
-  () => $fetch('/api/admin/contacts'),
+const searchQuery = ref('')
+const { data: contacts, pending, error } = await useFetch(
+  '/api/admin/contacts',
   {
+    query: { q: searchQuery },
+    watch: [searchQuery],
     default: () => [],
   },
 )
@@ -30,6 +33,10 @@ const paginatedContacts = computed(() => {
   if (!contacts.value) return []
   const startIndex = (currentPage.value - 1) * itemsPerPage
   return contacts.value.slice(startIndex, startIndex + itemsPerPage)
+})
+
+watch(searchQuery, () => {
+  currentPage.value = 1
 })
 
 const formatDate = (dateString: string) => {
@@ -53,7 +60,16 @@ const getStatusClass = (status: string) => {
 
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-6">お問い合わせ管理</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">お問い合わせ管理</h1>
+    </div>
+    <div class="mb-4">
+      <Input
+        v-model="searchQuery"
+        placeholder="名前、件名、内容などで検索..."
+        class="max-w-sm"
+      />
+    </div>
     <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
