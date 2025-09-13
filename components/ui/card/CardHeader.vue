@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <div
     data-slot="card-header"
-    :class="cn('px-6 pt-6', props.class)"
+    :class="cn(props.class)"
   >
     <slot />
   </div>

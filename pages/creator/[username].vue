@@ -23,7 +23,7 @@
       </div>
     </div>
   </div>
-  <div v-else-if="error" class="flex flex-col items-center justify-center container py-8 md:py-12 text-center">
+  <div v-else-if="error" class="flex flex-col items-center justify-center container mx-auto py-8 md:py-12 text-center">
     <h1 class="text-2xl font-bold text-red-500">エラーが発生しました</h1>
     <p class="mt-2 text-muted-foreground">クリエイターが見つかりませんでした。</p>
     <NuxtLink to="/" :class="buttonVariants({ variant: 'link', class: 'mt-4' })">

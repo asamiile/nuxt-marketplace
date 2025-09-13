@@ -1,5 +1,5 @@
 <template>
-  <footer class="container py-6 px-6 md:py-0 md:h-24 flex flex-col items-center justify-between gap-4 md:flex-row">
+  <footer class="container mx-auto py-6 px-6 md:py-0 md:h-24 flex flex-col items-center justify-between gap-4 md:flex-row">
     <p class="text-center text-sm leading-loose text-muted-foreground md:text-left">
       © 2025 Marketplace All rights reserved.
     </p>
