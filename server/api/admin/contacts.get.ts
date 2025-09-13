@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
+import { getQuery } from 'h3'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
-  // Nuxt Supabase module exposes these variables to the server context
   const supabaseUrl = process.env.SUPABASE_URL
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
 
@@ -14,13 +14,25 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  const query = getQuery(event)
+  const searchQuery = query.q as string
 
-  const { data, error } = await client
+  let supabaseQuery = client
     .from('contacts')
     .select('*')
-    .order('created_at', { ascending: false })
+
+  if (searchQuery) {
+    const orQuery = [
+      `name.ilike.%${searchQuery}%`,
+      `email.ilike.%${searchQuery}%`,
+      `subject.ilike.%${searchQuery}%`,
+      `message.ilike.%${searchQuery}%`,
+    ].join(',')
+    supabaseQuery = supabaseQuery.or(orQuery)
+  }
+
+  const { data, error } = await supabaseQuery.order('created_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching contacts:', error)

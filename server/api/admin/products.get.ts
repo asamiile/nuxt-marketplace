@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { getQuery } from 'h3'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
@@ -13,11 +14,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Create a new client with the service_role key to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  const query = getQuery(event)
+  const searchQuery = query.q as string
 
-  // Fetch all products
-  const { data: products, error } = await client
+  let supabaseQuery = client
     .from('products')
     .select(`
       *,
@@ -25,6 +26,12 @@ export default defineEventHandler(async (event) => {
         username
       )
     `)
+
+  if (searchQuery) {
+    supabaseQuery = supabaseQuery.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+  }
+
+  const { data: products, error } = await supabaseQuery.order('created_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching products:', error)

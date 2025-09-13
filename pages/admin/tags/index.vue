@@ -1,6 +1,16 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-6">タグ管理</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">タグ管理</h1>
+    </div>
+
+    <div class="mb-4">
+      <Input
+        v-model="searchQuery"
+        placeholder="タグ名で検索..."
+        class="max-w-sm"
+      />
+    </div>
 
     <!-- New Tag Form -->
     <div class="mb-8 p-4 bg-white dark:bg-secondary rounded-lg">
@@ -66,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { Tag } from '~/types/product'
 import UiPagination from '~/components/ui/Pagination.vue'
 import Button from '~/components/ui/button/Button.vue'
@@ -78,12 +88,16 @@ definePageMeta({
 })
 
 const { showToast } = useAlert()
+const searchQuery = ref('')
 
 // Fetch tags
-const { data: tags, pending, error, refresh } = await useAsyncData(
-  'tags',
-  () => $fetch('/api/admin/tags'),
-  { default: () => [] },
+const { data: tags, pending, error, refresh } = await useFetch(
+  '/api/admin/tags',
+  {
+    query: { q: searchQuery },
+    watch: [searchQuery],
+    default: () => [],
+  },
 )
 
 // Pagination
@@ -99,6 +113,11 @@ const paginatedTags = computed(() => {
   if (!tags.value) return []
   const startIndex = (currentPage.value - 1) * itemsPerPage
   return tags.value.slice(startIndex, startIndex + itemsPerPage)
+})
+
+// Reset page to 1 when search query changes
+watch(searchQuery, () => {
+  currentPage.value = 1
 })
 
 // Create
