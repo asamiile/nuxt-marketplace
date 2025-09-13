@@ -115,7 +115,7 @@ const performAction = async (action: 'admin' | 'disable') => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div>
               <Label>ユーザーID</Label>
-              <p class="mt-1 text-sm text-gray-400">{{ user.id }}</p>
+              <p class="mt-1 text-sm">{{ user.id }}</p>
             </div>
             <div>
               <Label>ユーザー名</Label>

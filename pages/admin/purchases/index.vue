@@ -23,7 +23,7 @@
           </tr>
           <tr v-for="purchase in paginatedPurchases" :key="purchase.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <NuxtLink :to="`/admin/purchases/${purchase.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+              <NuxtLink :to="`/admin/purchases/${purchase.id}`" class="text-blue-600 hover:underline dark:text-blue-400 whitespace-nowrap">
                 {{ purchase.id }}
               </NuxtLink>
             </td>

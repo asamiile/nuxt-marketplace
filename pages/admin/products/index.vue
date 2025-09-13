@@ -149,7 +149,7 @@ const statusBadgeClass = (status: string | null) => {
               ¥{{ product.price.toLocaleString() }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-              {{ product.profiles?.username || 'N/A' }}
+              <span class="whitespace-nowrap">{{ product.profiles?.username || 'N/A' }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
               {{ formatDate(product.created_at) }}
