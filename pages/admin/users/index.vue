@@ -66,7 +66,7 @@ const handleDisableUser = async (user: any) => {
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              ID
+              ユーザー名
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               メールアドレス
@@ -100,7 +100,7 @@ const handleDisableUser = async (user: any) => {
           <tr v-for="user in paginatedUsers" :key="user.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               <NuxtLink :to="`/admin/users/${user.id}`" class="text-blue-600 hover:underline">
-                {{ user.id }}
+                {{ user.username || '(未設定)' }}
               </NuxtLink>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">

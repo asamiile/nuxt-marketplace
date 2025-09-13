@@ -93,6 +93,11 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Product } from '~/types/product'
 
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin',
+})
+
 const route = useRoute()
 const userId = route.params.id as string
 
