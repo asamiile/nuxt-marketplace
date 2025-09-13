@@ -153,7 +153,7 @@ const performAction = async (action: 'admin' | 'disable') => {
             </Button>
             <Button
               @click="performAction('disable')"
-              :variant="isBanned(user.banned_until) ? 'outline' : 'destructive'"
+              :variant="isBanned(user.banned_until) ? 'secondary' : 'destructive'"
               :disabled="actionPending"
             >
               {{ isBanned(user.banned_until) ? 'アカウントを有効化' : 'アカウントを無効化' }}
