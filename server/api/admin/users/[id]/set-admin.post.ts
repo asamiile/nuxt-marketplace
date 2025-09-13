@@ -1,8 +1,19 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '~/types/supabase'
 import { readBody } from 'h3'
 
 export default defineEventHandler(async (event) => {
-  const client = await serverSupabaseClient(event)
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Internal Server Error: Supabase configuration missing.',
+    })
+  }
+
+  const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
   const userId = event.context.params?.id as string
   const body = await readBody(event)
   const { isAdmin } = body
