@@ -59,6 +59,36 @@ const isBanned = (bannedUntil: string | null | undefined) => {
   return new Date(bannedUntil) > new Date()
 }
 
+const translateStatus = (status: string | null) => {
+  switch (status) {
+    case 'pending':
+      return '承認待ち'
+    case 'approved':
+      return '承認済み'
+    case 'rejected':
+      return '要修正'
+    case 'banned':
+      return '却下'
+    default:
+      return '不明'
+  }
+}
+
+const statusBadgeClass = (status: string | null) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+    case 'approved':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+    case 'rejected':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+    case 'banned':
+      return 'bg-gray-500 text-white dark:bg-gray-700 dark:text-gray-200'
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300'
+  }
+}
+
 const performAction = async (action: 'admin' | 'disable') => {
   actionPending.value = true
   actionError.value = null
@@ -179,10 +209,17 @@ const performAction = async (action: 'admin' | 'disable') => {
                 <tr v-for="product in paginatedProducts" :key="product.id">
                   <td class="px-4 py-2">{{ product.id }}</td>
                   <td class="px-4 py-2">
-                    <NuxtLink :to="`/admin/products/${product.id}`" class="text-blue-600 hover:underline">{{ product.name }}</NuxtLink>
+                    <NuxtLink :to="`/admin/products/${product.id}`" class="text-gray-500 dark:text-gray-400">{{ product.name }}</NuxtLink>
                   </td>
                   <td class="px-4 py-2">{{ product.price }}円</td>
-                  <td class="px-4 py-2">{{ product.status }}</td>
+                  <td class="px-4 py-2">
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                      :class="statusBadgeClass(product.status)"
+                    >
+                      {{ translateStatus(product.status) }}
+                    </span>
+                  </td>
                 </tr>
               </tbody>
             </table>
