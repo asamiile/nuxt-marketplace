@@ -31,7 +31,7 @@
     </div>
 
     <!-- Categories Table -->
-    <div class="bg-white dark:bg-secondary rounded-lg overflow-x-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
