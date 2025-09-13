@@ -65,7 +65,7 @@ const handleSave = async () => {
       <p>データが見つかりません。</p>
     </div>
     <div v-else-if="category">
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex flex-col justify-between items-start md:flex-row gap-4 mb-6">
         <h1 class="text-3xl font-bold">
           カテゴリ編集: {{ category.name }}
         </h1>
@@ -94,7 +94,7 @@ const handleSave = async () => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/categories" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+        <NuxtLink to="/admin/categories" class="text-sm text-blue-400 hover:underline">
           &larr; カテゴリ一覧に戻る
         </NuxtLink>
       </div>

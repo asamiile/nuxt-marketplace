@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col justify-between items-start md:flex-row gap-4 mb-6">
       <h1 class="text-3xl font-bold">カテゴリ管理</h1>
     </div>
 
@@ -13,7 +13,7 @@
     </div>
 
     <!-- New Category Form -->
-    <div class="mb-8 p-4 bg-white dark:bg-secondary rounded-lg">
+    <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg">
       <h2 class="text-xl font-semibold mb-4">新規カテゴリ作成</h2>
       <form @submit.prevent="handleCreateCategory">
         <div class="flex items-center gap-4">
@@ -35,10 +35,10 @@
       <table class="min-w-full">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">名前</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ステータス</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">作成日時</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">名前</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ステータス</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">作成日時</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -54,7 +54,7 @@
                 {{ category.id }}
               </NuxtLink>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-white">{{ category.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', category.is_public ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']">
                 {{ category.is_public ? '公開' : '非公開' }}
