@@ -23,13 +23,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { data: purchase, error } = await client
+  // Step 1: Fetch the purchase data with profile username and product details
+  const { data: purchase, error: purchaseError } = await client
     .from('purchases')
     .select(`
       *,
       profiles (
-        username,
-        email
+        username
       ),
       products (
         *
@@ -38,11 +38,11 @@ export default defineEventHandler(async (event) => {
     .eq('id', purchaseId)
     .single()
 
-  if (error) {
-    console.error(`Error fetching purchase with id ${purchaseId}:`, error)
+  if (purchaseError) {
+    console.error(`Error fetching purchase with id ${purchaseId}:`, purchaseError)
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to fetch purchase: ${error.message}`,
+      statusMessage: `Failed to fetch purchase: ${purchaseError.message}`,
     })
   }
 
@@ -51,6 +51,31 @@ export default defineEventHandler(async (event) => {
       statusCode: 404,
       statusMessage: 'Purchase not found',
     })
+  }
+
+  if (!purchase.user_id) {
+    // Should not happen if data integrity is maintained, but good to handle.
+    return purchase
+  }
+
+  // Step 2: Fetch the user's auth data to get the email
+  const { data: authUser, error: authError } = await client.auth.admin.getUserById(purchase.user_id)
+
+  if (authError) {
+    // Log the error but don't fail the whole request, as we still have purchase data
+    console.error(`Could not fetch auth user for id ${purchase.user_id}:`, authError)
+  }
+
+  // Step 3: Combine the data
+  // Ensure profiles object exists before assigning to it
+  if (!purchase.profiles) {
+    // @ts-ignore
+    purchase.profiles = {}
+  }
+
+  if (authUser) {
+    // @ts-ignore
+    purchase.profiles.email = authUser.user.email
   }
 
   return purchase
