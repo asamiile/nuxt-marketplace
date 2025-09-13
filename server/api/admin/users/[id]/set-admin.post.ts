@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey)
-  const userId = event.context.params?.id as string
+  const userIdToUpdate = event.context.params?.id as string
   const body = await readBody(event)
   const { isAdmin } = body
 
@@ -22,15 +22,33 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid request body: isAdmin must be a boolean' })
   }
 
-  const { error } = await client.rpc('set_admin_status' as any, {
-    target_user_id: userId,
-    is_admin: isAdmin,
-  })
+  // If we are demoting a user, check if they are the last admin
+  if (isAdmin === false) {
+    const { data: usersData, error: listError } = await client.auth.admin.listUsers()
+    if (listError) {
+      throw createError({ statusCode: 500, statusMessage: 'Could not list users to check for last admin' })
+    }
 
-  if (error) {
-    console.error('Error calling set_admin_status RPC:', error)
-    throw createError({ statusCode: 500, statusMessage: 'Failed to update admin status' })
+    const admins = usersData.users.filter(u => u.app_metadata?.claims_admin === true)
+
+    if (admins.length === 1 && admins[0].id === userIdToUpdate) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Cannot demote the last admin account.',
+      })
+    }
   }
 
-  return { success: true }
+  // Update the user's custom claim
+  const { data, error } = await client.auth.admin.updateUserById(
+    userIdToUpdate,
+    { app_metadata: { claims_admin: isAdmin } }
+  )
+
+  if (error) {
+    console.error('Error updating admin status:', error)
+    throw createError({ statusCode: 500, statusMessage: `Failed to update admin status: ${error.message}` })
+  }
+
+  return { success: true, user: data.user }
 })
