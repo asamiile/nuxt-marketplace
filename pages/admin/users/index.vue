@@ -66,6 +66,9 @@ const handleDisableUser = async (user: any) => {
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              ID
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               メールアドレス
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -87,14 +90,19 @@ const handleDisableUser = async (user: any) => {
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
           <tr v-if="pending">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedUsers || paginatedUsers.length === 0">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
               ユーザーが見つかりません。
             </td>
           </tr>
           <tr v-for="user in paginatedUsers" :key="user.id">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              <NuxtLink :to="`/admin/users/${user.id}`" class="text-blue-600 hover:underline">
+                {{ user.id }}
+              </NuxtLink>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
               {{ user.email }}
             </td>
