@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const { error } = await client.auth.admin.updateUserById(userId, {
-    ban_duration: disable ? '365d' : 'none',
+    ban_duration: disable ? '8760h' : 'none',
   })
 
   if (error) {
