@@ -98,7 +98,7 @@
           <p v-if="errors.file" class="text-sm text-red-400 mt-1">{{ errors.file }}</p>
         </div>
         <div class="pt-2">
-          <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
+          <Button type="submit" class="w-full" size="lg" variant="secondary" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
             {{ isSubmitting ? 'アップロード中...' : '出品する' }}
           </Button>
         </div>
