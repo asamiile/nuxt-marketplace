@@ -134,23 +134,4 @@
   input[type=number] {
     -moz-appearance: textfield;
   }
-
-  /* Inherit color for calendar icon */
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    color: inherit;
-    opacity: 0.6; /* Adjust opacity to match text-muted-foreground */
-  }
-
-  input[type="date"]:hover::-webkit-calendar-picker-indicator {
-    opacity: 0.8;
-  }
-
-  .dark input[type="date"]::-webkit-calendar-picker-indicator {
-    color: inherit;
-    opacity: 0.7;
-  }
-
-  .dark input[type="date"]:hover::-webkit-calendar-picker-indicator {
-    opacity: 0.9;
-  }
 }
