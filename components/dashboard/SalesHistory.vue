@@ -20,13 +20,13 @@
         <div>
           <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
             <h3 class="text-lg font-semibold">販売履歴</h3>
-            <div class="flex flex-col sm:flex-row gap-2">
+            <div class="flex flex-col md:flex-row gap-4">
                <div class="flex items-center gap-2">
                 <DatePicker v-model="startDate" />
                 <span>〜</span>
                 <DatePicker v-model="endDate" />
               </div>
-              <div class="flex gap-2">
+              <div class="flex gap-4">
                 <Button variant="outline" size="sm" @click="setPeriod('this_month')">今月</Button>
                 <Button variant="outline" size="sm" @click="setPeriod('this_year')">今年</Button>
                 <Button variant="ghost" size="sm" @click="setPeriod(null)">リセット</Button>
