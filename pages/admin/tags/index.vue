@@ -13,7 +13,7 @@
     </div>
 
     <!-- New Tag Form -->
-    <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg">
+    <div class="mb-8 p-4 bg-card rounded-lg">
       <h2 class="text-xl font-semibold mb-4">新規タグ作成</h2>
       <form @submit.prevent="handleCreateTag">
         <div class="flex items-center gap-4">
@@ -31,36 +31,36 @@
     </div>
 
     <!-- Tags Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+    <div class="bg-card rounded-lg overflow-x-auto">
       <table class="min-w-full">
-        <thead class="bg-gray-50 dark:bg-gray-700">
+        <thead class="bg-secondary">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">名前</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ステータス</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">作成日時</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">名前</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">ステータス</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">作成日時</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+        <tbody class="divide-y divide-border">
           <tr v-if="pending">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="4" class="px-6 py-4 text-center text-muted-foreground">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedTags || paginatedTags.length === 0">
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">タグが見つかりません。</td>
+            <td colspan="4" class="px-6 py-4 text-center text-muted-foreground">タグが見つかりません。</td>
           </tr>
           <tr v-for="tag in paginatedTags" :key="tag.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-link hover:underline">
                 {{ tag.id }}
               </NuxtLink>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-white">{{ tag.name }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{{ tag.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', tag.is_public ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']">
                 {{ tag.is_public ? '公開' : '非公開' }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(tag.created_at).toLocaleString() }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ new Date(tag.created_at).toLocaleString() }}</td>
           </tr>
         </tbody>
       </table>

@@ -70,47 +70,47 @@ const getStatusClass = (status: string) => {
         class="max-w-sm"
       />
     </div>
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+    <div class="bg-card rounded-lg overflow-x-auto">
       <table class="min-w-full">
-        <thead class="bg-gray-50 dark:bg-gray-700">
+        <thead class="bg-secondary">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               ID
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               受信日時
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               名前
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               件名
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               ステータス
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+        <tbody class="divide-y divide-border">
           <tr v-if="pending">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="5" class="px-6 py-4 text-center text-muted-foreground">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedContacts || paginatedContacts.length === 0">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">お問い合わせが見つかりません。</td>
+            <td colspan="5" class="px-6 py-4 text-center text-muted-foreground">お問い合わせが見つかりません。</td>
           </tr>
           <tr v-for="contact in paginatedContacts" :key="contact.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-              <NuxtLink :to="`/admin/contacts/${contact.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+              <NuxtLink :to="`/admin/contacts/${contact.id}`" class="text-link hover:underline">
                 {{ contact.id }}
               </NuxtLink>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               {{ formatDate(contact.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
               {{ contact.name }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
               {{ contact.subject }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">

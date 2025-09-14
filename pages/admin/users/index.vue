@@ -43,60 +43,60 @@ const formatDate = (date: string | null) => {
     <h1 class="text-3xl font-bold mb-6">
       ユーザー管理
     </h1>
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+    <div class="bg-card rounded-lg overflow-x-auto">
       <table class="min-w-full">
-        <thead class="bg-gray-50 dark:bg-gray-700">
+        <thead class="bg-secondary">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               ユーザー名
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               メールアドレス
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               登録日時
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               最終サインイン日時
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               管理者
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap whitespace-nowrap">
               ステータス
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+        <tbody class="divide-y divide-border">
           <tr v-if="pending">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-muted-foreground">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedUsers || paginatedUsers.length === 0">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="6" class="px-6 py-4 text-center text-muted-foreground">
               ユーザーが見つかりません。
             </td>
           </tr>
           <tr v-for="user in paginatedUsers" :key="user.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-white">
-              <NuxtLink :to="`/admin/users/${user.id}`" class="text-blue-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
+              <NuxtLink :to="`/admin/users/${user.id}`" class="text-link">
                 {{ user.username || '(未設定)' }}
               </NuxtLink>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-white">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
               {{ user.email }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               {{ formatDate(user.created_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               {{ formatDate(user.last_sign_in_at) }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', user.is_admin ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800']">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+              <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', user.is_admin ? 'bg-green-100 text-green-800' : 'bg-secondary text-secondary-foreground']">
                 {{ user.is_admin ? 'はい' : 'いいえ' }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', user.banned_until && new Date(user.banned_until) > new Date() ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800']">
                 {{ user.banned_until && new Date(user.banned_until) > new Date() ? '無効' : '有効' }}
               </span>

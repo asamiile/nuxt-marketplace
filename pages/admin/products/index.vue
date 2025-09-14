@@ -95,46 +95,46 @@ const statusBadgeClass = (status: string | null) => {
         class="max-w-sm"
       />
     </div>
-    <div class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+    <div class="bg-card rounded-lg overflow-x-auto">
       <table class="min-w-full">
-        <thead class="bg-gray-50 dark:bg-gray-700">
+        <thead class="bg-secondary">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               ID
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               商品名
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               ステータス
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               価格
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               クリエイター
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
               登録日時
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+        <tbody class="divide-y divide-border">
           <tr v-if="pending">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">読み込み中...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-muted-foreground">読み込み中...</td>
           </tr>
           <tr v-else-if="error || !paginatedProducts || paginatedProducts.length === 0">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+            <td colspan="6" class="px-6 py-4 text-center text-muted-foreground">
               商品が見つかりません。
             </td>
           </tr>
           <tr v-for="product in paginatedProducts" :key="product.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <NuxtLink :to="`/admin/products/${product.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+              <NuxtLink :to="`/admin/products/${product.id}`" class="text-link hover:underline">
                 {{ product.id }}
               </NuxtLink>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-white">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
               {{ product.name }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -145,13 +145,13 @@ const statusBadgeClass = (status: string | null) => {
                 {{ translateStatus(product.status) }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               ¥{{ product.price.toLocaleString() }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               <span class="whitespace-nowrap">{{ product.profiles?.username || 'N/A' }}</span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
               {{ formatDate(product.created_at) }}
             </td>
           </tr>

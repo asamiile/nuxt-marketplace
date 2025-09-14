@@ -131,7 +131,7 @@ const performAction = async (action: 'admin' | 'disable') => {
       <p>読み込み中...</p>
     </div>
     <div v-else-if="error">
-      <p class="text-red-400">{{ error.message }}</p>
+      <p class="text-destructive">{{ error.message }}</p>
     </div>
     <div v-else-if="user">
       <h1 class="text-3xl font-bold mb-6">
@@ -140,39 +140,39 @@ const performAction = async (action: 'admin' | 'disable') => {
 
       <div class="space-y-8">
         <!-- 基本情報 -->
-        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
-          <h2 class="text-xl font-semibold mb-4 border-b pb-2">基本情報</h2>
+        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+          <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">基本情報</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div>
               <h3 class="font-semibold mb-2">ユーザーID</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.id }}</p>
+              <p class="text-sm text-muted-foreground">{{ user.id }}</p>
             </div>
             <div>
               <h3 class="font-semibold mb-2">ユーザー名</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.username || '未設定' }}</p>
+              <p class="text-sm text-muted-foreground">{{ user.username || '未設定' }}</p>
             </div>
             <div>
               <h3 class="font-semibold mb-2">メールアドレス</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</p>
+              <p class="text-sm text-muted-foreground">{{ user.email }}</p>
             </div>
               <div>
               <h3 class="font-semibold mb-2">自己紹介</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.bio || '未設定' }}</p>
+              <p class="text-sm text-muted-foreground">{{ user.bio || '未設定' }}</p>
             </div>
             <div>
               <h3 class="font-semibold mb-2">登録日時</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ new Date(user.created_at).toLocaleString() }}</p>
+              <p class="text-sm text-muted-foreground">{{ new Date(user.created_at).toLocaleString() }}</p>
             </div>
             <div>
               <h3 class="font-semibold mb-2">最終サインイン日時</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ new Date(user.last_sign_in_at).toLocaleString() }}</p>
+              <p class="text-sm text-muted-foreground">{{ new Date(user.last_sign_in_at).toLocaleString() }}</p>
             </div>
           </div>
         </div>
 
         <!-- 管理アクション -->
-        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
-          <h2 class="text-xl font-semibold mb-4 border-b pb-2">管理アクション</h2>
+        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+          <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">管理アクション</h2>
           <div class="flex flex-wrap gap-4 items-center">
             <Button
               @click="performAction('admin')"
@@ -188,30 +188,30 @@ const performAction = async (action: 'admin' | 'disable') => {
             >
               {{ isBanned(user.banned_until) ? 'アカウントを有効化' : 'アカウントを無効化' }}
             </Button>
-            <p v-if="actionError" class="text-red-400 text-sm">{{ actionError }}</p>
+            <p v-if="actionError" class="text-destructive text-sm">{{ actionError }}</p>
           </div>
         </div>
 
           <!-- 出品商品一覧 -->
-        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
-            <h2 class="text-xl font-semibold mb-4 border-b pb-2">出品商品一覧 ({{ products.length }}件)</h2>
-            <div v-if="products.length > 0" class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
+        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+            <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">出品商品一覧 ({{ products.length }}件)</h2>
+            <div v-if="products.length > 0" class="bg-card rounded-lg overflow-x-auto">
               <table class="min-w-full">
-                <thead class="bg-gray-50 dark:bg-gray-800">
+                <thead class="bg-secondary">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">商品名</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">価格</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ステータス</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">商品名</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">価格</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">ステータス</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                <tbody class="divide-y divide-border">
                   <tr v-for="product in paginatedProducts" :key="product.id">
                     <td class="px-4 py-2">{{ product.id }}</td>
                     <td class="px-4 py-2 whitespace-nowrap">
-                      <NuxtLink :to="`/admin/products/${product.id}`" class="text-blue-400">{{ product.name }}</NuxtLink>
+                      <NuxtLink :to="`/admin/products/${product.id}`" class="text-link">{{ product.name }}</NuxtLink>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ product.price }}円</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ product.price }}円</td>
                     <td class="px-4 py-2">
                       <span
                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
@@ -224,7 +224,7 @@ const performAction = async (action: 'admin' | 'disable') => {
                 </tbody>
               </table>
             </div>
-            <p v-else class="text-gray-400">このユーザーはまだ商品を出品していません。</p>
+            <p v-else class="text-muted-foreground">このユーザーはまだ商品を出品していません。</p>
 
             <div v-if="productTotalPages > 1" class="mt-4 flex justify-center">
               <UiPagination
@@ -236,7 +236,7 @@ const performAction = async (action: 'admin' | 'disable') => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/users" class="text-sm text-blue-400 hover:underline">
+        <NuxtLink to="/admin/users" class="text-sm text-link hover:underline">
           &larr; ユーザー一覧に戻る
         </NuxtLink>
       </div>

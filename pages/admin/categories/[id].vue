@@ -75,14 +75,14 @@ const handleSave = async () => {
       </div>
 
 
-      <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-8">
+      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-8">
         <form @submit.prevent="handleSave" class="space-y-6">
           <div>
             <Label for="name">カテゴリ名</Label>
             <Input v-model="form.name" type="text" id="name" class="mt-1" />
           </div>
           <div class="flex items-center space-x-2">
-            <input type="checkbox" v-model="form.is_public" id="is_public" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+            <input type="checkbox" v-model="form.is_public" id="is_public" class="h-4 w-4 rounded border-border text-primary focus:ring-primary" />
             <Label for="is_public">公開する</Label>
           </div>
           <div class="pt-2">
@@ -94,7 +94,7 @@ const handleSave = async () => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/categories" class="text-sm text-blue-400 hover:underline">
+        <NuxtLink to="/admin/categories" class="text-sm text-link hover:underline">
           &larr; カテゴリ一覧に戻る
         </NuxtLink>
       </div>
