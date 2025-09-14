@@ -3,7 +3,7 @@
     <div class="container mx-auto flex px-6 h-20 items-center">
       <div class="mr-4 md:flex">
         <NuxtLink to="/" class="mr-6 flex items-center space-x-2">
-          <span class="font-bold">Marketplace</span>
+          <span class="font-bold text-foreground hover:text-muted-foreground">Marketplace</span>
         </NuxtLink>
         <nav class="flex items-center space-x-6 text-sm font-medium">
           <!-- Add any main navigation links here if needed -->

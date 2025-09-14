@@ -49,22 +49,22 @@
               <table class="min-w-full divide-y divide-border">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th class="px-4 py-2 text-left text-sm font-medium text-muted-foreground">商品名</th>
-                    <th class="px-4 py-2 text-left text-sm font-medium text-muted-foreground">購入者</th>
-                    <th class="px-4 py-2 text-left text-sm font-medium text-muted-foreground">販売日時</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-muted-foreground">価格</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-muted-foreground">商品名</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-muted-foreground">購入者</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-muted-foreground">販売日時</th>
+                    <th class="px-6 py-4 text-right text-sm font-medium text-muted-foreground">価格</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-border">
                   <tr v-for="sale in filteredAndPagedSales" :key="sale.product_id + sale.purchased_at">
-                    <td class="px-4 py-2 font-medium whitespace-nowrap">
-                      <NuxtLink :to="`/product/${sale.product_id}`" class="hover:underline">
+                    <td class="px-6 py-4 font-medium whitespace-nowrap">
+                      <NuxtLink :to="`/product/${sale.product_id}`" class="hover:underline text-sky-500">
                         {{ sale.product_name }}
                       </NuxtLink>
                     </td>
-                    <td class="px-4 py-2 text-muted-foreground">{{ sale.purchaser_username }}</td>
-                    <td class="px-4 py-2 text-muted-foreground">{{ new Date(sale.purchased_at).toLocaleString() }}</td>
-                    <td class="px-4 py-2 text-right">{{ formatPrice(sale.price) }}</td>
+                    <td class="px-6 py-4 text-muted-foreground whitespace-nowrap">{{ sale.purchaser_username }}</td>
+                    <td class="px-6 py-4 text-muted-foreground whitespace-nowrap">{{ new Date(sale.purchased_at).toLocaleString() }}</td>
+                    <td class="px-6 py-4 text-right whitespace-nowrap">{{ formatPrice(sale.price) }}</td>
                   </tr>
                 </tbody>
               </table>

@@ -131,7 +131,7 @@ const performAction = async (action: 'admin' | 'disable') => {
       <p>読み込み中...</p>
     </div>
     <div v-else-if="error">
-      <p class="text-red-500">{{ error.message }}</p>
+      <p class="text-red-400">{{ error.message }}</p>
     </div>
     <div v-else-if="user">
       <h1 class="text-3xl font-bold mb-6">
@@ -188,7 +188,7 @@ const performAction = async (action: 'admin' | 'disable') => {
             >
               {{ isBanned(user.banned_until) ? 'アカウントを有効化' : 'アカウントを無効化' }}
             </Button>
-            <p v-if="actionError" class="text-red-500 text-sm">{{ actionError }}</p>
+            <p v-if="actionError" class="text-red-400 text-sm">{{ actionError }}</p>
           </div>
         </div>
 

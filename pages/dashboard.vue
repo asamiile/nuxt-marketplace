@@ -5,14 +5,14 @@
     </div>
 
     <Tabs v-model="activeTab" class="flex flex-col lg:flex-row gap-8">
-      <TabsList class="flex lg:flex-col lg:justify-start lg:w-1/4 shrink-0">
-        <TabsTrigger value="sales" class="w-full justify-start">
+      <TabsList class="flex lg:flex-col justify-start lg:w-1/4 shrink-0">
+        <TabsTrigger value="sales" class="lg:w-full justify-start">
           販売管理
         </TabsTrigger>
-        <TabsTrigger value="listings" class="w-full justify-start">
+        <TabsTrigger value="listings" class="lg:w-full justify-start">
           出品管理
         </TabsTrigger>
-        <TabsTrigger value="profile" class="w-full justify-start">
+        <TabsTrigger value="profile" class="lg:w-full justify-start">
           プロフィール設定
         </TabsTrigger>
       </TabsList>

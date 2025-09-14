@@ -3,26 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@layer base {
-  :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 20%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
-    --border: 0 0% 89.8%;
-    --secondary: 240 4.8% 95.9%;
-  }
-
-  .dark {
-    --background: 240 10% 8%;
-    --foreground: 0 0% 100%;
-    --card: 240 10% 12%;
-    --card-foreground: 0 0% 100%;
-    --border: 240 3.7% 25%;
-    --secondary: 240 3.7% 15.9%;
-  }
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -99,25 +79,25 @@
 }
 
 .dark {
-  --background: oklch(25.938% 0.02117 228.247);
-  --foreground: oklch(97.727% 0.01013 229.314);
-  --card: oklch(28.364% 0.03348 229.008);
-  --card-foreground: var(--foreground);
-  --popover: oklch(0.22 0.03 230);
-  --popover-foreground: oklch(0.95 0.03 230);
-  --primary: var(--foreground);
-  --primary-foreground: oklch(0.2 0.03 230);
-  --secondary: oklch(38.925% 0.01148 232.811);
-  --secondary-foreground: oklch(0.95 0.03 230);
-  --muted: oklch(0.3 0.02 230);
-  --muted-foreground: oklch(0.7 0.03 230);
+  --background: oklch(14.5% 0 0);
+  --foreground: oklch(98.5% 0 0);
+  --card: oklch(20.5% 0 0);
+  --card-foreground: oklch(98.5% 0 0);
+  --popover: oklch(20.5% 0 0);
+  --popover-foreground: oklch(98.5% 0 0);
+  --primary: oklch(92.2% 0 0);
+  --primary-foreground: oklch(20.5% 0 0);
+  --secondary: oklch(26.9% 0 0);
+  --secondary-foreground: oklch(98.5% 0 0);
+  --muted: oklch(26.9% 0 0);
+  --muted-foreground: oklch(70.8% 0 0);
   --accent: oklch(0.4 0.05 230);
   --accent-foreground: oklch(0.95 0.03 230);
-  --destructive: oklch(0.5 0.2 15);
+  --destructive: oklch(70.4% .191 22.216);
   --destructive-foreground: oklch(0.95 0.03 230);
-  --border: oklch(0.3 0.03 230);
-  --input: oklch(0.3 0.03 230);
-  --ring: oklch(0.8 0.15 270);
+  --border: hsl(0deg 0% 100% / 10.2%);
+  --input: oklch(100% 0 0/.15);
+  --ring: oklch(55.6% 0 0);
   --chart-1: oklch(0.7 0.2 280);
   --chart-2: oklch(0.6 0.25 200);
   --chart-3: oklch(0.75 0.2 100);

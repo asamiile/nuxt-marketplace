@@ -114,7 +114,7 @@ const statusInfo = (status: Product['status']) => {
     case 'pending':
       return { text: '審査中', class: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }
     case 'rejected':
-      return { text: '要修正', class: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }
+      return { text: '要修正', class: 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200' }
     case 'banned':
       return { text: '却下', class: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200' }
     default:

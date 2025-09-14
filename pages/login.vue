@@ -11,12 +11,12 @@
           <div>
             <Label for="email-address">メールアドレス</Label>
             <Input id="email-address" v-model="email" name="email" type="email" autocomplete="email" :required="false" class="mt-1" placeholder="メールアドレス" />
-            <p v-if="errors.email" class="text-sm text-red-500 mt-1">{{ errors.email }}</p>
+            <p v-if="errors.email" class="text-sm text-red-400 mt-1">{{ errors.email }}</p>
           </div>
           <div>
             <Label for="password">パスワード</Label>
             <Input id="password" v-model="password" name="password" type="password" autocomplete="current-password" :required="false" class="mt-1" placeholder="パスワード" />
-             <p v-if="errors.password" class="text-sm text-red-500 mt-1">{{ errors.password }}</p>
+             <p v-if="errors.password" class="text-sm text-red-400 mt-1">{{ errors.password }}</p>
           </div>
         </div>
 
@@ -48,7 +48,7 @@
           Googleでサインイン
         </Button>
       </div>
-       <div v-if="errorMsg" class="p-4 text-center text-red-500 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
+       <div v-if="errorMsg" class="p-4 text-center text-red-400 bg-red-500/10 rounded-md">{{ errorMsg }}</div>
     </div>
   </div>
 </template>

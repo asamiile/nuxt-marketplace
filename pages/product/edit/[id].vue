@@ -19,17 +19,17 @@
             <div>
               <Label for="name">商品名</Label>
               <Input v-model="name" type="text" id="name" class="mt-1" />
-               <p v-if="errors.name" class="text-sm text-red-500 mt-1">{{ errors.name }}</p>
+               <p v-if="errors.name" class="text-sm text-red-400 mt-1">{{ errors.name }}</p>
             </div>
             <div>
               <Label for="description">説明</Label>
               <Textarea v-model="description" id="description" :rows="4" class="mt-1" />
-              <p v-if="errors.description" class="text-sm text-red-500 mt-1">{{ errors.description }}</p>
+              <p v-if="errors.description" class="text-sm text-red-400 mt-1">{{ errors.description }}</p>
             </div>
             <div>
               <Label for="price">価格 (円)</Label>
               <Input v-model.number="price" type="number" id="price" class="mt-1" />
-               <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
+               <p v-if="errors.price" class="text-sm text-red-400 mt-1">{{ errors.price }}</p>
             </div>
             <div>
               <Label for="category">カテゴリ</Label>
@@ -44,7 +44,7 @@
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p v-if="errors.categoryId" class="text-sm text-red-500 mt-1">{{ errors.categoryId }}</p>
+              <p v-if="errors.categoryId" class="text-sm text-red-400 mt-1">{{ errors.categoryId }}</p>
             </div>
             <div>
               <Label for="tags">タグ (検索して選択)</Label>
@@ -82,7 +82,7 @@
               <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-sky-500">ダウンロード</a></p>
             </div>
             <div class="pt-2">
-              <Button type="submit" class="w-full hover:bg-gray-700 transition-colors duration-200" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
+              <Button type="submit" class="w-full hover:bg-primary/90 transition-colors duration-200" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">
                 {{ isSubmitting ? '更新中...' : '更新する' }}
               </Button>
             </div>
