@@ -16,9 +16,15 @@ module.exports = {
       },
     },
     extend: {
-      borderColor: {
-        DEFAULT: 'var(--border)',
-        border: 'var(--border)',
+      colors: {
+        primary: '#333',
+        'primary-foreground': '#FFF',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        card: 'hsl(var(--card))',
+        'card-foreground': 'hsl(var(--card-foreground))',
+        border: 'hsl(var(--border))',
+        secondary: 'hsl(var(--secondary))',
       },
     },
   },
