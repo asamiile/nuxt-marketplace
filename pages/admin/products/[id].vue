@@ -85,7 +85,7 @@ const handleSave = async () => {
         商品編集: {{ product.name }}
       </h1>
 
-      <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-8">
+      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-8">
         <form @submit.prevent="handleSave" class="space-y-6">
           <div>
             <Label for="name">商品名</Label>
@@ -143,7 +143,7 @@ const handleSave = async () => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/products" class="text-sm text-blue-400 hover:underline">
+        <NuxtLink to="/admin/products" class="text-sm text-primary hover:underline">
           &larr; 商品一覧に戻る
         </NuxtLink>
       </div>
