@@ -164,10 +164,6 @@ export function useProductForm(
       return;
     }
 
-    if (mode === 'create' && (!imageFile.value || !assetFile.value)) {
-        return
-    }
-
     isSubmitting.value = true
 
     try {
