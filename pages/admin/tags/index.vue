@@ -50,7 +50,7 @@
           </tr>
           <tr v-for="tag in paginatedTags" :key="tag.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-primary hover:underline">
+              <NuxtLink :to="`/admin/tags/${tag.id}`" class="text-[--link] hover:underline">
                 {{ tag.id }}
               </NuxtLink>
             </td>

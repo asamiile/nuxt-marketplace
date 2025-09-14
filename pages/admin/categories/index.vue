@@ -50,7 +50,7 @@
           </tr>
           <tr v-for="category in paginatedCategories" :key="category.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-              <NuxtLink :to="`/admin/categories/${category.id}`" class="text-primary hover:underline">
+              <NuxtLink :to="`/admin/categories/${category.id}`" class="text-[--link] hover:underline">
                 {{ category.id }}
               </NuxtLink>
             </td>

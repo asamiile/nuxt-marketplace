@@ -78,7 +78,7 @@ const formatDate = (date: string | null) => {
           </tr>
           <tr v-for="user in paginatedUsers" :key="user.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
-              <NuxtLink :to="`/admin/users/${user.id}`" class="text-primary">
+              <NuxtLink :to="`/admin/users/${user.id}`" class="text-[--link]">
                 {{ user.username || '(未設定)' }}
               </NuxtLink>
             </td>

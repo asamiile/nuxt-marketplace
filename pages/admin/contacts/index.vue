@@ -100,7 +100,7 @@ const getStatusClass = (status: string) => {
           </tr>
           <tr v-for="contact in paginatedContacts" :key="contact.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-              <NuxtLink :to="`/admin/contacts/${contact.id}`" class="text-primary hover:underline">
+              <NuxtLink :to="`/admin/contacts/${contact.id}`" class="text-[--link] hover:underline">
                 {{ contact.id }}
               </NuxtLink>
             </td>

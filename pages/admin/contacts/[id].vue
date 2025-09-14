@@ -129,7 +129,7 @@ const getStatusClass = (status: string | undefined) => {
         </div>
       </div>
        <div class="mt-6">
-        <NuxtLink to="/admin/contacts" class="text-sm text-primary hover:underline">
+        <NuxtLink to="/admin/contacts" class="text-sm text-[--link] hover:underline">
           &larr; お問い合わせ一覧に戻る
         </NuxtLink>
       </div>
