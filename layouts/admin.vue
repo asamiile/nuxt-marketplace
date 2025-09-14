@@ -86,10 +86,12 @@ const handleLinkClick = () => {
 onMounted(() => {
   handleResize()
   window.addEventListener('resize', handleResize)
+  document.documentElement.classList.add('admin-layout')
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  document.documentElement.classList.remove('admin-layout')
 })
 </script>
 
