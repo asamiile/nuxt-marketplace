@@ -42,12 +42,32 @@
 
         <div>
           <Label for="tags">タグ (検索して選択)</Label>
-          <Combobox
-            :items="publicTags"
-            @select="addTag"
-            placeholder="タグを検索..."
-            id="tags"
-          />
+          <Combobox>
+            <ComboboxTrigger class="w-full">
+              <Button
+                variant="outline"
+                role="combobox"
+                class="w-full justify-between"
+              >
+                <span>タグを選択...</span>
+                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </ComboboxTrigger>
+            <ComboboxContent>
+              <ComboboxInput placeholder="タグを検索..." />
+              <ComboboxEmpty>見つかりませんでした。</ComboboxEmpty>
+              <ComboboxGroup>
+                <ComboboxItem
+                  v-for="tag in publicTags"
+                  :key="tag.id"
+                  :value="tag.name"
+                  @select.prevent="addTag(tag)"
+                >
+                  {{ tag.name }}
+                </ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxContent>
+          </Combobox>
           <div class="mt-2 flex flex-wrap gap-2">
             <span v-for="tag in tags" :key="tag.id" class="inline-flex items-center px-2 py-1 bg-gray-200 dark:bg-gray-700 text-sm font-medium rounded-full">
               {{ tag.name }}
@@ -92,9 +112,11 @@ import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
-import FileDropzone from '~/components/ui/form/FileDropzone.vue'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
-import Combobox from '~/components/ui/form/Combobox.vue'
+import FileDropzone from '~/components/ui/FileDropzone.vue'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { Combobox, ComboboxContent, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxTrigger, ComboboxEmpty } from '~/components/ui/combobox'
+import { ChevronsUpDown } from 'lucide-vue-next'
+import { ref } from 'vue'
 
 definePageMeta({
   middleware: 'auth'
