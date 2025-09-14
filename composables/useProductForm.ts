@@ -227,34 +227,21 @@ export function useProductForm(
         router.push('/dashboard');
 
       } else {
-        // Logic for 'edit' mode
-        const productId = productBeingEdited!.id;
-        const productData = {
-          name: name.value,
-          description: description.value,
-          price: price.value,
-          category_id: categoryId.value,
-          image_url: newImageUrl,
-          file_url: newFileUrl,
-          license_type: license_type.value,
-          terms_of_use: terms_of_use.value,
-          // When a product is edited, its status is reset to 'pending' for re-approval.
-          status: 'pending'
-        };
+        // Use RPC for update
+        const { error: rpcError } = await supabase.rpc('update_product', {
+            p_product_id: productBeingEdited!.id,
+            p_name: name.value,
+            p_description: description.value,
+            p_price: price.value,
+            p_category_id: categoryId.value,
+            p_image_url: newImageUrl,
+            p_file_url: newFileUrl,
+            p_license_type: license_type.value,
+            p_terms_of_use: terms_of_use.value,
+            p_tag_ids: tags.value.map(t => t.id)
+        })
 
-        const { error: dbError } = await supabase.from('products').update(productData).eq('id', productId);
-        if (dbError) throw new Error(`データベース更新エラー: ${dbError.message}`);
-
-        // Handle tags for 'edit'
-        const { error: deleteError } = await supabase.from('product_tags').delete().eq('product_id', productId);
-        if (deleteError) throw new Error(`既存タグの削除エラー: ${deleteError.message}`);
-
-        const tagIds = tags.value.map(tag => tag.id);
-        if (tagIds.length > 0) {
-          const productTags = tagIds.map(tag_id => ({ product_id: productId, tag_id: tag_id }));
-          const { error: productTagError } = await supabase.from('product_tags').insert(productTags);
-          if (productTagError) throw new Error(`商品とタグの関連付けエラー: ${productTagError.message}`);
-        }
+        if (rpcError) throw rpcError;
 
         // Handle success for edit
         showToast('成功', '商品の変更を申請しました。管理者による承認をお待ちください。', 'success');
