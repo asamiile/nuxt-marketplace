@@ -86,10 +86,10 @@
         </div>
 
         <div v-if="user && product.creator_id === user.id" class="flex items-center gap-4 mt-8">
-          <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', class: 'flex-1' })">
+          <NuxtLink :to="`/product/edit/${product.id}`" :class="buttonVariants({ variant: 'outline', class: 'w-full' })">
             編集
           </NuxtLink>
-          <Button @click="handleDelete" variant="destructive" class="flex-1">
+          <Button @click="handleDelete" variant="destructive" class="w-full">
             削除
           </Button>
         </div>

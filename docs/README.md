@@ -24,4 +24,3 @@
 -   [5. バックアップとリストア](./operation/05-backup-and-restore.md)
 -   [6. トラブルシューティングガイド](./operation/06-troubleshooting-guide.md)
 -   [7. ファイルストレージ](./operation/07-file-storage.md)
--   [8. 商品管理マニュアル](./operation/08-product-management.md)
