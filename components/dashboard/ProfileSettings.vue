@@ -61,7 +61,7 @@ import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
-import FileDropzone from '~/components/ui/form/FileDropzone.vue'
+import FileDropzone from '~/components/ui/FileDropzone.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
