@@ -55,7 +55,7 @@ const formatDate = (date: string | null) => {
 
       <div class="space-y-8">
         <!-- Purchase Details -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">購入情報</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -70,7 +70,7 @@ const formatDate = (date: string | null) => {
         </div>
 
         <!-- Product Details -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">商品情報</h2>
           <div v-if="purchase.products" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -96,7 +96,7 @@ const formatDate = (date: string | null) => {
         </div>
 
         <!-- Customer Details -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">購入者情報</h2>
           <div v-if="purchase.profiles" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

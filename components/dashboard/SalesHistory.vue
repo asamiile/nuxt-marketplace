@@ -20,13 +20,13 @@
         <div>
           <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
             <h3 class="text-lg font-semibold">販売履歴</h3>
-            <div class="flex flex-col sm:flex-row gap-2">
+            <div class="flex flex-col md:flex-row gap-4">
                <div class="flex items-center gap-2">
-                <Input v-model="startDate" type="date" class="w-full sm:w-40" />
+                <DatePicker v-model="startDate" />
                 <span>〜</span>
-                <Input v-model="endDate" type="date" class="w-full sm:w-40" />
+                <DatePicker v-model="endDate" />
               </div>
-              <div class="flex gap-2">
+              <div class="flex gap-4">
                 <Button variant="outline" size="sm" @click="setPeriod('this_month')">今月</Button>
                 <Button variant="outline" size="sm" @click="setPeriod('this_year')">今年</Button>
                 <Button variant="ghost" size="sm" @click="setPeriod(null)">リセット</Button>
@@ -91,6 +91,7 @@ import { Card, CardContent } from '~/components/ui/card'
 import Input from '~/components/ui/input/Input.vue'
 import UiPagination from '~/components/ui/Pagination.vue'
 import Button from '~/components/ui/button/Button.vue'
+import { DatePicker } from '~/components/ui/date-picker'
 
 const supabase = useSupabaseClient()
 const { showToast } = useAlert()
@@ -107,24 +108,29 @@ const searchQuery = ref('')
 const currentPage = ref(1)
 const itemsPerPage = 10
 
+// --- Date formatting helper ---
+const toIsoDateString = (date: Date | null | undefined) => {
+  if (!date) return undefined
+  return date.toISOString().split('T')[0]
+}
+
 // --- Default to this month ---
 const getThisMonthRange = () => {
   const today = new Date()
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
   const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-  return {
-    start: firstDay.toISOString().split('T')[0],
-    end: lastDay.toISOString().split('T')[0],
-  }
+  return { start: firstDay, end: lastDay }
 }
 const { start, end } = getThisMonthRange()
-const startDate = ref<string | null>(start)
-const endDate = ref<string | null>(end)
+const startDate = ref<Date | null>(start)
+const endDate = ref<Date | null>(end)
 // -------------------------
 
 const { data: sales, pending, error } = await useAsyncData('sales-history', async () => {
   const params: { start_date?: string; end_date?: string } = {}
-  if (startDate.value) params.start_date = startDate.value
+  if (startDate.value) {
+    params.start_date = toIsoDateString(startDate.value)
+  }
   if (endDate.value) {
     const endOfDay = new Date(endDate.value)
     endOfDay.setHours(23, 59, 59, 999)
@@ -185,15 +191,14 @@ const setPeriod = (period: 'this_month' | 'this_year' | null) => {
 
   const today = new Date()
   if (period === 'this_month') {
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-    startDate.value = firstDay.toISOString().split('T')[0]
-    endDate.value = lastDay.toISOString().split('T')[0]
+    const { start, end } = getThisMonthRange()
+    startDate.value = start
+    endDate.value = end
   } else if (period === 'this_year') {
     const firstDay = new Date(today.getFullYear(), 0, 1)
     const lastDay = new Date(today.getFullYear(), 11, 31)
-    startDate.value = firstDay.toISOString().split('T')[0]
-    endDate.value = lastDay.toISOString().split('T')[0]
+    startDate.value = firstDay
+    endDate.value = lastDay
   }
 }
 

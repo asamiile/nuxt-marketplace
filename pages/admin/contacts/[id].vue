@@ -103,7 +103,7 @@ const getStatusClass = (status: string | undefined) => {
       </div>
       <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">件名: {{ contact.subject }}</p>
 
-      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6 space-y-6">
+      <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6 space-y-6">
         <!-- Contact Info -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b">
           <div>
