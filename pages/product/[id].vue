@@ -40,6 +40,17 @@
           </span>
         </div>
 
+        <!-- Status Banner for Creator -->
+        <div v-if="user && product.creator_id === user.id && statusDisplay"
+             :class="['p-4 rounded-md mb-4 border', statusDisplay.class]">
+          <p class="font-semibold">
+            この商品は現在「{{ statusDisplay.text }}」ステータスです。他のユーザーには表示されません。
+          </p>
+          <p v-if="product.admin_notes" class="mt-2 text-sm">
+            <b>管理者からのメモ:</b> {{ product.admin_notes }}
+          </p>
+        </div>
+
         <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-foreground">{{ product.name }}</h1>
         <p class="text-lg text-foreground mb-4">
           作成者:
@@ -113,7 +124,6 @@ const { data: product, pending, error } = await useAsyncData<ProductWithRelation
       tags (name, is_public)
     `)
     .eq('id', id)
-    .eq('status', 'approved')
     .single()
 
   if (error) {
@@ -134,6 +144,18 @@ const { isFavoritedState, toggleFavorite } = useProductFavorite(() => product.va
 
 const publicTags = computed(() => {
   return product.value?.tags?.filter(tag => tag.is_public) || []
+})
+
+const statusDisplay = computed(() => {
+  if (!product.value) return null
+  switch (product.value.status) {
+    case 'pending':
+      return { text: '承認待ち', class: 'bg-yellow-100 border-yellow-300 text-yellow-800' }
+    case 'rejected':
+      return { text: '非承認', class: 'bg-red-100 border-red-300 text-red-800' }
+    default:
+      return null
+  }
 })
 
 const formatPrice = (price: number | null) => {
