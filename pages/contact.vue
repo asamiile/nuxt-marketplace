@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold text-center mb-8 text-foreground">
       お問い合わせ
     </h1>
-    <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-8 pt-8">
+    <div class="text-card-foreground bg-secondary rounded-lg p-4 md:p-8 pt-8">
         <form class="space-y-6" @submit.prevent="handleSubmit">
           <div>
             <Label for="name">お名前</Label>

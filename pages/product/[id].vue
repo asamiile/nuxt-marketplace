@@ -34,7 +34,7 @@
         <img :src="optimizedImageUrl" :alt="product.name" class="w-full rounded-lg">
       </div>
       <div>
-        <div class="mb-2">
+        <div class="mb-3">
           <span v-if="product.categories?.name" class="text-sm font-semibold bg-secondary text-foreground px-3 py-1 rounded-full">
             {{ product.categories.name }}
           </span>

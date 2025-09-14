@@ -26,7 +26,7 @@
                 <span>〜</span>
                 <DatePicker v-model="endDate" />
               </div>
-              <div class="flex gap-4">
+              <div class="flex gap-2">
                 <Button variant="outline" size="sm" @click="setPeriod('this_month')">今月</Button>
                 <Button variant="outline" size="sm" @click="setPeriod('this_year')">今年</Button>
                 <Button variant="ghost" size="sm" @click="setPeriod(null)">リセット</Button>
@@ -47,7 +47,7 @@
           <div v-else-if="filteredAndPagedSales.length > 0">
             <div class="border rounded-lg overflow-x-auto">
               <table class="min-w-full divide-y divide-border">
-                <thead class="bg-gray-50 dark:bg-gray-700">
+                <thead class="bg-secondary">
                   <tr>
                     <th class="px-6 py-4 text-left text-sm font-medium text-muted-foreground">商品名</th>
                     <th class="px-6 py-4 text-left text-sm font-medium text-muted-foreground">購入者</th>
