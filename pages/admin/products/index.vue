@@ -130,7 +130,7 @@ const statusBadgeClass = (status: string | null) => {
           </tr>
           <tr v-for="product in paginatedProducts" :key="product.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <NuxtLink :to="`/admin/products/${product.id}`" class="text-[--link] hover:underline">
+              <NuxtLink :to="`/admin/products/${product.id}`" class="text-link hover:underline">
                 {{ product.id }}
               </NuxtLink>
             </td>

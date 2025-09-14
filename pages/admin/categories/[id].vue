@@ -94,7 +94,7 @@ const handleSave = async () => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/categories" class="text-sm text-[--link] hover:underline">
+        <NuxtLink to="/admin/categories" class="text-sm text-link hover:underline">
           &larr; カテゴリ一覧に戻る
         </NuxtLink>
       </div>

@@ -119,7 +119,7 @@ const formatDate = (date: string | null) => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/purchases" class="text-sm text-[--link] hover:underline">
+        <NuxtLink to="/admin/purchases" class="text-sm text-link hover:underline">
           &larr; 購入一覧に戻る
         </NuxtLink>
       </div>

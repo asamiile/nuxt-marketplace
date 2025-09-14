@@ -209,7 +209,7 @@ const performAction = async (action: 'admin' | 'disable') => {
                   <tr v-for="product in paginatedProducts" :key="product.id">
                     <td class="px-4 py-2">{{ product.id }}</td>
                     <td class="px-4 py-2 whitespace-nowrap">
-                      <NuxtLink :to="`/admin/products/${product.id}`" class="text-[--link]">{{ product.name }}</NuxtLink>
+                      <NuxtLink :to="`/admin/products/${product.id}`" class="text-link">{{ product.name }}</NuxtLink>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ product.price }}円</td>
                     <td class="px-4 py-2">
@@ -236,7 +236,7 @@ const performAction = async (action: 'admin' | 'disable') => {
       </div>
 
       <div class="mt-6">
-        <NuxtLink to="/admin/users" class="text-sm text-[--link] hover:underline">
+        <NuxtLink to="/admin/users" class="text-sm text-link hover:underline">
           &larr; ユーザー一覧に戻る
         </NuxtLink>
       </div>
