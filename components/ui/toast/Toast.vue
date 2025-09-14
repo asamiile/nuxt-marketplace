@@ -60,6 +60,6 @@ const buttonClasses = computed(() => {
   if (props.type === 'success') {
     return 'bg-green-50 text-green-500 hover:bg-green-100 focus:ring-green-600 focus:ring-offset-green-50'
   }
-  return 'bg-red-50 text-red-500 hover:bg-red-100 focus:ring-red-600 focus:ring-offset-red-50'
+  return 'bg-red-50 text-red-400 hover:bg-red-100 focus:ring-red-600 focus:ring-offset-red-50'
 })
 </script>

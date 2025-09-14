@@ -15,7 +15,7 @@
           <div>
             <Label for="username">ユーザー名</Label>
             <Input id="username" v-model="username" type="text" class="mt-1" placeholder="例: tanaka_taro" />
-            <p v-if="errors.username" class="text-sm text-red-500 mt-1">{{ errors.username }}</p>
+            <p v-if="errors.username" class="text-sm text-red-400 mt-1">{{ errors.username }}</p>
           </div>
           <div>
             <Label for="avatar_url">アバター画像</Label>
@@ -29,20 +29,20 @@
           <div>
             <Label for="website_url">ウェブサイトURL</Label>
             <Input id="website_url" v-model="website_url" type="url" class="mt-1" placeholder="https://..."/>
-            <p v-if="errors.website_url" class="text-sm text-red-500 mt-1">{{ errors.website_url }}</p>
+            <p v-if="errors.website_url" class="text-sm text-red-400 mt-1">{{ errors.website_url }}</p>
           </div>
           <div>
             <Label for="x_url">X (Twitter) URL</Label>
             <Input id="x_url" v-model="x_url" type="url" class="mt-1" placeholder="https://x.com/..."/>
-            <p v-if="errors.x_url" class="text-sm text-red-500 mt-1">{{ errors.x_url }}</p>
+            <p v-if="errors.x_url" class="text-sm text-red-400 mt-1">{{ errors.x_url }}</p>
           </div>
           <div>
             <Label for="youtube_url">YouTube URL</Label>
             <Input id="youtube_url" v-model="youtube_url" type="url" class="mt-1" placeholder="https://youtube.com/..."/>
-            <p v-if="errors.youtube_url" class="text-sm text-red-500 mt-1">{{ errors.youtube_url }}</p>
+            <p v-if="errors.youtube_url" class="text-sm text-red-400 mt-1">{{ errors.youtube_url }}</p>
           </div>
           <div class="pt-2">
-            <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full hover:bg-gray-700">
+            <Button type="submit" :disabled="saving || (hasAttemptedSubmit && isFormInvalid)" class="w-full hover:bg-primary/90">
               {{ saving ? '保存中...' : 'プロフィールを更新' }}
             </Button>
           </div>

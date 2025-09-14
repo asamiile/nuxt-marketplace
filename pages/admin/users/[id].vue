@@ -131,7 +131,7 @@ const performAction = async (action: 'admin' | 'disable') => {
       <p>読み込み中...</p>
     </div>
     <div v-else-if="error">
-      <p class="text-red-500">{{ error.message }}</p>
+      <p class="text-red-400">{{ error.message }}</p>
     </div>
     <div v-else-if="user">
       <h1 class="text-3xl font-bold mb-6">
@@ -140,7 +140,7 @@ const performAction = async (action: 'admin' | 'disable') => {
 
       <div class="space-y-8">
         <!-- 基本情報 -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">基本情報</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div>
@@ -171,7 +171,7 @@ const performAction = async (action: 'admin' | 'disable') => {
         </div>
 
         <!-- 管理アクション -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
           <h2 class="text-xl font-semibold mb-4 border-b pb-2">管理アクション</h2>
           <div class="flex flex-wrap gap-4 items-center">
             <Button
@@ -188,16 +188,16 @@ const performAction = async (action: 'admin' | 'disable') => {
             >
               {{ isBanned(user.banned_until) ? 'アカウントを有効化' : 'アカウントを無効化' }}
             </Button>
-            <p v-if="actionError" class="text-red-500 text-sm">{{ actionError }}</p>
+            <p v-if="actionError" class="text-red-400 text-sm">{{ actionError }}</p>
           </div>
         </div>
 
           <!-- 出品商品一覧 -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <div class="text-card-foreground bg-card dark:bg-gray-800 rounded-lg p-4 md:p-6">
             <h2 class="text-xl font-semibold mb-4 border-b pb-2">出品商品一覧 ({{ products.length }}件)</h2>
             <div v-if="products.length > 0" class="bg-white dark:bg-gray-800 rounded-lg overflow-x-auto">
               <table class="min-w-full">
-                <thead class="bg-gray-50 dark:bg-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-800">
                   <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">商品名</th>

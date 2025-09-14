@@ -6,22 +6,22 @@
     <p class="text-center mb-8 text-muted-foreground">
       以下のフォームに必要事項を入力して、新しい商品を販売してください。
     </p>
-    <div class="text-card-foreground bg-card rounded-lg p-4 md:p-8 pt-8">
+    <div class="text-card-foreground bg-secondary rounded-lg p-4 md:p-8 pt-8">
       <form @submit.prevent="submit" class="space-y-6">
         <div>
           <Label for="name">商品名</Label>
           <Input v-model="name" type="text" id="name" class="mt-1" placeholder="例: 高品質3Dキャラクターモデル" />
-          <p v-if="errors.name" class="text-sm text-red-500 mt-1">{{ errors.name }}</p>
+          <p v-if="errors.name" class="text-sm text-red-400 mt-1">{{ errors.name }}</p>
         </div>
         <div>
           <Label for="description">説明</Label>
           <Textarea v-model="description" id="description" :rows="4" class="mt-1" placeholder="商品の特徴、含まれるファイル、使い方などを詳しく説明します。" />
-          <p v-if="errors.description" class="text-sm text-red-500 mt-1">{{ errors.description }}</p>
+          <p v-if="errors.description" class="text-sm text-red-400 mt-1">{{ errors.description }}</p>
         </div>
         <div>
           <Label for="price">価格 (円)</Label>
           <Input v-model.number="price" type="number" id="price" class="mt-1" placeholder="例: 1500" />
-          <p v-if="errors.price" class="text-sm text-red-500 mt-1">{{ errors.price }}</p>
+          <p v-if="errors.price" class="text-sm text-red-400 mt-1">{{ errors.price }}</p>
         </div>
 
         <div>
@@ -37,7 +37,7 @@
               </SelectItem>
             </SelectContent>
           </Select>
-          <p v-if="errors.categoryId" class="text-sm text-red-500 mt-1">{{ errors.categoryId }}</p>
+          <p v-if="errors.categoryId" class="text-sm text-red-400 mt-1">{{ errors.categoryId }}</p>
         </div>
 
         <div>
@@ -70,12 +70,12 @@
         <div>
           <Label for="image">サムネイル画像</Label>
           <FileDropzone v-model="imageFile" accept="image/*" class="mt-1" />
-          <p v-if="errors.image" class="text-sm text-red-500 mt-1">{{ errors.image }}</p>
+          <p v-if="errors.image" class="text-sm text-red-400 mt-1">{{ errors.image }}</p>
         </div>
         <div>
           <Label for="file">デジタルアセット (zip, etc.)</Label>
           <FileDropzone v-model="assetFile" class="mt-1" />
-          <p v-if="errors.file" class="text-sm text-red-500 mt-1">{{ errors.file }}</p>
+          <p v-if="errors.file" class="text-sm text-red-400 mt-1">{{ errors.file }}</p>
         </div>
         <div class="pt-2">
           <Button type="submit" class="w-full" size="lg" :disabled="isSubmitting || (hasAttemptedSubmit && isFormInvalid)">

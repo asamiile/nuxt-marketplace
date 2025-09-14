@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@internationalized/date':
+    specifier: ^3.9.0
+    version: 3.9.0
   '@nuxtjs/supabase':
     specifier: ^1.6.1
     version: 1.6.1
