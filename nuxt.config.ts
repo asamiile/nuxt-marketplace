@@ -50,4 +50,12 @@ export default defineNuxtConfig({
       cert: './server.crt'
     }
   },
+  runtimeConfig: {
+    // The private keys which are only available on server-side
+    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
+    // Public keys that are exposed to the client
+    public: {
+      // publicなキーがあればここに記述
+    }
+  },
 })

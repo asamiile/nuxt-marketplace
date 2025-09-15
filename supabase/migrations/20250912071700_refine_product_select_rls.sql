@@ -1,6 +1,11 @@
 -- Drop the previous consolidated policy to ensure a clean slate.
 DROP POLICY IF EXISTS "Users can view approved products and their own products" ON public.products;
 
+-- Drop policies created in this script to make it idempotent
+DROP POLICY IF EXISTS "Public can view approved products" ON public.products;
+DROP POLICY IF EXISTS "Authenticated users can view approved and their own products" ON public.products;
+
+
 -- Re-create the policy for non-authenticated users (public role).
 -- They should only be able to see approved products.
 CREATE POLICY "Public can view approved products"
