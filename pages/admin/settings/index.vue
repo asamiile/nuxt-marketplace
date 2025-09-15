@@ -5,12 +5,9 @@
     <form @submit.prevent="handleSaveSettings">
       <div class="space-y-8">
         <!-- Basic Information -->
-        <Card>
-          <CardHeader>
-            <CardTitle>サイト基本情報</CardTitle>
-            <CardDescription>サイト名や概要など、基本的な情報を設定します。</CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-4">
+        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+          <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">サイト基本情報</h2>
+          <div class="grid grid-cols-1 gap-4">
             <div>
               <Label for="siteName">サイト名</Label>
               <Input id="siteName" v-model="settings.site_name" />
@@ -19,8 +16,8 @@
               <Label for="siteDescription">サイト概要</Label>
               <Textarea id="siteDescription" v-model="settings.site_description" rows="3" />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
       </div>
 
