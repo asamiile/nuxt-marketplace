@@ -21,5 +21,5 @@ USING (true);
 CREATE POLICY "Allow admin write access to site settings"
 ON public.site_settings
 FOR ALL
-TO service_role
-USING (true);
+TO authenticated
+USING ((auth.jwt() -> 'app_metadata' ->> 'claims_admin')::boolean IS TRUE);
