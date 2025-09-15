@@ -38,39 +38,29 @@ const dashboardCards = computed(() => [
       管理者ダッシュボード
     </h1>
 
-    <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card v-for="i in 4" :key="i">
-        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle class="text-sm font-medium">
-            読み込み中...
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div class="text-2xl font-bold">
-            -
-          </div>
-        </CardContent>
-      </Card>
+    <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div v-for="i in 4" :key="i" class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">読み込み中...</h2>
+        <div class="text-xl">
+          -
+        </div>
+      </div>
     </div>
 
     <div v-else-if="error" class="text-red-500">
       データの取得中にエラーが発生しました: {{ error.message }}
     </div>
 
-    <div v-else-if="stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card v-for="card in dashboardCards" :key="card.title">
-        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle class="text-sm font-medium">
-            {{ card.title }}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div class="text-2xl font-bold">
-            {{ card.value }}
-            <span v-if="card.value !== 'N/A'" class="text-sm font-normal text-gray-500">{{ card.unit }}</span>
-          </div>
-        </CardContent>
-      </Card>
+    <div v-else-if="stats" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div v-for="card in dashboardCards" :key="card.title" class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
+        <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">
+          {{ card.title }}
+        </h2>
+        <div class="text-xl">
+          {{ card.value }}
+          <span v-if="card.value !== 'N/A'" class="text-sm font-normal text-gray-500">{{ card.unit }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
