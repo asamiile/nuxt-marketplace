@@ -3,7 +3,7 @@ import { serverSupabaseUser } from '#supabase/server'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
-  // First, ensure the user is an admin
+  // Ensure the user is an admin
   const user = await serverSupabaseUser(event)
   if (!user || user.app_metadata?.claims_admin !== true) {
     throw createError({ statusCode: 401, message: 'Unauthorized: Admin access required' })
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Since this is a protected admin route, we create a new client with the service role key to bypass RLS.
+  // Create a service role client to bypass RLS
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
@@ -30,32 +30,21 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  // Continue to use readMultipartFormData to handle file uploads
   const formData = await readMultipartFormData(event)
-
   if (!formData) {
     throw createError({ statusCode: 400, message: 'No form data received' })
   }
 
-  const settingsToUpdate: { key: string; value: string }[] = []
+  const settingsToUpsert: { key: string; value: string }[] = []
 
-  // Process text fields
+  // 1. Process text fields and add them to the list
   formData.forEach(part => {
     if (part.name && !part.filename && part.data) {
-      settingsToUpdate.push({ key: part.name, value: part.data.toString('utf-8') })
+      settingsToUpsert.push({ key: part.name, value: part.data.toString('utf-8') })
     }
   })
 
-  // Upsert text-based settings
-  if (settingsToUpdate.length > 0) {
-    const { error: dbError } = await client.from('site_settings').upsert(settingsToUpdate, { onConflict: 'key' })
-    if (dbError) {
-      console.error('Error saving text settings:', dbError)
-      throw createError({ statusCode: 500, message: `Failed to save settings: ${dbError.message}` })
-    }
-  }
-
-  // Handle file uploads and update their URLs
+  // 2. Process file uploads, upload them, and add their URLs to the same list
   const fileParts = formData.filter(p => p.filename && (p.name === 'logo' || p.name === 'favicon'))
 
   for (const filePart of fileParts) {
@@ -84,14 +73,34 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 500, message: `Could not get public URL for ${name}.` })
     }
 
-    const urlKey = `${name}_url`
-    const { error: urlUpdateError } = await client.from('site_settings').upsert({ key: urlKey, value: urlData.publicUrl }, { onConflict: 'key' })
+    settingsToUpsert.push({ key: `${name}_url`, value: urlData.publicUrl })
+  }
 
-    if (urlUpdateError) {
-        console.error(`Error saving ${urlKey}:`, urlUpdateError)
-        throw createError({ statusCode: 500, message: `Failed to save ${name} URL: ${urlUpdateError.message}` })
+  // 3. Perform a single batch upsert operation
+  if (settingsToUpsert.length > 0) {
+    const { error: dbError } = await client.from('site_settings').upsert(settingsToUpsert, { onConflict: 'key' })
+    if (dbError) {
+      console.error('Error batch saving settings:', dbError)
+      throw createError({ statusCode: 500, message: `Failed to save settings: ${dbError.message}` })
     }
   }
 
-  return { success: true, message: 'Settings updated successfully.' }
+  // 4. Fetch and return the fresh data
+  const { data: freshData, error: fetchError } = await client.from('site_settings').select('key, value')
+
+  if (fetchError) {
+    // The save succeeded, but the fetch failed. Log the error but still return success.
+    console.error('Error fetching settings after update:', fetchError)
+    return { success: true, message: 'Settings updated, but failed to fetch latest data.' }
+  }
+
+  const freshSettings = freshData.reduce((acc, { key, value }) => {
+    if (value !== null) {
+      acc[key] = value
+    }
+    return acc
+  }, {} as Record<string, string>)
+
+
+  return freshSettings
 })
