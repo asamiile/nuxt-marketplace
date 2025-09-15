@@ -67,6 +67,7 @@ const menuItems = [
   { to: '/admin/purchases', name: '購入管理' },
   { to: '/admin/users', name: 'ユーザ管理' },
   { to: '/admin/contacts', name: 'お問い合わせ管理' },
+  { to: '/admin/settings', name: 'サイト設定' },
 ]
 
 const handleResize = () => {

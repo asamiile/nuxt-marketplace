@@ -3,7 +3,8 @@
     <div class="container mx-auto flex px-6 h-20 items-center">
       <div class="mr-4 md:flex">
         <NuxtLink to="/" class="mr-6 flex items-center space-x-2">
-          <span class="font-bold text-foreground hover:text-muted-foreground">Marketplace</span>
+          <img v-if="logoUrl" :src="logoUrl" :alt="siteName" class="h-8 w-auto">
+          <span v-else class="font-bold text-foreground hover:text-muted-foreground">{{ siteName }}</span>
         </NuxtLink>
         <nav class="flex items-center space-x-6 text-sm font-medium">
           <!-- Add any main navigation links here if needed -->
@@ -84,6 +85,11 @@ import { ref, onMounted, onUnmounted, watchEffect, computed } from 'vue'
 import { buttonVariants } from '~/components/ui/button'
 import type { Profile } from '~/types/profile'
 import { useSupabaseHelpers } from '~/composables/useSupabaseHelpers'
+import { useSiteSettings } from '~/composables/useSiteSettings'
+
+const { getSetting } = useSiteSettings()
+const siteName = getSetting('site_name', 'Marketplace')
+const logoUrl = getSetting('logo_url')
 
 const user = useCurrentUser()
 const supabase = useSupabaseClient()

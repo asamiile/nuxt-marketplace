@@ -1,13 +1,13 @@
 <template>
   <div>
     <h1 class="text-3xl font-bold mb-4">利用規約</h1>
-    <div class="prose max-w-none">
-      <p>ここに利用規約が入ります。</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    </div>
+    <div class="prose max-w-none" v-html="termsContent"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-// No script needed for this static page
+import { useSiteSettings } from '~/composables/useSiteSettings'
+
+const { getSetting } = useSiteSettings()
+const termsContent = getSetting('terms_of_service', '利用規約が設定されていません。')
 </script>
