@@ -22,23 +22,6 @@
           </CardContent>
         </Card>
 
-        <!-- Terms and Privacy Policy -->
-        <Card>
-          <CardHeader>
-            <CardTitle>利用規約・プライバシーポリシー</CardTitle>
-            <CardDescription>サイトの利用規約とプライバシーポリシーを編集します。</CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-4">
-            <div>
-              <Label for="terms">利用規約</Label>
-              <Textarea id="terms" v-model="settings.terms_of_service" rows="10" />
-            </div>
-            <div>
-              <Label for="privacy">プライバシーポリシー</Label>
-              <Textarea id="privacy" v-model="settings.privacy_policy" rows="10" />
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <div class="mt-8 flex justify-end">
@@ -79,8 +62,6 @@ const pending = ref(false)
 const settings = ref<Record<string, any>>({
   site_name: '',
   site_description: '',
-  terms_of_service: '',
-  privacy_policy: '',
 })
 
 // Fetch initial settings
