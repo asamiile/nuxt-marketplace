@@ -3,25 +3,26 @@ import { serverSupabaseUser } from '#supabase/server'
 import type { Database } from '~/types/supabase'
 
 export default defineEventHandler(async (event) => {
-  // First, ensure the user is an admin via middleware check (already done by the file being in /api/admin)
-  // and by an explicit check here.
+  // First, ensure the user is an admin
   const user = await serverSupabaseUser(event)
   if (!user || user.app_metadata?.claims_admin !== true) {
     throw createError({ statusCode: 401, message: 'Unauthorized: Admin access required' })
   }
 
-  // Since this is a protected admin route, we can use the service role key to bypass RLS.
-  const supabaseUrl = process.env.NUXT_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+  // Get Supabase config from runtime config
+  const config = useRuntimeConfig(event)
+  const supabaseUrl = config.public.supabase.url
+  const supabaseServiceKey = config.supabaseServiceKey
 
   if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Supabase server environment variables are not set.')
+    console.error('Supabase server environment variables are not configured in nuxt.config.')
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal Server Error: Server configuration missing.',
+      statusMessage: 'Internal Server Error: Server configuration is missing.',
     })
   }
 
+  // Since this is a protected admin route, we create a new client with the service role key to bypass RLS.
   const client = createClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
@@ -29,6 +30,7 @@ export default defineEventHandler(async (event) => {
     }
   })
 
+  // Continue to use readMultipartFormData to handle file uploads
   const formData = await readMultipartFormData(event)
 
   if (!formData) {
