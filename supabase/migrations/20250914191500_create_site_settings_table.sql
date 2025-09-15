@@ -1,4 +1,4 @@
-CREATE TABLE public.site_settings (
+CREATE TABLE IF NOT EXISTS public.site_settings (
   key TEXT PRIMARY KEY,
   value TEXT
 );
@@ -11,6 +11,7 @@ COMMENT ON COLUMN public.site_settings.value IS 'The value of the setting.';
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access
+DROP POLICY IF EXISTS "Allow public read access to site settings" ON public.site_settings;
 CREATE POLICY "Allow public read access to site settings"
 ON public.site_settings
 FOR SELECT
@@ -18,6 +19,7 @@ TO anon, authenticated
 USING (true);
 
 -- Allow admin write access
+DROP POLICY IF EXISTS "Allow admin write access to site settings" ON public.site_settings;
 CREATE POLICY "Allow admin write access to site settings"
 ON public.site_settings
 FOR ALL
