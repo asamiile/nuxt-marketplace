@@ -4,28 +4,6 @@
 
     <form @submit.prevent="handleSaveSettings">
       <div class="space-y-8">
-        <!-- Logo and Favicon Settings -->
-        <Card>
-          <CardHeader>
-            <CardTitle>ロゴ・ファビコン</CardTitle>
-            <CardDescription>サイトのロゴとファビコンを設定します。</CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label for="logo">ロゴ</Label>
-                <FileDropzone id="logo" v-model:file="logoFile" accept="image/png, image/jpeg, image/svg+xml" />
-                <img v-if="settings.logo_url && !logoFile" :src="settings.logo_url" alt="Logo preview" class="mt-4 max-h-20" />
-              </div>
-              <div>
-                <Label for="favicon">ファビコン</Label>
-                <FileDropzone id="favicon" v-model:file="faviconFile" accept="image/x-icon, image/png, image/svg+xml" />
-                 <img v-if="settings.favicon_url && !faviconFile" :src="settings.favicon_url" alt="Favicon preview" class="mt-4 max-h-10" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         <!-- Basic Information -->
         <Card>
           <CardHeader>
@@ -85,7 +63,6 @@ import Input from '~/components/ui/input/Input.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Button from '~/components/ui/button/Button.vue'
-import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 import { useAlert } from '~/composables/useAlert'
 import { useSiteSettings } from '~/composables/useSiteSettings'
 
@@ -100,16 +77,11 @@ const pending = ref(false)
 
 // Use a more flexible type for settings
 const settings = ref<Record<string, any>>({
-  logo_url: '',
-  favicon_url: '',
   site_name: '',
   site_description: '',
   terms_of_service: '',
   privacy_policy: '',
 })
-
-const logoFile = ref<File | null>(null)
-const faviconFile = ref<File | null>(null)
 
 // Fetch initial settings
 onMounted(async () => {
@@ -132,43 +104,20 @@ onMounted(async () => {
 const handleSaveSettings = async () => {
   pending.value = true
   try {
-    const formData = new FormData()
-
-    // Append text settings
-    for (const key in settings.value) {
-      // Don't append URL values, they are derived from file uploads
-      if (!key.endsWith('_url')) {
-        formData.append(key, settings.value[key] || '')
-      }
-    }
-
-    // Append file uploads
-    if (logoFile.value) {
-      formData.append('logo', logoFile.value)
-    }
-    if (faviconFile.value) {
-      formData.append('favicon', faviconFile.value)
-    }
-
-    await $fetch('/api/admin/settings', {
+    const data = await $fetch('/api/admin/settings', {
       method: 'POST',
-      body: formData,
+      body: settings.value,
     })
 
     // Refresh the global site settings
     await refreshSettings()
 
-    // After successful upload, clear the file inputs and refetch the settings to show the new previews
-    logoFile.value = null
-    faviconFile.value = null
-
-    const data = await $fetch('/api/admin/settings')
+    // Update local state with the fresh data from the API response
     for (const key in settings.value) {
       if (data[key]) {
         settings.value[key] = data[key]
       }
     }
-
 
     showToast('成功', '設定を保存しました。')
   } catch (error: any) {
