@@ -77,10 +77,15 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 500, message: `Failed to upload ${name}: ${uploadError.message}` })
     }
 
-    const { data: { publicUrl } } = client.storage.from('assets').getPublicUrl(filePath)
+    const { data: urlData, error: urlError } = client.storage.from('assets').getPublicUrl(filePath)
+
+    if (urlError || !urlData?.publicUrl) {
+      console.error(`Error getting public URL for ${name}:`, urlError)
+      throw createError({ statusCode: 500, message: `Could not get public URL for ${name}.` })
+    }
 
     const urlKey = `${name}_url`
-    const { error: urlUpdateError } = await client.from('site_settings').upsert({ key: urlKey, value: publicUrl }, { onConflict: 'key' })
+    const { error: urlUpdateError } = await client.from('site_settings').upsert({ key: urlKey, value: urlData.publicUrl }, { onConflict: 'key' })
 
     if (urlUpdateError) {
         console.error(`Error saving ${urlKey}:`, urlUpdateError)
