@@ -1,3 +1,6 @@
+-- 先に同じ名前のポリシーが存在すれば削除する
+DROP POLICY IF EXISTS "Creators can view their own products" ON public.products;
+
 -- Creators can view their own products.
 -- This policy allows creators to view all of their own products, regardless of status.
 -- This is evaluated as an OR condition with the existing public policy.
