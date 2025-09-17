@@ -1,6 +1,21 @@
 # Nuxt Marketplace
 
-## Nuxt
+## Overview
+
+### Technology Stack
+
+- Front-end Framework: Nuxt.js v3
+- UI Component: shadcn/vue
+- CSS Framework: Tailwind CSS v4
+- Baas: Supabase
+- Mail Service: Resend
+- Test: Vitest
+- Deploy: Vercel
+
+
+## Getting Started
+
+### Nuxt
 
 - Make sure to install dependencies:
 
@@ -26,9 +41,9 @@ pnpm build
 pnpm preview
 ```
 
-## Supabase
+### Supabase
 
-### Migration
+#### Migration
 
 - Applying the migration file
 
@@ -49,7 +64,7 @@ supabase migration list
 supabase migration repair [TIMESTAMP] --status applied
 ```
 
-### Edge Functions
+#### Edge Functions
 
 - Deploy Edge Functions
 
