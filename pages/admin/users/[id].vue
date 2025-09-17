@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import type { Product } from '~/types/product'
 import Button from '~/components/ui/button/Button.vue'
 import Label from '~/components/ui/label/Label.vue'
-import UiPagination from '~/components/ui/Pagination.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -227,7 +226,7 @@ const performAction = async (action: 'admin' | 'disable') => {
             <p v-else class="text-muted-foreground">このユーザーはまだ商品を出品していません。</p>
 
             <div v-if="productTotalPages > 1" class="mt-4 flex justify-center">
-              <UiPagination
+              <Pagination
                 v-model:currentPage="productsCurrentPage"
                 :total-pages="productTotalPages"
               />

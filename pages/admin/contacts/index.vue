@@ -2,7 +2,6 @@
 import { ref, computed, watch } from 'vue'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/contact'
-import UiPagination from '~/components/ui/Pagination.vue'
 import Input from '~/components/ui/input/Input.vue'
 
 definePageMeta({
@@ -124,7 +123,7 @@ const getStatusClass = (status: string) => {
     </div>
 
     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
-      <UiPagination
+      <Pagination
         v-model:currentPage="currentPage"
         :total-pages="totalPages"
       />

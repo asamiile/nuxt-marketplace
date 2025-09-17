@@ -36,8 +36,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Product, Category, Tag } from '~/types/product'
-import Pagination from '~/components/ui/Pagination.vue'
-import Skeleton from '~/components/ui/Skeleton.vue'
 import ProductFilters from '~/components/ProductFilters.vue'
 
 const supabase = useSupabaseClient()

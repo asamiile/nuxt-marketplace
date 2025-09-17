@@ -29,8 +29,6 @@
 import { onMounted, watch } from 'vue'
 import { useFavorites } from '~/composables/useFavorites'
 import ProductCard from '~/components/ProductCard.vue'
-import Pagination from '~/components/ui/Pagination.vue'
-import Skeleton from '~/components/ui/Skeleton.vue'
 import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({

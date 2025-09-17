@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import UiPagination from '~/components/ui/Pagination.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -107,7 +106,7 @@ const formatDate = (date: string | null) => {
     </div>
 
     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
-      <UiPagination
+      <Pagination
         v-model:currentPage="currentPage"
         :total-pages="totalPages"
       />

@@ -68,10 +68,6 @@ import { ref, onMounted, computed, watch } from 'vue'
 import type { Product } from '~/types/product'
 import { buttonVariants, Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
-import Tabs from '~/components/ui/tabs/Tabs.vue'
-import TabsList from '~/components/ui/tabs/TabsList.vue'
-import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
-import Pagination from '~/components/ui/Pagination.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()

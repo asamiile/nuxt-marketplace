@@ -67,7 +67,7 @@
     </div>
 
     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
-      <UiPagination
+      <Pagination
         v-model:currentPage="currentPage"
         :total-pages="totalPages"
       />
@@ -78,7 +78,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { Tag } from '~/types/product'
-import UiPagination from '~/components/ui/Pagination.vue'
 import Button from '~/components/ui/button/Button.vue'
 import Input from '~/components/ui/input/Input.vue'
 

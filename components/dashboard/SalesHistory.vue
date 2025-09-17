@@ -70,7 +70,7 @@
               </table>
             </div>
             <div v-if="totalPages > 1" class="mt-4 flex justify-center">
-              <UiPagination
+              <Pagination
                 v-model:currentPage="currentPage"
                 :total-pages="totalPages"
               />
@@ -89,7 +89,6 @@
 import { ref, computed, watch } from 'vue'
 import { Card, CardContent } from '~/components/ui/card'
 import Input from '~/components/ui/input/Input.vue'
-import UiPagination from '~/components/ui/Pagination.vue'
 import Button from '~/components/ui/button/Button.vue'
 import { DatePicker } from '~/components/ui/date-picker'
 
