@@ -29,7 +29,7 @@
         </div>
 
         <div>
-          <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full text-white bg-gradient-blue hover:opacity-90">
+          <Button type="submit" :disabled="loading || (hasAttemptedSubmit && isFormInvalid)" class="w-full" :class="buttonVariants({ variant: 'gradient-blue' })">
             <span v-if="loading">サインイン中...</span>
             <span v-else>サインイン</span>
           </Button>
@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { z } from 'zod'
+import { buttonVariants } from '~/components/ui/button'
 import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Button from '~/components/ui/button/Button.vue'

@@ -1,10 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  safelist: [
-    'bg-gradient-blue',
-    'bg-gradient-pink',
-  ],
   content: [
     "./components/**/*.{js,vue,ts}",
     "./layouts/**/*.vue",
