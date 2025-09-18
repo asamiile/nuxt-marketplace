@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import Toaster from '~/components/ui/toast/Toaster.vue'
+import { Toaster } from '~/components/ui/sonner'
 
 const isSidebarOpen = ref(true)
 
