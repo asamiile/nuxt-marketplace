@@ -70,10 +70,31 @@
               </table>
             </div>
             <div v-if="totalPages > 1" class="mt-4 flex justify-center">
-              <UiPagination
-                v-model:currentPage="currentPage"
-                :total-pages="totalPages"
-              />
+              <Pagination
+                v-slot="{ page }"
+                v-model:page="currentPage"
+                :total="filteredSales.length"
+                :items-per-page="itemsPerPage"
+                :sibling-count="1"
+                show-edges
+              >
+                <PaginationContent v-slot="{ items }" class="flex items-center gap-1">
+                  <PaginationFirst />
+                  <PaginationPrevious />
+
+                  <template v-for="(item, index) in items">
+                    <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                      <Button class="w-9 h-9 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                        {{ item.value }}
+                      </Button>
+                    </PaginationItem>
+                    <PaginationEllipsis v-else :key="item.type" :index="index" />
+                  </template>
+
+                  <PaginationNext />
+                  <PaginationLast />
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
           <div v-else class="text-center text-muted-foreground py-4 md:py-8">
@@ -88,8 +109,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Card, CardContent } from '~/components/ui/card'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from '~/components/ui/pagination'
 import Input from '~/components/ui/input/Input.vue'
-import UiPagination from '~/components/ui/Pagination.vue'
 import Button from '~/components/ui/button/Button.vue'
 import { DatePicker } from '~/components/ui/date-picker'
 

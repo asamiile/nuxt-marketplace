@@ -10,6 +10,7 @@ const error = ref<Error | null>(null)
 const itemsPerPage = 8
 const currentPage = ref(1)
 const totalPages = ref(1)
+const totalCount = ref(0)
 // --- End Shared State ---
 
 export const useFavorites = () => {
@@ -98,6 +99,7 @@ export const useFavorites = () => {
 
       if (countError) throw countError
 
+      totalCount.value = count || 0
       totalPages.value = count ? Math.ceil(count / itemsPerPage) : 1
 
       // Then, fetch the products for the current page
@@ -132,6 +134,7 @@ export const useFavorites = () => {
     error,
     currentPage,
     totalPages,
+    totalCount,
     isFavorited,
     addFavorite,
     removeFavorite,

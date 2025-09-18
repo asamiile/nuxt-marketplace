@@ -27,9 +27,30 @@
       <div class="mt-8">
         <Pagination
           v-if="data.totalPages > 1"
-          v-model:currentPage="currentPage"
-          :total-pages="data.totalPages"
-        />
+          v-slot="{ page }"
+          v-model:page="currentPage"
+          :total="data.totalCount"
+          :items-per-page="itemsPerPage"
+          :sibling-count="1"
+          show-edges
+        >
+          <PaginationContent v-slot="{ items }" class="flex items-center gap-1">
+            <PaginationFirst />
+            <PaginationPrevious />
+
+            <template v-for="(item, index) in items">
+              <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                <Button class="w-9 h-9 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                  {{ item.value }}
+                </Button>
+              </PaginationItem>
+              <PaginationEllipsis v-else :key="item.type" :index="index" />
+            </template>
+
+            <PaginationNext />
+            <PaginationLast />
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
     <div v-else>
@@ -41,7 +62,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Product, Category, Tag } from '~/types/product'
-import Pagination from '~/components/ui/Pagination.vue'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from '~/components/ui/pagination'
+import { Button } from '~/components/ui/button'
 import { Skeleton } from '~/components/ui/skeleton'
 import ProductFilters from '~/components/ProductFilters.vue'
 
@@ -104,6 +134,7 @@ const { data, pending, error, refresh } = await useAsyncData(
     return {
       products: productsData as Product[],
       totalPages,
+      totalCount,
     }
   },
   {
