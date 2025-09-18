@@ -41,6 +41,16 @@ function resetFilters() {
   filters.value = { ...initialFilters }
 }
 
+function handleTagChange(tagId: number, isChecked: boolean) {
+  if (isChecked) {
+    if (!filters.value.tagIds.includes(tagId)) {
+      filters.value.tagIds.push(tagId)
+    }
+  } else {
+    filters.value.tagIds = filters.value.tagIds.filter(id => id !== tagId)
+  }
+}
+
 const activeFilterCount = computed(() => {
   let count = 0
   if (filters.value.keyword) count++
@@ -118,8 +128,8 @@ const activeFilterCount = computed(() => {
           <div v-for="tag in tags" :key="tag.id" class="flex items-center">
             <Checkbox
               :id="'tag-' + tag.id"
-              :value="tag.id"
-              v-model="filters.tagIds"
+              :checked="filters.tagIds.includes(tag.id)"
+              @update:checked="(isChecked) => handleTagChange(tag.id, isChecked)"
             />
             <label :for="'tag-' + tag.id" class="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {{ tag.name }}
