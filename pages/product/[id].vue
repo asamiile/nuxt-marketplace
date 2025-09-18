@@ -105,7 +105,7 @@
 import type { ProductWithRelations } from '~/types/product'
 import { buttonVariants } from '~/components/ui/button'
 import Button from '~/components/ui/button/Button.vue'
-import Skeleton from '~/components/ui/Skeleton.vue'
+import { Skeleton } from '~/components/ui/skeleton'
 
 const route = useRoute()
 const router = useRouter()
