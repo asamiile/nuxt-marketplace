@@ -40,10 +40,6 @@ module.exports = {
           foreground: "hsl(var(--destructive-foreground))",
         },
       },
-      backgroundImage: {
-        'gradient-pink': 'linear-gradient(to right, #ec4899, #f97316)',
-        'gradient-blue': 'linear-gradient(to right, #06b6d4, #3b82f6)',
-      },
     },
   },
   plugins: [],
