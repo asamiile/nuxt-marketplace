@@ -16,7 +16,7 @@
         </div>
         <nav class="flex items-center gap-4">
           <template v-if="user">
-            <NuxtLink to="/sell" :class="buttonVariants({ variant: 'gradient-pink' })">
+            <NuxtLink to="/sell" :class="[buttonVariants(), 'text-white bg-gradient-pink hover:opacity-90']">
               出品する
             </NuxtLink>
             <div ref="dropdownRef" class="relative">
