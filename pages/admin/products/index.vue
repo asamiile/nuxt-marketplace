@@ -29,7 +29,7 @@ const { data: products, pending, error, refresh } = await useFetch<Product[]>('/
     showToast({
       title: 'エラー',
       description: '商品情報の取得に失敗しました。',
-      variant: 'destructive',
+      variant: 'error',
     })
   },
   default: () => [],

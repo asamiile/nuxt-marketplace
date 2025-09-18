@@ -1,32 +1,24 @@
+// composables/useAlert.ts
 import { toast } from 'vue-sonner'
 
 export function useAlert() {
-  const showToast = (title: string, message: string, type: 'success' | 'error' = 'success') => {
-    if (type === 'success') {
-      toast.success(title, {
-        description: message,
-      })
-    }
-    else {
-      toast.error(title, {
-        description: message,
-      })
-    }
+  const showToast = (options: {
+    title: string,
+    description?: string,
+    variant?: 'success' | 'error' | 'info' | 'warning'
+  }) => {
+    const toastFunctions = {
+      success: toast.success,
+      error: toast.error,
+      info: toast.info,
+      warning: toast.warning,
+    };
+
+    const toastFn = toastFunctions[options.variant || 'success'] || toast;
+    toastFn(options.title, {
+      description: options.description,
+    });
   }
 
-  // We are not using the removeToast function anymore,
-  // as sonner handles this automatically.
-  // We will keep the function signature for now to avoid breaking changes.
-  const removeToast = (id: number) => {
-    // eslint-disable-next-line no-console
-    console.warn('removeToast is deprecated. Toasts are now automatically removed.', id)
-  }
-
-  return {
-    // We are not using the toasts array anymore,
-    // as sonner handles this automatically.
-    toasts: [],
-    showToast,
-    removeToast,
-  }
+  return { showToast }
 }

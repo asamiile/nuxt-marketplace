@@ -16,7 +16,7 @@ const contactId = route.params.id as string
 
 const { data: contact, pending, error, refresh } = await useFetch<Contact>(`/api/admin/contacts/${contactId}`, {
   onResponseError: ({ response }) => {
-    showToast('エラー', 'お問い合わせデータの取得に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: 'お問い合わせデータの取得に失敗しました。', variant: 'error' })
   },
 })
 
@@ -43,11 +43,11 @@ const updateStatus = async () => {
       method: 'PUT',
       body: { status: selectedStatus.value },
     })
-    showToast('成功', 'ステータスを更新しました。')
+    showToast({ title: '成功', description: 'ステータスを更新しました。' })
     await refresh() // データを再取得して表示を最新化
   } catch (e) {
     console.error('Failed to update status', e)
-    showToast('エラー', 'ステータスの更新に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: 'ステータスの更新に失敗しました。', variant: 'error' })
     // エラーが発生した場合、UIを元の状態に戻す
     await refresh()
   }

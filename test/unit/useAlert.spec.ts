@@ -7,6 +7,8 @@ vi.mock('vue-sonner', () => ({
   toast: {
     success: vi.fn(),
     error: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
   },
 }))
 
@@ -18,55 +20,83 @@ describe('useAlert', () => {
 
   it('should call toast.success with the correct parameters for a success toast', () => {
     const { showToast } = useAlert()
-    const title = 'Success'
-    const message = 'Your action was successful.'
+    const options = {
+      title: 'Success',
+      description: 'Your action was successful.',
+      variant: 'success' as const,
+    }
 
-    showToast(title, message, 'success')
+    showToast(options)
 
     expect(toast.success).toHaveBeenCalledTimes(1)
-    expect(toast.success).toHaveBeenCalledWith(title, {
-      description: message,
+    expect(toast.success).toHaveBeenCalledWith(options.title, {
+      description: options.description,
     })
     expect(toast.error).not.toHaveBeenCalled()
   })
 
   it('should call toast.error with the correct parameters for an error toast', () => {
     const { showToast } = useAlert()
-    const title = 'Error'
-    const message = 'Something went wrong.'
+    const options = {
+      title: 'Error',
+      description: 'Something went wrong.',
+      variant: 'error' as const,
+    }
 
-    showToast(title, message, 'error')
+    showToast(options)
 
     expect(toast.error).toHaveBeenCalledTimes(1)
-    expect(toast.error).toHaveBeenCalledWith(title, {
-      description: message,
+    expect(toast.error).toHaveBeenCalledWith(options.title, {
+      description: options.description,
     })
     expect(toast.success).not.toHaveBeenCalled()
   })
 
-  it('should default to a success toast if type is not provided', () => {
+  it('should default to a success toast if variant is not provided', () => {
     const { showToast } = useAlert()
-    const title = 'Default'
-    const message = 'This is a default toast.'
+    const options = {
+      title: 'Default',
+      description: 'This is a default toast.',
+    }
 
-    showToast(title, message)
+    showToast(options)
 
     expect(toast.success).toHaveBeenCalledTimes(1)
-    expect(toast.success).toHaveBeenCalledWith(title, {
-      description: message,
+    expect(toast.success).toHaveBeenCalledWith(options.title, {
+      description: options.description,
     })
     expect(toast.error).not.toHaveBeenCalled()
   })
 
-  it('should call console.warn for removeToast', () => {
-    const { removeToast } = useAlert()
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  it('should call toast.info for an info toast', () => {
+    const { showToast } = useAlert()
+    const options = {
+      title: 'Info',
+      description: 'This is some information.',
+      variant: 'info' as const,
+    }
 
-    removeToast(123)
+    showToast(options)
 
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
-    expect(consoleWarnSpy).toHaveBeenCalledWith('removeToast is deprecated. Toasts are now automatically removed.', 123)
+    expect(toast.info).toHaveBeenCalledTimes(1)
+    expect(toast.info).toHaveBeenCalledWith(options.title, {
+      description: options.description,
+    })
+  })
 
-    consoleWarnSpy.mockRestore()
+  it('should call toast.warning for a warning toast', () => {
+    const { showToast } = useAlert()
+    const options = {
+      title: 'Warning',
+      description: 'This is a warning.',
+      variant: 'warning' as const,
+    }
+
+    showToast(options)
+
+    expect(toast.warning).toHaveBeenCalledTimes(1)
+    expect(toast.warning).toHaveBeenCalledWith(options.title, {
+      description: options.description,
+    })
   })
 })

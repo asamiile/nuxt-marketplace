@@ -166,7 +166,7 @@ const fetchProducts = async () => {
     products.value = data || []
   } catch (e: any) {
     error.value = e
-    showToast('エラー', '商品の読み込みに失敗しました。', 'error')
+    showToast({ title: 'エラー', description: '商品の読み込みに失敗しました。', variant: 'error' })
   } finally {
     pending.value = false
   }
@@ -212,11 +212,11 @@ const handleDelete = async (product: Product) => {
     const { error: dbError } = await supabase.from('products').delete().eq('id', product.id)
     if (dbError) throw new Error(`データベースからの商品削除に失敗しました: ${dbError.message}`)
 
-    showToast('成功', '商品を削除しました。')
+    showToast({ title: '成功', description: '商品を削除しました。' })
     await fetchProducts()
 
   } catch (error: any) {
-    showToast('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
+    showToast({ title: '削除エラー', description: error.message || '商品の削除中にエラーが発生しました。', variant: 'error' })
   }
 }
 </script>

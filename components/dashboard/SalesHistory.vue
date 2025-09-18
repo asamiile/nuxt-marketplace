@@ -168,7 +168,7 @@ const { data: sales, pending, error } = await useAsyncData('sales-history', asyn
 
   const { data, error } = await supabase.rpc('get_sales_history', params)
   if (error) {
-    showToast('エラー', '販売履歴の読み込みに失敗しました。', 'error')
+    showToast({ title: 'エラー', description: '販売履歴の読み込みに失敗しました。', variant: 'error' })
     return []
   }
   return data

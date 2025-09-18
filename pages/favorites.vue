@@ -99,7 +99,7 @@ watch(currentPage, () => {
 
 watch(error, (newError) => {
   if (newError) {
-    showToast('エラー', `お気に入り商品の読み込みに失敗しました: ${newError.message}`, 'error')
+    showToast({ title: 'エラー', description: `お気に入り商品の読み込みに失敗しました: ${newError.message}`, variant: 'error' })
   }
 })
 </script>

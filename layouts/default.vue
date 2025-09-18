@@ -4,8 +4,8 @@
     <main class="flex-grow container mx-auto p-4 md:p-8 relative">
       <slot />
     </main>
-    <Toaster />
     <TheFooter />
+    <Toaster rich-colors />
   </div>
 </template>
 

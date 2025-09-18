@@ -73,7 +73,7 @@ onMounted(async () => {
       }
     }
   } catch (error) {
-    showToast('エラー', '設定の読み込みに失敗しました。', 'error')
+    showToast({ title: 'エラー', description: '設定の読み込みに失敗しました。', variant: 'error' })
   } finally {
     pending.value = false
   }
@@ -97,9 +97,9 @@ const handleSaveSettings = async () => {
       }
     }
 
-    showToast('成功', '設定を保存しました。')
+    showToast({ title: '成功', description: '設定を保存しました。' })
   } catch (error: any) {
-    showToast('エラー', error.data?.message || '設定の保存に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: error.data?.message || '設定の保存に失敗しました。', variant: 'error' })
   } finally {
     pending.value = false
   }

@@ -43,7 +43,7 @@ const loading = ref(false)
 
 const handlePasswordReset = async () => {
   if (!email.value) {
-    showToast('エラー', 'メールアドレスを入力してください。', 'error')
+    showToast({ title: 'エラー', description: 'メールアドレスを入力してください。', variant: 'error' })
     return
   }
   loading.value = true
@@ -52,9 +52,9 @@ const handlePasswordReset = async () => {
       redirectTo: `${window.location.origin}/update-password`,
     })
     if (error) throw error
-    showToast('成功', 'パスワード再設定メールを送信しました。メールをご確認ください。')
+    showToast({ title: '成功', description: 'パスワード再設定メールを送信しました。メールをご確認ください。' })
   } catch (error: any) {
-    showToast('エラー', error.message, 'error')
+    showToast({ title: 'エラー', description: error.message, variant: 'error' })
   } finally {
     loading.value = false
   }

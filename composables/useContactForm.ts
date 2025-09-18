@@ -66,7 +66,7 @@ export function useContactForm() {
         throw new Error(error.message)
       }
 
-      showToast('成功', 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。')
+      showToast({ title: '成功', description: 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。' })
       // フォームをリセット
       form.value = {
         name: '',
@@ -78,7 +78,7 @@ export function useContactForm() {
       errors.value = {}
       hasAttemptedSubmit.value = false
     } catch (err: any) {
-      showToast('エラー', `エラーが発生しました: ${err.message}`, 'error')
+      showToast({ title: 'エラー', description: `エラーが発生しました: ${err.message}`, variant: 'error' })
     } finally {
       loading.value = false
     }

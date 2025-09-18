@@ -21,7 +21,7 @@ const { showToast } = useAlert()
 const { data: users, pending, error } = await useFetch('/api/admin/users', {
   onResponseError: ({ response }) => {
     console.error(response._data)
-    showToast('エラー', 'ユーザー情報の取得に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: 'ユーザー情報の取得に失敗しました。', variant: 'error' })
   },
   default: () => [],
 })
