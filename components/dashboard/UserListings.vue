@@ -74,8 +74,10 @@ import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
 import Pagination from '~/components/ui/Pagination.vue'
 
 const supabase = useSupabaseClient()
-const user = useCurrentUser()
+const { user } = useCurrentUser()
 const { showToast } = useAlert()
+const { formatPrice } = useFormatters()
+const { getPathFromUrl } = useSupabaseHelpers()
 
 const products = ref<Product[]>([])
 const pending = ref(true)
@@ -144,21 +146,6 @@ const fetchProducts = async () => {
 }
 
 onMounted(fetchProducts)
-
-const formatPrice = (price: number | null) => {
-  if (price === null) return 'N/A'
-  return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
-}
-
-const getPathFromUrl = (url: string) => {
-  try {
-    const urlObject = new URL(url)
-    return urlObject.pathname.split('/assets/')[1]
-  } catch (error) {
-    console.error('Invalid URL:', url, error)
-    return null
-  }
-}
 
 const confirmDelete = (product: Product) => {
   if (window.confirm(`本当に「${product.name}」を削除しますか？この操作は元に戻せません。`)) {

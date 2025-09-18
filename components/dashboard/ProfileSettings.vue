@@ -64,7 +64,7 @@ import Button from '~/components/ui/button/Button.vue'
 import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 const supabase = useSupabaseClient()
-const user = useCurrentUser()
+const { user } = useCurrentUser()
 const emit = defineEmits(['show-alert'])
 
 // --- Profile State ---

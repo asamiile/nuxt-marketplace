@@ -110,8 +110,9 @@ import Skeleton from '~/components/ui/Skeleton.vue'
 const route = useRoute()
 const router = useRouter()
 const supabase = useSupabaseClient()
-const user = useCurrentUser()
+const { user } = useCurrentUser()
 const { showToast } = useAlert()
+const { formatPrice } = useFormatters()
 const id = route.params.id
 
 const { data: product, pending, error } = await useAsyncData<ProductWithRelations | null>(`product-${id}`, async () => {
@@ -157,11 +158,6 @@ const statusDisplay = computed(() => {
       return null
   }
 })
-
-const formatPrice = (price: number | null) => {
-  if (price === null) return ''
-  return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
-}
 
 useHead({
   title: product.value?.name || '商品詳細',
