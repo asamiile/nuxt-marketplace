@@ -69,19 +69,12 @@
         </div>
         <div>
           <Label for="image">サムネイル画像</Label>
-          <Input id="image" type="file" accept="image/*" @change="handleImageChange" class="mt-1" />
-          <p v-if="imageFile" class="text-sm text-muted-foreground mt-2">
-            選択中のファイル: {{ imageFile.name }}
-          </p>
-          <img v-if="imagePreview" :src="imagePreview" alt="Image preview" class="mt-4 w-32 h-32 object-cover rounded-md border" />
+          <FileDropzone v-model="imageFile" accept="image/*" class="mt-1" />
           <p v-if="errors.image" class="text-sm text-red-400 mt-1">{{ errors.image }}</p>
         </div>
         <div>
           <Label for="file">デジタルアセット (zip, etc.)</Label>
-          <Input id="file" type="file" @change="handleAssetChange" class="mt-1" />
-           <p v-if="assetFile" class="text-sm text-muted-foreground mt-2">
-            選択中のファイル: {{ assetFile.name }}
-          </p>
+          <FileDropzone v-model="assetFile" class="mt-1" />
           <p v-if="errors.file" class="text-sm text-red-400 mt-1">{{ errors.file }}</p>
         </div>
         <div class="pt-2">
@@ -99,14 +92,13 @@ import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
+import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 import Combobox from '~/components/ui/form/Combobox.vue'
 
 definePageMeta({
   middleware: 'auth'
 })
-
-import { ref } from 'vue'
 
 const {
   name,
@@ -128,28 +120,6 @@ const {
   removeTag,
   submit
 } = useProductForm('create')
-
-const imagePreview = ref<string | null>(null)
-
-const handleImageChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    const file = target.files[0]
-    imageFile.value = file
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      imagePreview.value = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-const handleAssetChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    assetFile.value = target.files[0]
-  }
-}
 
 </script>
 

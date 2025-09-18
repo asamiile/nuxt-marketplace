@@ -74,18 +74,11 @@
             </div>
             <div>
               <Label for="image">サムネイル画像 (変更する場合)</Label>
-              <Input id="image" type="file" accept="image/*" @change="handleImageChange" class="mt-1" />
-              <p v-if="imageFile" class="text-sm text-muted-foreground mt-2">
-                選択中のファイル: {{ imageFile.name }}
-              </p>
-              <img v-if="imagePreview || product.image_url" :src="imagePreview || product.image_url" alt="Image preview" class="mt-4 w-32 h-32 object-cover rounded-md border" />
+              <FileDropzone v-model="imageFile" accept="image/*" :initial-preview-url="product.image_url" class="mt-1" />
             </div>
             <div>
               <Label for="file">デジタルアセット (変更する場合)</Label>
-              <Input id="file" type="file" @change="handleAssetChange" class="mt-1" />
-               <p v-if="assetFile" class="text-sm text-muted-foreground mt-2">
-                選択中のファイル: {{ assetFile.name }}
-              </p>
+              <FileDropzone v-model="assetFile" class="mt-1" />
               <p class="text-sm text-muted-foreground mt-2">現在のファイル: <a :href="product.file_url" target="_blank" class="underline hover:text-sky-500">ダウンロード</a></p>
             </div>
             <div class="pt-2">
@@ -107,6 +100,7 @@ import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
+import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 import Combobox from '~/components/ui/form/Combobox.vue'
 
@@ -144,28 +138,6 @@ const {
   removeTag,
   submit
 } = useProductForm('edit', product)
-
-const imagePreview = ref<string | null>(null)
-
-const handleImageChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    const file = target.files[0]
-    imageFile.value = file
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      imagePreview.value = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-const handleAssetChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    assetFile.value = target.files[0]
-  }
-}
 
 // Fetch the product data on mount and update the ref.
 onMounted(async () => {
