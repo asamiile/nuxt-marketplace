@@ -2,7 +2,7 @@ import { useFavorites } from '~/composables/useFavorites'
 import type { MaybeRef } from 'vue'
 
 export const useProductFavorite = (productId: MaybeRef<number | undefined>) => {
-  const user = useCurrentUser()
+  const { user } = useCurrentUser()
   const { isFavorited, addFavorite, removeFavorite } = useFavorites()
   const id = toValue(productId)
 

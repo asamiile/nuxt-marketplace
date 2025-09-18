@@ -37,13 +37,10 @@ const router = useRouter()
 
 const { isFavoritedState, toggleFavorite } = useProductFavorite(props.product.id)
 
+const { formatPrice } = useFormatters()
+
 const navigateToProduct = () => {
   router.push(`/product/${props.product.id}`)
-}
-
-const formatPrice = (price: number | null) => {
-  if (price === null) return ''
-  return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
 }
 
 const { getPathFromUrl, getOptimizedPublicUrl } = useSupabaseHelpers()
