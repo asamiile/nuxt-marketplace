@@ -1,79 +1,72 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useAlert } from '~/composables/useAlert'
+import { toast } from 'vue-sonner'
+
+// Mock vue-sonner
+vi.mock('vue-sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}))
 
 describe('useAlert', () => {
-  // Use fake timers to control setTimeout
   beforeEach(() => {
-    vi.useFakeTimers()
-    // Reset toasts array before each test to ensure isolation
-    const { toasts, removeToast } = useAlert()
-    // Create a mutable copy to iterate while removing
-    const toastsToRemove = [...toasts]
-    toastsToRemove.forEach(toast => removeToast(toast.id))
+    // Reset mocks before each test
+    vi.clearAllMocks()
   })
 
-  afterEach(() => {
-    vi.useRealTimers()
+  it('should call toast.success with the correct parameters for a success toast', () => {
+    const { showToast } = useAlert()
+    const title = 'Success'
+    const message = 'Your action was successful.'
+
+    showToast(title, message, 'success')
+
+    expect(toast.success).toHaveBeenCalledTimes(1)
+    expect(toast.success).toHaveBeenCalledWith(title, {
+      description: message,
+    })
+    expect(toast.error).not.toHaveBeenCalled()
   })
 
-  it('should show a success toast and add it to the toasts array', () => {
-    const { toasts, showToast } = useAlert()
+  it('should call toast.error with the correct parameters for an error toast', () => {
+    const { showToast } = useAlert()
+    const title = 'Error'
+    const message = 'Something went wrong.'
 
-    expect(toasts.length).toBe(0)
+    showToast(title, message, 'error')
 
-    showToast('Success', 'Your action was successful.', 'success')
-
-    expect(toasts.length).toBe(1)
-    expect(toasts[0].title).toBe('Success')
-    expect(toasts[0].message).toBe('Your action was successful.')
-    expect(toasts[0].type).toBe('success')
+    expect(toast.error).toHaveBeenCalledTimes(1)
+    expect(toast.error).toHaveBeenCalledWith(title, {
+      description: message,
+    })
+    expect(toast.success).not.toHaveBeenCalled()
   })
 
-  it('should show an error toast', () => {
-    const { toasts, showToast } = useAlert()
+  it('should default to a success toast if type is not provided', () => {
+    const { showToast } = useAlert()
+    const title = 'Default'
+    const message = 'This is a default toast.'
 
-    showToast('Error', 'Something went wrong.', 'error')
+    showToast(title, message)
 
-    expect(toasts.length).toBe(1)
-    expect(toasts[0].type).toBe('error')
+    expect(toast.success).toHaveBeenCalledTimes(1)
+    expect(toast.success).toHaveBeenCalledWith(title, {
+      description: message,
+    })
+    expect(toast.error).not.toHaveBeenCalled()
   })
 
-  it('should remove a toast when removeToast is called', () => {
-    const { toasts, showToast, removeToast } = useAlert()
+  it('should call console.warn for removeToast', () => {
+    const { removeToast } = useAlert()
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    showToast('Test', 'This is a test.')
-    const toastId = toasts[0].id
+    removeToast(123)
 
-    expect(toasts.length).toBe(1)
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+    expect(consoleWarnSpy).toHaveBeenCalledWith('removeToast is deprecated. Toasts are now automatically removed.', 123)
 
-    removeToast(toastId)
-
-    expect(toasts.length).toBe(0)
-  })
-
-  it('should automatically remove a toast after the specified duration', () => {
-    const { toasts, showToast } = useAlert()
-    const duration = 3000
-
-    showToast('Auto Remove', 'This should disappear.', 'success', duration)
-
-    expect(toasts.length).toBe(1)
-
-    // Advance timers by the duration
-    vi.advanceTimersByTime(duration)
-
-    expect(toasts.length).toBe(0)
-  })
-
-  it('should not remove a toast if the wrong id is provided', () => {
-    const { toasts, showToast, removeToast } = useAlert()
-
-    showToast('Test', 'A toast.')
-    expect(toasts.length).toBe(1)
-
-    // Try to remove with a non-existent ID
-    removeToast(99999)
-
-    expect(toasts.length).toBe(1)
+    consoleWarnSpy.mockRestore()
   })
 })

@@ -19,8 +19,14 @@
           </div>
           <div>
             <Label for="avatar_url">アバター画像</Label>
-            <FileDropzone v-model="avatarFile" accept="image/*" :initial-preview-url="avatar_url" class="mt-1" />
-            <p class="text-sm text-muted-foreground mt-2">新しい画像をドラッグ＆ドロップするか、クリックしてアバターを変更します。</p>
+            <div class="mt-1 flex items-center gap-4">
+              <img v-if="avatarPreview || avatar_url" :src="avatarPreview || avatar_url" alt="Avatar" class="w-20 h-20 rounded-full object-cover border" />
+              <div v-else class="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
+                <span class="text-2xl text-muted-foreground">{{ username?.charAt(0).toUpperCase() }}</span>
+              </div>
+              <Input id="avatar_url" type="file" accept="image/*" @change="handleFileChange" class="flex-grow" />
+            </div>
+            <p class="text-sm text-muted-foreground mt-2">新しい画像を選択してアバターを変更します。</p>
           </div>
           <div>
             <Label for="bio">自己紹介</Label>
@@ -61,7 +67,6 @@ import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
-import FileDropzone from '~/components/ui/form/FileDropzone.vue'
 
 const supabase = useSupabaseClient()
 const user = useCurrentUser()
@@ -75,6 +80,7 @@ const avatar_url = ref('')
 const bio = ref('')
 const website_url = ref('')
 const avatarFile = ref<File | null>(null)
+const avatarPreview = ref<string | null>(null)
 const x_url = ref('')
 const youtube_url = ref('')
 const hasAttemptedSubmit = ref(false)
@@ -125,6 +131,19 @@ watch(username, () => { if (hasAttemptedSubmit.value) validate() })
 watch(website_url, () => { if (hasAttemptedSubmit.value) validate() })
 watch(x_url, () => { if (hasAttemptedSubmit.value) validate() })
 watch(youtube_url, () => { if (hasAttemptedSubmit.value) validate() })
+
+const handleFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    avatarFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      avatarPreview.value = e.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  }
+}
 
 async function fetchProfile() {
   if (!user.value) return

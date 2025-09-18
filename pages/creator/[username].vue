@@ -19,7 +19,12 @@
     <div>
       <Skeleton class="h-7 w-64 mb-6" />
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-        <Skeleton v-for="n in 8" :key="n" />
+        <div v-for="n in 8" :key="n" class="space-y-2">
+          <Skeleton class="h-48 w-full" />
+          <Skeleton class="h-6 w-3/4" />
+          <Skeleton class="h-4 w-1/2" />
+          <Skeleton class="h-6 w-1/4 mt-2" />
+        </div>
       </div>
     </div>
   </div>
@@ -84,7 +89,7 @@ import type { Profile } from '~/types/profile'
 import { buttonVariants } from '~/components/ui/button'
 import ProductCard from '~/components/ProductCard.vue'
 import Pagination from '~/components/ui/Pagination.vue'
-import Skeleton from '~/components/ui/Skeleton.vue'
+import { Skeleton } from '~/components/ui/skeleton'
 
 const route = useRoute()
 const supabase = useSupabaseClient()

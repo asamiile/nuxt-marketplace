@@ -1,39 +1,31 @@
-import { reactive, readonly } from 'vue'
-
-interface Toast {
-  id: number
-  title: string
-  message: string
-  type: 'success' | 'error'
-}
-
-// Define the state outside the composable function to make it a singleton
-const toasts = reactive<Toast[]>([])
+import { toast } from 'vue-sonner'
 
 export function useAlert() {
-  function showToast(title: string, message: string, type: 'success' | 'error' = 'success', duration = 5000) {
-    const id = Date.now()
-    toasts.push({
-      id,
-      title,
-      message,
-      type,
-    })
-
-    setTimeout(() => {
-      removeToast(id)
-    }, duration)
-  }
-
-  function removeToast(id: number) {
-    const index = toasts.findIndex(toast => toast.id === id)
-    if (index !== -1) {
-      toasts.splice(index, 1)
+  const showToast = (title: string, message: string, type: 'success' | 'error' = 'success') => {
+    if (type === 'success') {
+      toast.success(title, {
+        description: message,
+      })
+    }
+    else {
+      toast.error(title, {
+        description: message,
+      })
     }
   }
 
+  // We are not using the removeToast function anymore,
+  // as sonner handles this automatically.
+  // We will keep the function signature for now to avoid breaking changes.
+  const removeToast = (id: number) => {
+    // eslint-disable-next-line no-console
+    console.warn('removeToast is deprecated. Toasts are now automatically removed.', id)
+  }
+
   return {
-    toasts: readonly(toasts),
+    // We are not using the toasts array anymore,
+    // as sonner handles this automatically.
+    toasts: [],
     showToast,
     removeToast,
   }

@@ -9,7 +9,12 @@
 
     <div v-if="pending">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-        <Skeleton v-for="n in 8" :key="n" />
+        <div v-for="n in 8" :key="n" class="space-y-2">
+          <Skeleton class="h-48 w-full" />
+          <Skeleton class="h-6 w-3/4" />
+          <Skeleton class="h-4 w-1/2" />
+          <Skeleton class="h-6 w-1/4 mt-2" />
+        </div>
       </div>
     </div>
     <div v-else-if="error">
@@ -37,7 +42,7 @@
 import { ref, watch } from 'vue'
 import type { Product, Category, Tag } from '~/types/product'
 import Pagination from '~/components/ui/Pagination.vue'
-import Skeleton from '~/components/ui/Skeleton.vue'
+import { Skeleton } from '~/components/ui/skeleton'
 import ProductFilters from '~/components/ProductFilters.vue'
 
 const supabase = useSupabaseClient()
