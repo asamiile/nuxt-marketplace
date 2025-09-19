@@ -91,7 +91,7 @@ const { getSetting } = useSiteSettings()
 const siteName = getSetting('site_name', 'Marketplace')
 const logoUrl = getSetting('logo_url')
 
-const user = useCurrentUser()
+const { user, isAdmin } = useCurrentUser()
 const supabase = useSupabaseClient()
 const router = useRouter()
 

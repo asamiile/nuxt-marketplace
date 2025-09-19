@@ -66,7 +66,7 @@ export function useContactForm() {
         throw new Error(error.message)
       }
 
-      showToast({ title: '成功', description: 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。' })
+      showToast('成功', 'お問い合わせいただきありがとうございます。メッセージは正常に送信されました。', 'success')
       // フォームをリセット
       form.value = {
         name: '',

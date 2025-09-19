@@ -15,7 +15,7 @@ const totalCount = ref(0)
 
 export const useFavorites = () => {
   const supabase = useSupabaseClient()
-  const user = useCurrentUser()
+  const { user } = useCurrentUser()
 
   // Check if a specific product is favorited
   const isFavorited = async (productId: number) => {

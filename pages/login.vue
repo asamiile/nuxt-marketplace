@@ -136,7 +136,7 @@ async function signInWithGoogle() {
   }
 }
 
-const user = useCurrentUser()
+const { user } = useCurrentUser()
 watch(user, () => {
   if (user.value) {
     router.push('/')

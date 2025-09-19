@@ -109,7 +109,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
-const user = useCurrentUser()
+const { user } = useCurrentUser()
 const route = useRoute()
 const id = route.params.id as string
 

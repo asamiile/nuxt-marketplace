@@ -10,7 +10,7 @@ export function useProductForm(
   productToEdit?: Ref<ProductWithRelations | null>,
 ) {
   const supabase = useSupabaseClient()
-  const user = useCurrentUser()
+  const { user } = useCurrentUser()
   const router = useRouter()
   const { showToast } = useAlert()
   const { getPathFromUrl } = useSupabaseHelpers()

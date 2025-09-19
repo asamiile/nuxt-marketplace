@@ -63,7 +63,7 @@
                       </NuxtLink>
                     </td>
                     <td class="px-6 py-4 text-muted-foreground whitespace-nowrap">{{ sale.purchaser_username }}</td>
-                    <td class="px-6 py-4 text-muted-foreground whitespace-nowrap">{{ new Date(sale.purchased_at).toLocaleString() }}</td>
+                    <td class="px-6 py-4 text-muted-foreground whitespace-nowrap">{{ formatDate(sale.purchased_at) }}</td>
                     <td class="px-6 py-4 text-right whitespace-nowrap">{{ formatPrice(sale.price) }}</td>
                   </tr>
                 </tbody>
@@ -124,6 +124,7 @@ import { DatePicker } from '~/components/ui/date-picker'
 
 const supabase = useSupabaseClient()
 const { showToast } = useAlert()
+const { formatPrice, formatDate } = useFormatters()
 
 interface Sale {
   product_id: number;
@@ -229,11 +230,6 @@ const setPeriod = (period: 'this_month' | 'this_year' | null) => {
     startDate.value = firstDay
     endDate.value = lastDay
   }
-}
-
-const formatPrice = (price: number | null) => {
-  if (price === null) return 'N/A'
-  return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(price)
 }
 
 watch(searchQuery, () => {
