@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue'
+import { ref, readonly } from 'vue'
 
 interface Toast {
   id: number
@@ -7,29 +7,29 @@ interface Toast {
   type: 'success' | 'error'
 }
 
-// Define the state outside the composable function to make it a singleton
-const toasts = reactive<Toast[]>([])
+const toasts = ref<Toast[]>([])
 
 export function useAlert() {
-  function showToast(title: string, message: string, type: 'success' | 'error' = 'success', duration = 5000) {
+  const showToast = (options: {
+    title: string,
+    message: string,
+    type?: 'success' | 'error'
+  }) => {
     const id = Date.now()
-    toasts.push({
+    toasts.value.push({
       id,
-      title,
-      message,
-      type,
+      title: options.title,
+      message: options.message,
+      type: options.type || 'success',
     })
 
     setTimeout(() => {
       removeToast(id)
-    }, duration)
+    }, 5000)
   }
 
-  function removeToast(id: number) {
-    const index = toasts.findIndex(toast => toast.id === id)
-    if (index !== -1) {
-      toasts.splice(index, 1)
-    }
+  const removeToast = (id: number) => {
+    toasts.value = toasts.value.filter((toast) => toast.id !== id)
   }
 
   return {

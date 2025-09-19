@@ -78,7 +78,7 @@ export function useContactForm() {
       errors.value = {}
       hasAttemptedSubmit.value = false
     } catch (err: any) {
-      showToast('エラー', `エラーが発生しました: ${err.message}`, 'error')
+      showToast({ title: 'エラー', description: `エラーが発生しました: ${err.message}`, variant: 'error' })
     } finally {
       loading.value = false
     }

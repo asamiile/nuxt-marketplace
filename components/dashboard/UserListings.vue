@@ -54,9 +54,30 @@
 
         <div v-if="totalPages > 1" class="mt-6 flex justify-center">
           <Pagination
-            v-model:currentPage="currentPage"
-            :total-pages="totalPages"
-          />
+            v-slot="{ page }"
+            v-model:page="currentPage"
+            :total="filteredProducts.length"
+            :items-per-page="itemsPerPage"
+            :sibling-count="1"
+            show-edges
+          >
+            <PaginationContent v-slot="{ items }" class="flex items-center gap-1">
+              <PaginationFirst />
+              <PaginationPrevious />
+
+              <template v-for="(item, index) in items">
+                <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                  <Button class="w-9 h-9 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                    {{ item.value }}
+                  </Button>
+                </PaginationItem>
+                <PaginationEllipsis v-else :key="item.type" :index="index" />
+              </template>
+
+              <PaginationNext />
+              <PaginationLast />
+            </PaginationContent>
+          </Pagination>
         </div>
       </CardContent>
     </Card>
@@ -68,10 +89,18 @@ import { ref, onMounted, computed, watch } from 'vue'
 import type { Product } from '~/types/product'
 import { buttonVariants, Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from '~/components/ui/pagination'
 import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
-import Pagination from '~/components/ui/Pagination.vue'
 
 const supabase = useSupabaseClient()
 const { user } = useCurrentUser()
@@ -139,7 +168,7 @@ const fetchProducts = async () => {
     products.value = data || []
   } catch (e: any) {
     error.value = e
-    showToast('エラー', '商品の読み込みに失敗しました。', 'error')
+    showToast({ title: 'エラー', description: '商品の読み込みに失敗しました。', variant: 'error' })
   } finally {
     pending.value = false
   }
@@ -170,11 +199,11 @@ const handleDelete = async (product: Product) => {
     const { error: dbError } = await supabase.from('products').delete().eq('id', product.id)
     if (dbError) throw new Error(`データベースからの商品削除に失敗しました: ${dbError.message}`)
 
-    showToast('成功', '商品を削除しました。')
+    showToast({ title: '成功', description: '商品を削除しました。' })
     await fetchProducts()
 
   } catch (error: any) {
-    showToast('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
+    showToast({ title: '削除エラー', description: error.message || '商品の削除中にエラーが発生しました。', variant: 'error' })
   }
 }
 </script>

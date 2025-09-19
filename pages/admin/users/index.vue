@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import UiPagination from '~/components/ui/Pagination.vue'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from '~/components/ui/pagination'
+import { Button } from '~/components/ui/button'
 
 definePageMeta({
   layout: 'admin',
@@ -12,7 +21,7 @@ const { showToast } = useAlert()
 const { data: users, pending, error } = await useFetch('/api/admin/users', {
   onResponseError: ({ response }) => {
     console.error(response._data)
-    showToast('エラー', 'ユーザー情報の取得に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: 'ユーザー情報の取得に失敗しました。', variant: 'error' })
   },
   default: () => [],
 })
@@ -107,10 +116,31 @@ const formatDate = (date: string | null) => {
     </div>
 
     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
-      <UiPagination
-        v-model:currentPage="currentPage"
-        :total-pages="totalPages"
-      />
+      <Pagination
+        v-slot="{ page }"
+        v-model:page="currentPage"
+        :total="users?.length || 0"
+        :items-per-page="itemsPerPage"
+        :sibling-count="1"
+        show-edges
+      >
+        <PaginationContent v-slot="{ items }" class="flex items-center gap-1">
+          <PaginationFirst />
+          <PaginationPrevious />
+
+          <template v-for="(item, index) in items">
+            <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button class="w-9 h-9 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                {{ item.value }}
+              </Button>
+            </PaginationItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+
+          <PaginationNext />
+          <PaginationLast />
+        </PaginationContent>
+      </Pagination>
     </div>
   </div>
 </template>

@@ -1,6 +1,5 @@
 <template>
   <div class="flex h-screen bg-background overflow-hidden">
-    <Toaster />
     <!-- Sidebar -->
     <aside
       class="fixed inset-y-0 left-0 z-30 w-64 flex-shrink-0 bg-card border-r border-border transform transition-transform duration-300 ease-in-out"
@@ -51,6 +50,7 @@
       class="fixed inset-0 bg-black opacity-50 z-20 md:hidden"
     ></div>
 
+    <Toaster />
   </div>
 </template>
 

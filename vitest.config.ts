@@ -1,22 +1,30 @@
-import { defineVitestConfig } from '@nuxt/test-utils/config'
+import { defineConfig } from 'vitest/config'
+import { defineVitestProject } from '@nuxt/test-utils/config'
+import { fileURLToPath } from 'node:url'
 
 export default defineVitestConfig({
   test: {
-    // Set the test environment to 'nuxt'.
-    // This will provide a Nuxt runtime environment for all tests,
-    // which is necessary for testing composables and components.
-    environment: 'nuxt',
-
-    // You can optionally set Nuxt-specific environment options
-    environmentOptions: {
-      nuxt: {
-        // Use 'happy-dom' for a simulated DOM environment.
-        // This is useful for testing composables that might interact with the DOM.
-        domEnvironment: 'happy-dom',
+    projects: [
+      {
+        test: {
+          name: 'unit',
+          include: ['test/{e2e,unit}/*.{test,spec}.ts'],
+          environment: 'happy-dom', // Changed from node to happy-dom for composables
+        },
+        resolve: {
+          alias: {
+            '~': fileURLToPath(new URL('./', import.meta.url)),
+            '#imports': fileURLToPath(new URL('./.nuxt/imports.d.ts', import.meta.url)),
+          },
+        },
       },
-    },
-    // Enable global test APIs (describe, test, expect, vi)
-    // to be available in all test files without importing them.
-    globals: true,
+      defineVitestProject({ // Removed await as it's not needed
+        test: {
+          name: 'nuxt',
+          include: ['test/nuxt/*.{test,spec}.ts'],
+          environment: 'nuxt',
+        },
+      }),
+    ],
   },
 })

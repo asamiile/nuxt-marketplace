@@ -60,7 +60,7 @@ const activeTab = computed({
 
 const { showToast } = useAlert()
 
-function handleShowAlert(alertData: { title: string, message: string, type: 'success' | 'error' }) {
-  showToast(alertData.title, alertData.message, alertData.type)
+function handleShowAlert(alertData: { title: string, description: string, variant: 'success' | 'error' }) {
+  showToast(alertData)
 }
 </script>

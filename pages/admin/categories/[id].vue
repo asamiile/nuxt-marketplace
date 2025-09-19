@@ -29,7 +29,7 @@ const { data: category, pending, error, refresh } = await useFetch<Category>(`/a
     }
   },
   onResponseError: ({ response }) => {
-    showToast('エラー', 'カテゴリデータの取得に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: 'カテゴリデータの取得に失敗しました。', variant: 'error' })
   }
 })
 
@@ -45,11 +45,11 @@ const handleSave = async () => {
         is_public: form.value.is_public,
       },
     })
-    showToast('成功', 'カテゴリ情報が正常に更新されました。')
+    showToast({ title: '成功', description: 'カテゴリ情報が正常に更新されました。' })
     await refresh()
   } catch (err: any) {
     console.error('Failed to update category:', err)
-    showToast('エラー', err.data?.message || 'カテゴリ情報の更新に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: err.data?.message || 'カテゴリ情報の更新に失敗しました。', variant: 'error' })
   } finally {
     isSaving.value = false
   }

@@ -101,7 +101,7 @@ export function useProductForm(
   const fetchCategories = async () => {
     const { data, error } = await supabase.from('categories').select('id, name').order('name')
     if (error) {
-      showToast('エラー', 'カテゴリの読み込みに失敗しました。', 'error')
+      showToast({ title: 'エラー', description: 'カテゴリの読み込みに失敗しました。', variant: 'error' })
     } else {
       categories.value = data
     }
@@ -110,7 +110,7 @@ export function useProductForm(
   const fetchPublicTags = async () => {
     const { data, error } = await supabase.from('tags').select('id, name').eq('is_public', true).order('name')
     if (error) {
-      showToast('エラー', 'タグの読み込みに失敗しました。', 'error')
+      showToast({ title: 'エラー', description: 'タグの読み込みに失敗しました。', variant: 'error' })
     } else {
       publicTags.value = data
     }
@@ -160,7 +160,7 @@ export function useProductForm(
     // For 'edit' mode, we need to ensure the product to edit is loaded.
     const productBeingEdited = productToEdit?.value
     if (mode === 'edit' && !productBeingEdited) {
-      showToast('エラー', '編集対象の商品が読み込まれていません。', 'error');
+      showToast({ title: 'エラー', description: '編集対象の商品が読み込まれていません。', variant: 'error' });
       return;
     }
 
@@ -223,7 +223,7 @@ export function useProductForm(
         if (rpcError) throw rpcError;
 
         // Handle success for creation
-        showToast('成功', '商品の出品申請が完了しました。管理者による承認をお待ちください。', 'success');
+        showToast({ title: '成功', description: '商品の出品申請が完了しました。管理者による承認をお待ちください。' });
         router.push('/dashboard');
 
       } else {
@@ -257,7 +257,7 @@ export function useProductForm(
         }
 
         // Handle success for edit
-        showToast('成功', '商品の変更を申請しました。管理者による承認をお待ちください。', 'success');
+        showToast({ title: '成功', description: '商品の変更を申請しました。管理者による承認をお待ちください。' });
         // Redirect to the dashboard's listings tab.
         router.push('/dashboard?tab=listings');
       }
@@ -265,7 +265,7 @@ export function useProductForm(
       hasAttemptedSubmit.value = false
 
     } catch (error: any) {
-      showToast('エラー', error.message || '予期せぬエラーが発生しました。', 'error');
+      showToast({ title: 'エラー', description: error.message || '予期せぬエラーが発生しました。', variant: 'error' });
     } finally {
       isSubmitting.value = false
     }

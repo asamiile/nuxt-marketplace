@@ -2,6 +2,16 @@
 import { ref, watch, computed } from 'vue'
 import type { Category, Tag } from '~/types/product'
 import Input from '~/components/ui/input/Input.vue'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select'
+import { Checkbox } from '~/components/ui/checkbox'
 import { buttonVariants } from '~/components/ui/button'
 
 const props = defineProps<{
@@ -29,6 +39,17 @@ watch(filters, (newFilters) => {
 
 function resetFilters() {
   filters.value = { ...initialFilters }
+}
+
+function handleTagChange(tagId: number, isChecked: boolean) {
+  const currentTagIds = [...filters.value.tagIds];
+  if (isChecked) {
+    if (!currentTagIds.includes(tagId)) {
+      filters.value.tagIds = [...currentTagIds, tagId];
+    }
+  } else {
+    filters.value.tagIds = currentTagIds.filter(id => id !== tagId);
+  }
 }
 
 const activeFilterCount = computed(() => {
@@ -69,16 +90,17 @@ const activeFilterCount = computed(() => {
         </div>
         <div class="filter-group">
           <label for="category-select" class="text-sm font-medium">カテゴリ</label>
-          <select
-            id="category-select"
-            v-model="filters.categoryId"
-            :class="['flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 mt-1', filters.categoryId === null ? 'text-muted-foreground' : 'text-foreground']"
-          >
-            <option :value="null">すべてのカテゴリ</option>
-            <option v-for="category in categories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
+          <Select v-model="filters.categoryId">
+            <SelectTrigger id="category-select" class="w-full mt-1">
+              <SelectValue placeholder="すべてのカテゴリ" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="null">すべてのカテゴリ</SelectItem>
+              <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
+                {{ category.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div class="filter-group">
           <label for="min-price" class="text-sm font-medium">最低価格</label>
@@ -105,14 +127,12 @@ const activeFilterCount = computed(() => {
         <label class="text-sm font-medium">タグ</label>
         <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
           <div v-for="tag in tags" :key="tag.id" class="flex items-center">
-            <input
+            <Checkbox
               :id="'tag-' + tag.id"
-              type="checkbox"
-              :value="tag.id"
-              v-model="filters.tagIds"
-              class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              :checked="filters.tagIds.includes(tag.id)"
+              @update:checked="(isChecked) => handleTagChange(tag.id, isChecked)"
             />
-            <label :for="'tag-' + tag.id" class="ml-2 text-sm text-foreground">
+            <label :for="'tag-' + tag.id" class="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               {{ tag.name }}
             </label>
           </div>
@@ -132,14 +152,4 @@ const activeFilterCount = computed(() => {
 </template>
 
 <style scoped>
-select {
-    padding-right: 2.5rem;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.5rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
 </style>

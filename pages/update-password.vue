@@ -49,11 +49,11 @@ const loading = ref(false)
 
 const handleUpdatePassword = async () => {
   if (password.value !== confirmPassword.value) {
-    showToast('エラー', 'パスワードが一致しません。', 'error')
+    showToast({ title: 'エラー', description: 'パスワードが一致しません。', variant: 'error' })
     return
   }
   if (!password.value) {
-    showToast('エラー', 'パスワードを入力してください。', 'error')
+    showToast({ title: 'エラー', description: 'パスワードを入力してください。', variant: 'error' })
     return
   }
 
@@ -63,10 +63,10 @@ const handleUpdatePassword = async () => {
       password: password.value,
     })
     if (error) throw error
-    showToast('成功', 'パスワードが正常に更新されました。')
+    showToast({ title: '成功', description: 'パスワードが正常に更新されました。' })
     router.push('/login')
   } catch (error: any) {
-    showToast('エラー', translateError(error.message), 'error')
+    showToast({ title: 'エラー', description: translateError(error.message), variant: 'error' })
   } finally {
     loading.value = false
   }

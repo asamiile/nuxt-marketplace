@@ -30,7 +30,7 @@ const purchaseId = route.params.id as string
 
 const { data: purchase, pending, error } = await useFetch<PurchaseDetail>(`/api/admin/purchases/${purchaseId}`, {
   onResponseError: ({ response }) => {
-    showToast('エラー', '購入データの取得に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: '購入データの取得に失敗しました。', variant: 'error' })
   }
 })
 

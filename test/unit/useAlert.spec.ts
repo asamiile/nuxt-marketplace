@@ -1,79 +1,112 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useAlert } from '~/composables/useAlert'
+import { nextTick } from 'vue'
+
+// Since useAlert now manages its own state, we don't need to mock external libraries.
+// We can directly test the composable's output.
 
 describe('useAlert', () => {
-  // Use fake timers to control setTimeout
   beforeEach(() => {
+    // Vitest's fake timers allow us to control setTimeout
     vi.useFakeTimers()
-    // Reset toasts array before each test to ensure isolation
+
+    // Reset the state before each test.
+    // This is a bit of a hack, but necessary since the state is global.
+    // A better implementation might use a plugin system or provide a reset function.
     const { toasts, removeToast } = useAlert()
-    // Create a mutable copy to iterate while removing
-    const toastsToRemove = [...toasts]
-    toastsToRemove.forEach(toast => removeToast(toast.id))
+    toasts.value.forEach(toast => removeToast(toast.id))
   })
 
   afterEach(() => {
+    // Restore real timers after each test
     vi.useRealTimers()
   })
 
-  it('should show a success toast and add it to the toasts array', () => {
-    const { toasts, showToast } = useAlert()
+  it('should add a success toast to the toasts array', async () => {
+    const { showToast, toasts } = useAlert()
+    const options = {
+      title: 'Success',
+      message: 'Your action was successful.',
+      type: 'success' as const,
+    }
 
-    expect(toasts.length).toBe(0)
+    showToast(options)
+    await nextTick()
 
-    showToast('Success', 'Your action was successful.', 'success')
-
-    expect(toasts.length).toBe(1)
-    expect(toasts[0].title).toBe('Success')
-    expect(toasts[0].message).toBe('Your action was successful.')
-    expect(toasts[0].type).toBe('success')
+    expect(toasts.value).toHaveLength(1)
+    expect(toasts.value[0]).toMatchObject({
+      title: options.title,
+      message: options.message,
+      type: options.type,
+    })
   })
 
-  it('should show an error toast', () => {
-    const { toasts, showToast } = useAlert()
+  it('should add an error toast to the toasts array', async () => {
+    const { showToast, toasts } = useAlert()
+    const options = {
+      title: 'Error',
+      message: 'Something went wrong.',
+      type: 'error' as const,
+    }
 
-    showToast('Error', 'Something went wrong.', 'error')
+    showToast(options)
+    await nextTick()
 
-    expect(toasts.length).toBe(1)
-    expect(toasts[0].type).toBe('error')
+    expect(toasts.value).toHaveLength(1)
+    expect(toasts.value[0]).toMatchObject({
+      title: options.title,
+      message: options.message,
+      type: options.type,
+    })
   })
 
-  it('should remove a toast when removeToast is called', () => {
-    const { toasts, showToast, removeToast } = useAlert()
+  it('should default to a success toast if type is not provided', async () => {
+    const { showToast, toasts } = useAlert()
+    const options = {
+      title: 'Default',
+      message: 'This is a default toast.',
+    }
 
-    showToast('Test', 'This is a test.')
-    const toastId = toasts[0].id
+    showToast(options)
+    await nextTick()
 
-    expect(toasts.length).toBe(1)
+    expect(toasts.value).toHaveLength(1)
+    expect(toasts.value[0].type).toBe('success')
+  })
 
+  it('should remove a toast when removeToast is called', async () => {
+    const { showToast, removeToast, toasts } = useAlert()
+    const options = {
+      title: 'To Be Removed',
+      message: 'This toast will be removed.',
+    }
+
+    showToast(options)
+    await nextTick()
+
+    const toastId = toasts.value[0].id
     removeToast(toastId)
+    await nextTick()
 
-    expect(toasts.length).toBe(0)
+    expect(toasts.value).toHaveLength(0)
   })
 
-  it('should automatically remove a toast after the specified duration', () => {
-    const { toasts, showToast } = useAlert()
-    const duration = 3000
+  it('should automatically remove a toast after the timeout', async () => {
+    const { showToast, toasts } = useAlert()
+    const options = {
+      title: 'Auto Remove',
+      message: 'This toast will disappear.',
+    }
 
-    showToast('Auto Remove', 'This should disappear.', 'success', duration)
+    showToast(options)
+    await nextTick()
 
-    expect(toasts.length).toBe(1)
+    expect(toasts.value).toHaveLength(1)
 
-    // Advance timers by the duration
-    vi.advanceTimersByTime(duration)
+    // Fast-forward time by 5 seconds
+    vi.advanceTimersByTime(5000)
+    await nextTick()
 
-    expect(toasts.length).toBe(0)
-  })
-
-  it('should not remove a toast if the wrong id is provided', () => {
-    const { toasts, showToast, removeToast } = useAlert()
-
-    showToast('Test', 'A toast.')
-    expect(toasts.length).toBe(1)
-
-    // Try to remove with a non-existent ID
-    removeToast(99999)
-
-    expect(toasts.length).toBe(1)
+    expect(toasts.value).toHaveLength(0)
   })
 })

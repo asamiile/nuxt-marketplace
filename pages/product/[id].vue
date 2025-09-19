@@ -105,7 +105,7 @@
 import type { ProductWithRelations } from '~/types/product'
 import { buttonVariants } from '~/components/ui/button'
 import Button from '~/components/ui/button/Button.vue'
-import Skeleton from '~/components/ui/Skeleton.vue'
+import { Skeleton } from '~/components/ui/skeleton'
 
 const route = useRoute()
 const router = useRouter()
@@ -203,11 +203,11 @@ const handleDelete = async () => {
       // 2. Delete product from database
       await supabase.from('products').delete().eq('id', product.value.id)
 
-      showToast('成功', '商品を削除しました。')
+      showToast({ title: '成功', description: '商品を削除しました。' })
       router.push('/dashboard')
 
     } catch (error: any) {
-      showToast('削除エラー', error.message || '商品の削除中にエラーが発生しました。', 'error')
+      showToast({ title: '削除エラー', description: error.message || '商品の削除中にエラーが発生しました。', variant: 'error' })
     }
   }
 }

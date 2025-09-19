@@ -4,7 +4,15 @@ import { useRoute } from 'vue-router'
 import type { Product } from '~/types/product'
 import Button from '~/components/ui/button/Button.vue'
 import Label from '~/components/ui/label/Label.vue'
-import UiPagination from '~/components/ui/Pagination.vue'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from '~/components/ui/pagination'
 
 definePageMeta({
   layout: 'admin',
@@ -227,10 +235,31 @@ const performAction = async (action: 'admin' | 'disable') => {
             <p v-else class="text-muted-foreground">このユーザーはまだ商品を出品していません。</p>
 
             <div v-if="productTotalPages > 1" class="mt-4 flex justify-center">
-              <UiPagination
-                v-model:currentPage="productsCurrentPage"
-                :total-pages="productTotalPages"
-              />
+              <Pagination
+                v-slot="{ page }"
+                v-model:page="productsCurrentPage"
+                :total="products.length"
+                :items-per-page="productsItemsPerPage"
+                :sibling-count="1"
+                show-edges
+              >
+                <PaginationContent v-slot="{ items }" class="flex items-center gap-1">
+                  <PaginationFirst />
+                  <PaginationPrevious />
+
+                  <template v-for="(item, index) in items">
+                    <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                      <Button class="w-9 h-9 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                        {{ item.value }}
+                      </Button>
+                    </PaginationItem>
+                    <PaginationEllipsis v-else :key="item.type" :index="index" />
+                  </template>
+
+                  <PaginationNext />
+                  <PaginationLast />
+                </PaginationContent>
+              </Pagination>
           </div>
         </div>
       </div>

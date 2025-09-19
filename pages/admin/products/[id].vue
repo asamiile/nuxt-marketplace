@@ -46,7 +46,7 @@ watch(product, (newProduct) => {
 }, { immediate: true })
 
 if (productError.value) {
-  showToast('エラー', '商品データの取得に失敗しました。', 'error')
+  showToast({ title: 'エラー', description: '商品データの取得に失敗しました。', variant: 'error' })
 }
 
 // Fetch categories for the select dropdown
@@ -61,11 +61,11 @@ const handleSave = async () => {
       method: 'PUT',
       body: form.value,
     })
-    showToast('成功', '商品情報が正常に更新されました。')
+    showToast({ title: '成功', description: '商品情報が正常に更新されました。' })
     await navigateTo('/admin/products')
   } catch (err) {
     console.error('Failed to update product:', err)
-    showToast('エラー', '商品情報の更新に失敗しました。', 'error')
+    showToast({ title: 'エラー', description: '商品情報の更新に失敗しました。', variant: 'error' })
   } finally {
     isSaving.value = false
   }
