@@ -5,8 +5,7 @@
     <form @submit.prevent="handleSaveSettings">
       <div class="space-y-8">
         <!-- Basic Information -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
-          <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">サイト基本情報</h2>
+        <AdminCard title="サイト基本情報">
           <div class="grid grid-cols-1 gap-4">
             <div>
               <Label for="siteName">サイト名</Label>
@@ -17,7 +16,7 @@
               <Textarea id="siteDescription" v-model="settings.site_description" rows="3" />
             </div>
           </div>
-        </div>
+        </AdminCard>
 
       </div>
 
@@ -32,13 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card'
+import AdminCard from '~/components/admin/AdminCard.vue'
 import Input from '~/components/ui/input/Input.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Label from '~/components/ui/label/Label.vue'

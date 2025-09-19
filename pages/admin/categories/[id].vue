@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Button from '~/components/ui/button/Button.vue'
+import AdminCard from '~/components/admin/AdminCard.vue'
 import type { Category } from '~/types/product'
 
 definePageMeta({
@@ -75,7 +76,7 @@ const handleSave = async () => {
       </div>
 
 
-      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-8">
+      <AdminCard title="カテゴリ情報">
         <form @submit.prevent="handleSave" class="space-y-6">
           <div>
             <Label for="name">カテゴリ名</Label>
@@ -91,7 +92,7 @@ const handleSave = async () => {
             </Button>
           </div>
         </form>
-      </div>
+      </AdminCard>
 
       <div class="mt-6">
         <NuxtLink to="/admin/categories" class="text-sm text-link hover:underline">
