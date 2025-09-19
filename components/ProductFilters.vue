@@ -42,12 +42,13 @@ function resetFilters() {
 }
 
 function handleTagChange(tagId: number, isChecked: boolean) {
+  const currentTagIds = [...filters.value.tagIds];
   if (isChecked) {
-    if (!filters.value.tagIds.includes(tagId)) {
-      filters.value.tagIds.push(tagId)
+    if (!currentTagIds.includes(tagId)) {
+      filters.value.tagIds = [...currentTagIds, tagId];
     }
   } else {
-    filters.value.tagIds = filters.value.tagIds.filter(id => id !== tagId)
+    filters.value.tagIds = currentTagIds.filter(id => id !== tagId);
   }
 }
 
