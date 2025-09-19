@@ -7,6 +7,7 @@ import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 import type { Product, Category } from '~/types/product'
+import AdminCard from '~/components/admin/AdminCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -85,7 +86,7 @@ const handleSave = async () => {
         商品編集: {{ product.name }}
       </h1>
 
-      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-8">
+      <AdminCard >
         <form @submit.prevent="handleSave" class="space-y-6">
           <div>
             <Label for="name">商品名</Label>
@@ -140,7 +141,7 @@ const handleSave = async () => {
             </Button>
           </div>
         </form>
-      </div>
+      </AdminCard>
 
       <div class="mt-6">
         <NuxtLink to="/admin/products" class="text-sm text-link hover:underline">

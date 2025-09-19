@@ -13,7 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '~/components/ui/pagination'
-import DashboardCard from '~/components/admin/DashboardCard.vue'
+import AdminCard from '~/components/admin/AdminCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -149,7 +149,7 @@ const performAction = async (action: 'admin' | 'disable') => {
 
       <div class="space-y-8">
         <!-- 基本情報 -->
-        <DashboardCard title="基本情報">
+        <AdminCard title="基本情報">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div>
               <h3 class="font-semibold mb-2">ユーザーID</h3>
@@ -176,10 +176,10 @@ const performAction = async (action: 'admin' | 'disable') => {
               <p class="text-sm text-muted-foreground">{{ new Date(user.last_sign_in_at).toLocaleString() }}</p>
             </div>
           </div>
-        </DashboardCard>
+        </AdminCard>
 
         <!-- 管理アクション -->
-        <DashboardCard title="管理アクション">
+        <AdminCard title="管理アクション">
           <div class="flex flex-wrap gap-4 items-center">
             <Button
               @click="performAction('admin')"
@@ -197,10 +197,10 @@ const performAction = async (action: 'admin' | 'disable') => {
             </Button>
             <p v-if="actionError" class="text-destructive text-sm">{{ actionError }}</p>
           </div>
-        </DashboardCard>
+        </AdminCard>
 
           <!-- 出品商品一覧 -->
-        <DashboardCard :title="`出品商品一覧 (${products.length}件)`">
+        <AdminCard :title="`出品商品一覧 (${products.length}件)`">
             <div v-if="products.length > 0" class="overflow-x-auto">
               <table class="min-w-full">
                 <thead class="bg-secondary">
@@ -259,7 +259,7 @@ const performAction = async (action: 'admin' | 'disable') => {
                 </PaginationContent>
               </Pagination>
           </div>
-        </DashboardCard>
+        </AdminCard>
       </div>
 
       <div class="mt-6">

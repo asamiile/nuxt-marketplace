@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DashboardCard from '~/components/admin/DashboardCard.vue'
+import AdminCard from '~/components/admin/AdminCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -39,11 +39,11 @@ const dashboardCards = computed(() => [
     </h1>
 
     <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <DashboardCard v-for="i in 4" :key="i" title="読み込み中...">
+      <AdminCard v-for="i in 4" :key="i" title="読み込み中...">
         <div class="text-xl">
           -
         </div>
-      </DashboardCard>
+      </AdminCard>
     </div>
 
     <div v-else-if="error" class="text-red-500">
@@ -51,7 +51,7 @@ const dashboardCards = computed(() => [
     </div>
 
     <div v-else-if="stats" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <DashboardCard
+      <AdminCard
         v-for="card in dashboardCards"
         :key="card.title"
         :title="card.title"
@@ -60,7 +60,7 @@ const dashboardCards = computed(() => [
           {{ card.value }}
           <span v-if="card.value !== 'N/A'" class="text-sm font-normal text-gray-500">{{ card.unit }}</span>
         </div>
-      </DashboardCard>
+      </AdminCard>
     </div>
   </div>
 </template>

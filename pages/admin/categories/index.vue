@@ -13,7 +13,7 @@
     </div>
 
     <!-- New Category Form -->
-    <div class="mb-8 p-4 bg-card rounded-lg">
+    <AdminCard class="mb-8">
       <h2 class="text-xl font-semibold mb-4">新規カテゴリ作成</h2>
       <form @submit.prevent="handleCreateCategory">
         <div class="flex items-center gap-4">
@@ -28,7 +28,7 @@
           </Button>
         </div>
       </form>
-    </div>
+    </AdminCard>
 
     <!-- Categories Table -->
     <div class="bg-card rounded-lg overflow-x-auto">
@@ -110,6 +110,7 @@ import {
 } from '~/components/ui/pagination'
 import Button from '~/components/ui/button/Button.vue'
 import Input from '~/components/ui/input/Input.vue'
+import AdminCard from '~/components/admin/AdminCard.vue'
 
 definePageMeta({
   layout: 'admin',

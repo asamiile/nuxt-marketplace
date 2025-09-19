@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/contact'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
-import DashboardCard from '~/components/admin/DashboardCard.vue'
+import AdminCard from '~/components/admin/AdminCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -104,7 +104,7 @@ const getStatusClass = (status: string | undefined) => {
       </div>
       <p class="text-sm text-muted-foreground mb-6">件名: {{ contact.subject }}</p>
 
-      <DashboardCard title="お問い合わせ内容">
+      <AdminCard title="お問い合わせ内容">
         <div class="space-y-6">
           <!-- Contact Info -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b border-border">
@@ -130,7 +130,7 @@ const getStatusClass = (status: string | undefined) => {
             </div>
           </div>
         </div>
-      </DashboardCard>
+      </AdminCard>
        <div class="mt-6">
         <NuxtLink to="/admin/contacts" class="text-sm text-link hover:underline">
           &larr; お問い合わせ一覧に戻る

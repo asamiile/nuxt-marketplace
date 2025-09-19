@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import DashboardCard from '~/components/admin/DashboardCard.vue'
+import AdminCard from '~/components/admin/AdminCard.vue'
 
 // Define a more specific type for the purchase data we expect from our API
 interface PurchaseDetail {
@@ -56,7 +56,7 @@ const formatDate = (date: string | null) => {
 
       <div class="space-y-8">
         <!-- Purchase Details -->
-        <DashboardCard title="購入情報">
+        <AdminCard title="購入情報">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 class="font-semibold mb-2">購入ID</h3>
@@ -67,10 +67,10 @@ const formatDate = (date: string | null) => {
               <p class="text-sm text-muted-foreground">{{ formatDate(purchase.created_at) }}</p>
             </div>
           </div>
-        </DashboardCard>
+        </AdminCard>
 
         <!-- Product Details -->
-        <DashboardCard title="商品情報">
+        <AdminCard title="商品情報">
           <div v-if="purchase.products" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 class="font-semibold mb-2">商品ID</h3>
@@ -92,10 +92,10 @@ const formatDate = (date: string | null) => {
            <div v-else>
             <p class="text-sm text-muted-foreground">商品情報がありません。</p>
           </div>
-        </DashboardCard>
+        </AdminCard>
 
         <!-- Customer Details -->
-        <DashboardCard title="購入者情報">
+        <AdminCard title="購入者情報">
           <div v-if="purchase.profiles" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 class="font-semibold mb-2">ユーザーID</h3>
@@ -113,7 +113,7 @@ const formatDate = (date: string | null) => {
           <div v-else>
             <p class="text-sm text-muted-foreground">購入者情報がありません。</p>
           </div>
-        </DashboardCard>
+        </AdminCard>
       </div>
 
       <div class="mt-6">
