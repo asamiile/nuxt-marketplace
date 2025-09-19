@@ -55,9 +55,12 @@ const dashboardCards = computed(() => [
         v-for="card in dashboardCards"
         :key="card.title"
         :title="card.title"
-        :value="card.value"
-        :unit="card.unit"
-      />
+      >
+        <div class="text-xl">
+          {{ card.value }}
+          <span v-if="card.value !== 'N/A'" class="text-sm font-normal text-gray-500">{{ card.unit }}</span>
+        </div>
+      </DashboardCard>
     </div>
   </div>
 </template>

@@ -13,10 +13,9 @@ defineProps<Props>()
     <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">
       {{ title }}
     </h2>
-    <div class="text-xl">
+    <div>
       <slot>
         {{ value }}
-        <span v-if="value !== 'N/A' && unit" class="text-sm font-normal text-gray-500">{{ unit }}</span>
       </slot>
     </div>
   </div>
