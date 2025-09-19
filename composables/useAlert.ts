@@ -1,24 +1,40 @@
-// composables/useAlert.ts
-import { toast } from 'vue-sonner'
+import { ref, readonly } from 'vue'
+
+interface Toast {
+  id: number
+  title: string
+  message: string
+  type: 'success' | 'error'
+}
+
+const toasts = ref<Toast[]>([])
 
 export function useAlert() {
   const showToast = (options: {
     title: string,
-    description?: string,
-    variant?: 'success' | 'error' | 'info' | 'warning'
+    message: string,
+    type?: 'success' | 'error'
   }) => {
-    const toastFunctions = {
-      success: toast.success,
-      error: toast.error,
-      info: toast.info,
-      warning: toast.warning,
-    };
+    const id = Date.now()
+    toasts.value.push({
+      id,
+      title: options.title,
+      message: options.message,
+      type: options.type || 'success',
+    })
 
-    const toastFn = toastFunctions[options.variant || 'success'] || toast;
-    toastFn(options.title, {
-      description: options.description,
-    });
+    setTimeout(() => {
+      removeToast(id)
+    }, 5000)
   }
 
-  return { showToast }
+  const removeToast = (id: number) => {
+    toasts.value = toasts.value.filter((toast) => toast.id !== id)
+  }
+
+  return {
+    toasts: readonly(toasts),
+    showToast,
+    removeToast,
+  }
 }
