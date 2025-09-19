@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook-vue/nuxt'
+import '~/assets/css/tailwind.css'
 
 const preview: Preview = {
   parameters: {
