@@ -1,39 +1,23 @@
 import type { StorybookConfig } from '@storybook-vue/nuxt';
-import path from 'path';
-
 const config: StorybookConfig = {
   stories: [
     "../components/**/*.stories.@(js|jsx|ts|tsx)",
-    "../components/**/*.mdx",
+    "../stories/**/*.mdx",
   ],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     {
-      name: '@storybook/addon-styling-webpack',
+      name: '@storybook/addon-styling',
       options: {
-        rules: [
-          {
-            test: /\.css$/,
-            sideEffects: true,
-            use: [
-              "style-loader",
-              {
-                loader: "css-loader",
-                options: { importLoaders: 1 },
-              },
-              {
-                loader: "postcss-loader",
-                options: {
-                  implementation: require("postcss"),
-                },
-              },
-            ],
-          },
-        ],
-      }
-    }
+        // Check out https://github.com/storybookjs/addon-styling/blob/main/docs/api.md
+        // For more details on this addon's options.
+        postCss: {
+          implementation: require.resolve('postcss'),
+        },
+      },
+    },
   ],
   framework: {
     name: "@storybook-vue/nuxt",
@@ -41,16 +25,6 @@ const config: StorybookConfig = {
   },
   docs: {
     autodocs: 'tag',
-  },
-  webpackFinal: async (config) => {
-    if (config.resolve) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '~': path.resolve(__dirname, '../'),
-        '@': path.resolve(__dirname, '../'),
-      };
-    }
-    return config;
   },
 };
 export default config;
