@@ -71,6 +71,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '~/components/ui/pagination'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from '~/components/ui/pagination'
 import { Button } from '~/components/ui/button'
 import { Skeleton } from '~/components/ui/skeleton'
 import ProductFilters from '~/components/ProductFilters.vue'
@@ -138,7 +147,8 @@ const { data, pending, error, refresh } = await useAsyncData(
     }
   },
   {
-    watch: [() => ({ ...filters.value }), currentPage],
+    watch: [filters, currentPage],
+    deep: true,
   },
 )
 </script>
