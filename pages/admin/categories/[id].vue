@@ -83,7 +83,7 @@ const handleSave = async () => {
             <Input v-model="form.name" type="text" id="name" class="mt-1" />
           </div>
           <div class="flex items-center space-x-2">
-            <Checkbox id="is_public" :checked="form.is_public" @update:checked="form.is_public = $event" />
+            <Checkbox id="is_public" v-model:checked="form.is_public" />
             <Label for="is_public">公開する</Label>
           </div>
           <div class="pt-2">
