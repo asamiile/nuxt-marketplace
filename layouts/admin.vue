@@ -50,13 +50,13 @@
       class="fixed inset-0 bg-black opacity-50 z-20 md:hidden"
     ></div>
 
-    <Toaster rich-colors />
+    <Toaster />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Toaster } from 'vue-sonner'
+import Toaster from '~/components/ui/toast/Toaster.vue'
 
 const isSidebarOpen = ref(true)
 

@@ -5,10 +5,10 @@
       <slot />
     </main>
     <TheFooter />
-    <Toaster rich-colors />
+    <Toaster />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Toaster } from 'vue-sonner'
+import Toaster from '~/components/ui/toast/Toaster.vue'
 </script>

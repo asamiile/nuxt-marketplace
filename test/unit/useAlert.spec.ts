@@ -1,102 +1,112 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useAlert } from '~/composables/useAlert'
-import { toast } from 'vue-sonner'
+import { nextTick } from 'vue'
 
-// Mock vue-sonner
-vi.mock('vue-sonner', () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-    warning: vi.fn(),
-  },
-}))
+// Since useAlert now manages its own state, we don't need to mock external libraries.
+// We can directly test the composable's output.
 
 describe('useAlert', () => {
   beforeEach(() => {
-    // Reset mocks before each test
-    vi.clearAllMocks()
+    // Vitest's fake timers allow us to control setTimeout
+    vi.useFakeTimers()
+
+    // Reset the state before each test.
+    // This is a bit of a hack, but necessary since the state is global.
+    // A better implementation might use a plugin system or provide a reset function.
+    const { toasts, removeToast } = useAlert()
+    toasts.value.forEach(toast => removeToast(toast.id))
   })
 
-  it('should call toast.success with the correct parameters for a success toast', () => {
-    const { showToast } = useAlert()
+  afterEach(() => {
+    // Restore real timers after each test
+    vi.useRealTimers()
+  })
+
+  it('should add a success toast to the toasts array', async () => {
+    const { showToast, toasts } = useAlert()
     const options = {
       title: 'Success',
-      description: 'Your action was successful.',
-      variant: 'success' as const,
+      message: 'Your action was successful.',
+      type: 'success' as const,
     }
 
     showToast(options)
+    await nextTick()
 
-    expect(toast.success).toHaveBeenCalledTimes(1)
-    expect(toast.success).toHaveBeenCalledWith(options.title, {
-      description: options.description,
+    expect(toasts.value).toHaveLength(1)
+    expect(toasts.value[0]).toMatchObject({
+      title: options.title,
+      message: options.message,
+      type: options.type,
     })
-    expect(toast.error).not.toHaveBeenCalled()
   })
 
-  it('should call toast.error with the correct parameters for an error toast', () => {
-    const { showToast } = useAlert()
+  it('should add an error toast to the toasts array', async () => {
+    const { showToast, toasts } = useAlert()
     const options = {
       title: 'Error',
-      description: 'Something went wrong.',
-      variant: 'error' as const,
+      message: 'Something went wrong.',
+      type: 'error' as const,
     }
 
     showToast(options)
+    await nextTick()
 
-    expect(toast.error).toHaveBeenCalledTimes(1)
-    expect(toast.error).toHaveBeenCalledWith(options.title, {
-      description: options.description,
+    expect(toasts.value).toHaveLength(1)
+    expect(toasts.value[0]).toMatchObject({
+      title: options.title,
+      message: options.message,
+      type: options.type,
     })
-    expect(toast.success).not.toHaveBeenCalled()
   })
 
-  it('should default to a success toast if variant is not provided', () => {
-    const { showToast } = useAlert()
+  it('should default to a success toast if type is not provided', async () => {
+    const { showToast, toasts } = useAlert()
     const options = {
       title: 'Default',
-      description: 'This is a default toast.',
+      message: 'This is a default toast.',
     }
 
     showToast(options)
+    await nextTick()
 
-    expect(toast.success).toHaveBeenCalledTimes(1)
-    expect(toast.success).toHaveBeenCalledWith(options.title, {
-      description: options.description,
-    })
-    expect(toast.error).not.toHaveBeenCalled()
+    expect(toasts.value).toHaveLength(1)
+    expect(toasts.value[0].type).toBe('success')
   })
 
-  it('should call toast.info for an info toast', () => {
-    const { showToast } = useAlert()
+  it('should remove a toast when removeToast is called', async () => {
+    const { showToast, removeToast, toasts } = useAlert()
     const options = {
-      title: 'Info',
-      description: 'This is some information.',
-      variant: 'info' as const,
+      title: 'To Be Removed',
+      message: 'This toast will be removed.',
     }
 
     showToast(options)
+    await nextTick()
 
-    expect(toast.info).toHaveBeenCalledTimes(1)
-    expect(toast.info).toHaveBeenCalledWith(options.title, {
-      description: options.description,
-    })
+    const toastId = toasts.value[0].id
+    removeToast(toastId)
+    await nextTick()
+
+    expect(toasts.value).toHaveLength(0)
   })
 
-  it('should call toast.warning for a warning toast', () => {
-    const { showToast } = useAlert()
+  it('should automatically remove a toast after the timeout', async () => {
+    const { showToast, toasts } = useAlert()
     const options = {
-      title: 'Warning',
-      description: 'This is a warning.',
-      variant: 'warning' as const,
+      title: 'Auto Remove',
+      message: 'This toast will disappear.',
     }
 
     showToast(options)
+    await nextTick()
 
-    expect(toast.warning).toHaveBeenCalledTimes(1)
-    expect(toast.warning).toHaveBeenCalledWith(options.title, {
-      description: options.description,
-    })
+    expect(toasts.value).toHaveLength(1)
+
+    // Fast-forward time by 5 seconds
+    vi.advanceTimersByTime(5000)
+    await nextTick()
+
+    expect(toasts.value).toHaveLength(0)
   })
 })
