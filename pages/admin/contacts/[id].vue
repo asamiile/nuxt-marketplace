@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/contact'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
+import DashboardCard from '~/components/admin/DashboardCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -103,31 +104,33 @@ const getStatusClass = (status: string | undefined) => {
       </div>
       <p class="text-sm text-muted-foreground mb-6">件名: {{ contact.subject }}</p>
 
-      <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6 space-y-6">
-        <!-- Contact Info -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b border-border">
-          <div>
-            <h3 class="font-semibold mb-2">名前</h3>
-            <p class="text-sm text-muted-foreground">{{ contact.name }}</p>
+      <DashboardCard title="お問い合わせ内容">
+        <div class="space-y-6">
+          <!-- Contact Info -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b border-border">
+            <div>
+              <h3 class="font-semibold mb-2">名前</h3>
+              <p class="text-sm text-muted-foreground">{{ contact.name }}</p>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-2">Email</h3>
+              <p class="text-sm text-muted-foreground">{{ contact.email }}</p>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-2">受信日時</h3>
+              <p class="text-sm text-muted-foreground">{{ formatDate(contact.created_at) }}</p>
+            </div>
           </div>
-          <div>
-            <h3 class="font-semibold mb-2">Email</h3>
-            <p class="text-sm text-muted-foreground">{{ contact.email }}</p>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-2">受信日時</h3>
-            <p class="text-sm text-muted-foreground">{{ formatDate(contact.created_at) }}</p>
-          </div>
-        </div>
 
-        <!-- Message -->
-        <div>
-          <h3 class="font-semibold mb-2">メッセージ本文</h3>
+          <!-- Message -->
           <div>
-            {{ contact.message }}
+            <h3 class="font-semibold mb-2">メッセージ本文</h3>
+            <div>
+              {{ contact.message }}
+            </div>
           </div>
         </div>
-      </div>
+      </DashboardCard>
        <div class="mt-6">
         <NuxtLink to="/admin/contacts" class="text-sm text-link hover:underline">
           &larr; お問い合わせ一覧に戻る

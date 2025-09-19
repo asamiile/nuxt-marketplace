@@ -13,6 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '~/components/ui/pagination'
+import DashboardCard from '~/components/admin/DashboardCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -148,8 +149,7 @@ const performAction = async (action: 'admin' | 'disable') => {
 
       <div class="space-y-8">
         <!-- 基本情報 -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
-          <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">基本情報</h2>
+        <DashboardCard title="基本情報">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
             <div>
               <h3 class="font-semibold mb-2">ユーザーID</h3>
@@ -176,11 +176,10 @@ const performAction = async (action: 'admin' | 'disable') => {
               <p class="text-sm text-muted-foreground">{{ new Date(user.last_sign_in_at).toLocaleString() }}</p>
             </div>
           </div>
-        </div>
+        </DashboardCard>
 
         <!-- 管理アクション -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
-          <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">管理アクション</h2>
+        <DashboardCard title="管理アクション">
           <div class="flex flex-wrap gap-4 items-center">
             <Button
               @click="performAction('admin')"
@@ -198,12 +197,11 @@ const performAction = async (action: 'admin' | 'disable') => {
             </Button>
             <p v-if="actionError" class="text-destructive text-sm">{{ actionError }}</p>
           </div>
-        </div>
+        </DashboardCard>
 
           <!-- 出品商品一覧 -->
-        <div class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
-            <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">出品商品一覧 ({{ products.length }}件)</h2>
-            <div v-if="products.length > 0" class="bg-card rounded-lg overflow-x-auto">
+        <DashboardCard :title="`出品商品一覧 (${products.length}件)`">
+            <div v-if="products.length > 0" class="overflow-x-auto">
               <table class="min-w-full">
                 <thead class="bg-secondary">
                   <tr>
@@ -261,7 +259,7 @@ const performAction = async (action: 'admin' | 'disable') => {
                 </PaginationContent>
               </Pagination>
           </div>
-        </div>
+        </DashboardCard>
       </div>
 
       <div class="mt-6">
