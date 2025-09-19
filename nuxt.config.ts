@@ -7,7 +7,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/supabase',
     'shadcn-nuxt',
-    '@nuxt/test-utils/module'
+    '@nuxt/test-utils/module',
+    '@nuxtjs/storybook',
   ],
   css: ['~/assets/css/tailwind.css'],
   vite: {
