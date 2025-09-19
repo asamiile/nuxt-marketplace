@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import DashboardCard from '~/components/admin/DashboardCard.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -39,12 +39,11 @@ const dashboardCards = computed(() => [
     </h1>
 
     <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div v-for="i in 4" :key="i" class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
-        <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">読み込み中...</h2>
+      <DashboardCard v-for="i in 4" :key="i" title="読み込み中...">
         <div class="text-xl">
           -
         </div>
-      </div>
+      </DashboardCard>
     </div>
 
     <div v-else-if="error" class="text-red-500">
@@ -52,15 +51,13 @@ const dashboardCards = computed(() => [
     </div>
 
     <div v-else-if="stats" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div v-for="card in dashboardCards" :key="card.title" class="text-card-foreground bg-card rounded-lg p-4 md:p-6">
-        <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">
-          {{ card.title }}
-        </h2>
-        <div class="text-xl">
-          {{ card.value }}
-          <span v-if="card.value !== 'N/A'" class="text-sm font-normal text-gray-500">{{ card.unit }}</span>
-        </div>
-      </div>
+      <DashboardCard
+        v-for="card in dashboardCards"
+        :key="card.title"
+        :title="card.title"
+        :value="card.value"
+        :unit="card.unit"
+      />
     </div>
   </div>
 </template>

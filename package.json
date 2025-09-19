@@ -38,6 +38,7 @@
     "playwright-core": "^1.55.0",
     "supabase": "^2.39.2",
     "typescript": "^5.9.2",
+    "unimported": "^1.31.0",
     "vitest": "^3.2.4"
   }
 }
