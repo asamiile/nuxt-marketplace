@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import AdminCard from '~/components/admin/AdminCard.vue'
+import AdminCard from '~/components/admin/AdminCard'
 import Input from '~/components/ui/input/Input.vue'
 import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Label from '~/components/ui/label/Label.vue'

@@ -110,7 +110,7 @@ import {
 } from '~/components/ui/pagination'
 import Button from '~/components/ui/button/Button.vue'
 import Input from '~/components/ui/input/Input.vue'
-import AdminCard from '~/components/admin/AdminCard.vue'
+import AdminCard from '~/components/admin/AdminCard'
 
 definePageMeta({
   layout: 'admin',

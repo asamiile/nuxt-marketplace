@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 import { useFavorites } from '~/composables/useFavorites'
-import ProductCard from '~/components/ProductCard.vue'
+import ProductCard from '~/components/ProductCard'
 import {
   Pagination,
   PaginationContent,

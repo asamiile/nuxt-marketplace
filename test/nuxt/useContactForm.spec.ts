@@ -120,7 +120,11 @@ describe('useContactForm', () => {
 
       await handleSubmit()
 
-      expect(alertMock.showToast).toHaveBeenCalledWith('エラー', `エラーが発生しました: ${submissionError.message}`, 'error')
+      expect(alertMock.showToast).toHaveBeenCalledWith({
+        title: 'エラー',
+        description: `エラーが発生しました: ${submissionError.message}`,
+        variant: 'error',
+      })
     })
   })
 })

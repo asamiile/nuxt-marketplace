@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { format } from 'date-fns'
 import type { Contact } from '~/types/contact'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
-import AdminCard from '~/components/admin/AdminCard.vue'
+import AdminCard from '~/components/admin/AdminCard'
 
 definePageMeta({
   layout: 'admin',
