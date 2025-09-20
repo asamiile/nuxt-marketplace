@@ -10,6 +10,14 @@ export default defineNuxtConfig({
     '@nuxt/test-utils/module',
     '@nuxtjs/storybook',
   ],
+  components: [
+    {
+      path: '~/components',
+      // Only scan .vue files, which prevents warnings about duplicate component names
+      // due to index.ts files.
+      extensions: ['.vue'],
+    },
+  ],
   css: ['~/assets/css/tailwind.css'],
   vite: {
     plugins: [

@@ -21,7 +21,7 @@ export default defineConfig({
       defineVitestProject({ // Removed await as it's not needed
         test: {
           name: 'nuxt',
-          include: ['test/nuxt/*.{test,spec}.ts'],
+          include: ['test/nuxt/**/*.{test,spec}.ts', 'test/components/**/*.{test,spec}.ts'],
           environment: 'nuxt',
         },
       }),
