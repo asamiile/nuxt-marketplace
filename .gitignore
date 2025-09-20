@@ -29,3 +29,5 @@ supabase/.temp/
 # Local SSL
 server.key
 server.crt
+*storybook.log
+storybook-static

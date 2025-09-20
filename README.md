@@ -71,3 +71,11 @@ supabase migration repair [TIMESTAMP] --status applied
 ```
 supabase functions deploy product-status-notifier --no-verify-jwt
 ```
+
+### Storybook
+
+- Launch the Storybook Viewer on `http://localhost:6006`:
+
+```bash
+pnpm run storybook
+```
