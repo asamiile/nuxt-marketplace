@@ -39,9 +39,9 @@ import Tabs from '~/components/ui/tabs/Tabs.vue'
 import TabsList from '~/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '~/components/ui/tabs/TabsTrigger.vue'
 import TabsContent from '~/components/ui/tabs/TabsContent.vue'
-import ProfileSettings from '~/components/dashboard/ProfileSettings.vue'
-import SalesHistory from '~/components/dashboard/SalesHistory.vue'
-import UserListings from '~/components/dashboard/UserListings.vue'
+import ProfileSettings from '~/components/dashboard/ProfileSettings'
+import SalesHistory from '~/components/dashboard/SalesHistory'
+import UserListings from '~/components/dashboard/UserListings'
 import { useAlert } from '~/composables/useAlert'
 
 definePageMeta({

@@ -7,7 +7,7 @@ import Textarea from '~/components/ui/textarea/Textarea.vue'
 import Button from '~/components/ui/button/Button.vue'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '~/components/ui/select'
 import type { Product, Category } from '~/types/product'
-import AdminCard from '~/components/admin/AdminCard.vue'
+import AdminCard from '~/components/admin/AdminCard'
 
 definePageMeta({
   layout: 'admin',

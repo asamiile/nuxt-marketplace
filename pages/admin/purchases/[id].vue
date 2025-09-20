@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import AdminCard from '~/components/admin/AdminCard.vue'
+import AdminCard from '~/components/admin/AdminCard'
 
 // Define a more specific type for the purchase data we expect from our API
 interface PurchaseDetail {

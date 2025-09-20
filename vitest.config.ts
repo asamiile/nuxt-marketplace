@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config'
 import { defineVitestProject } from '@nuxt/test-utils/config'
 import { fileURLToPath } from 'node:url'
 
-export default defineVitestConfig({
+export default defineConfig({
   test: {
     projects: [
       {

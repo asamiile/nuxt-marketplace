@@ -126,7 +126,10 @@ describe('useProductForm', () => {
         p_terms_of_use: '',
         p_tag_names: [],
       })
-      expect(alert.showToast).toHaveBeenCalledWith('成功', '商品の出品申請が完了しました。管理者による承認をお待ちください。', 'success')
+      expect(alert.showToast).toHaveBeenCalledWith({
+        title: '成功',
+        description: '商品の出品申請が完了しました。管理者による承認をお待ちください。',
+      })
       expect(router.push).toHaveBeenCalledWith('/dashboard')
     })
 
@@ -146,7 +149,11 @@ describe('useProductForm', () => {
 
       expect(supabase.rpc).toHaveBeenCalled()
       expect(router.push).not.toHaveBeenCalled()
-      expect(alert.showToast).toHaveBeenCalledWith('エラー', rpcError.message, 'error')
+      expect(alert.showToast).toHaveBeenCalledWith({
+        title: 'エラー',
+        description: rpcError.message,
+        variant: 'error',
+      })
     })
   })
 })

@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import Input from '~/components/ui/input/Input.vue'
 import Label from '~/components/ui/label/Label.vue'
 import Button from '~/components/ui/button/Button.vue'
-import AdminCard from '~/components/admin/AdminCard.vue'
+import AdminCard from '~/components/admin/AdminCard'
 import type { Tag } from '~/types/product'
 
 definePageMeta({
