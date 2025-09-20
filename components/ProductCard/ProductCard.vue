@@ -16,8 +16,8 @@
       class="absolute top-2 right-2 z-10 p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors duration-200"
       aria-label="Toggle Favorite"
     >
-      <HeartIconSolid v-if="isFavoritedState" class="w-6 h-6 text-red-400" />
-      <HeartIcon v-else class="w-6 h-6 text-gray-400 dark:text-gray-300" />
+      <HeartIconSolid v-if="isFavoritedState" data-testid="solid-heart" class="w-6 h-6 text-red-400" />
+      <HeartIcon v-else data-testid="outline-heart" class="w-6 h-6 text-gray-400 dark:text-gray-300" />
     </button>
   </Card>
 </template>
